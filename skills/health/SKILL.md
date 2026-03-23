@@ -94,7 +94,7 @@ except: print('(unavailable)')
 " 2>/dev/null || echo "(unavailable)"
 echo "=== allowedTools count ===" ; python3 -c "import json; d=json.load(open('$SETTINGS')); print(len(d.get('permissions',{}).get('allow',[])))" 2>/dev/null || echo "(unavailable)"
 echo "=== NESTED CLAUDE.md ===" ; find "$P" -name "CLAUDE.md" -not -path "$P/CLAUDE.md" -not -path "*/.git/*" -not -path "*/node_modules/*" 2>/dev/null || echo "(none)"
-echo "=== GITIGNORE ===" ; (grep -qE "settings\.local" "$P/.gitignore" "$P/.claude/.gitignore" 2>/dev/null && echo "settings.local.json: gitignored") || echo "settings.local.json: NOT gitignored -- risk of committing tokens/credentials"
+echo "=== GITIGNORE ===" ; (git -C "$P" check-ignore -q .claude/settings.local.json 2>/dev/null && echo "settings.local.json: gitignored") || echo "settings.local.json: NOT gitignored -- risk of committing tokens/credentials"
 echo "=== HANDOFF.md ===" ; cat "$P/HANDOFF.md" 2>/dev/null || echo "(none)"
 echo "=== MEMORY.md ===" ; cat "$HOME/.claude/projects/-$(pwd | sed 's|[/_]|-|g; s|^-||')/memory/MEMORY.md" 2>/dev/null | head -50 || echo "(none)"
 
