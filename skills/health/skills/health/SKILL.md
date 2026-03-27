@@ -249,11 +249,11 @@ Launch **two subagents** in parallel. Paste all data inline -- do not pass file 
 
 ### Agent 1 -- Context + Security Audit (no conversation needed)
 
-Read `agents/agent1-context.md` from this skill's directory. It specifies which Step 1 sections to paste and the full audit checklist.
+Read `../../agents/agent1-context.md` from this skill's directory. It specifies which Step 1 sections to paste and the full audit checklist.
 
 ### Agent 2 -- Control + Behavior Audit (uses conversation evidence)
 
-Read `agents/agent2-control.md` from this skill's directory. It specifies which Step 1 sections to paste and the full audit checklist.
+Read `../../agents/agent2-control.md` from this skill's directory. It specifies which Step 1 sections to paste and the full audit checklist.
 
 ## Step 3: Synthesize and present
 
