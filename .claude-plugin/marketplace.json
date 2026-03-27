@@ -12,7 +12,8 @@
       "description": "Audit Claude Code configuration health across all layers. Install into Claude Code and run when collaboration feels off.",
       "version": "1.5.4",
       "category": "development",
-      "source": "./skills/health",
+      "source": "./",
+      "skills": ["./skills/health"],
       "homepage": "https://github.com/tw93/claude-health"
     }
   ]
