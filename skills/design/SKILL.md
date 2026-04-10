@@ -20,8 +20,9 @@ Before writing any code, use AskUserQuestion:
 2. **What is the aesthetic direction?** Name it precisely: dense editorial, raw terminal, ink-on-paper, brutalist grid, warm analog. "Clean and modern" is not a direction.
 3. **What is the one thing this leaves in memory?** A typeface, color system, unexpected motion, asymmetric layout. Pick one and make it obvious.
 4. **What are the hard constraints?** Framework, bundle size, contrast minimums, keyboard accessibility.
+5. **What is the signature micro-interaction?** Scale on press, staggered reveal, or contextual icon animation. Pick one and know exactly how it's implemented.
 
-Do not proceed until all four are answered. State the chosen direction in one sentence, then load `references/design-reference.md` and check the tech stack conflicts table. Name the single CSS strategy before writing the first component.
+Do not proceed until all five are answered. State the chosen direction in one sentence, then load `references/design-reference.md` and check the tech stack conflicts table. Name the single CSS strategy before writing the first component.
 
 Summarize the direction as three lines before writing any code:
 - **Visual thesis**: mood, material, and energy in one sentence (e.g. "warm brutalist editorial with high-contrast ink type and rough paper texture")
