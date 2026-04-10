@@ -69,3 +69,10 @@ Check before handoff. These are not aesthetic choices, they are non-negotiable.
 - Text wrapping: `text-wrap: balance` on headings and short text blocks (≤6 lines in Chromium, ≤10 in Firefox); `text-wrap: pretty` on body paragraphs and longer text; leave default on code blocks and pre-formatted text
 - Font smoothing: apply `-webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale` once on the root layout (macOS only)
 - Tabular numbers: use `font-variant-numeric: tabular-nums` for counters, timers, prices, number columns, or any dynamically updating numbers
+
+### Surfaces
+- Concentric border radius: `outerRadius = innerRadius + padding`; if padding is larger than `24px`, treat layers as separate surfaces and choose each radius independently
+- Optical alignment: buttons with text and icon use slightly less padding on the icon side (e.g., `pl-4 pr-3.5`); play triangles and asymmetric icons shift `1px`–`2px` to the heavier side or fix the SVG directly
+- Shadows over borders: use layered `box-shadow` for depth on cards, buttons, and elevated elements; use actual `border` only for dividers, table cells, and layout separation
+- Image outlines: add a subtle inset outline for consistent depth using `outline: 1px solid rgba(0,0,0,0.1); outline-offset: -1px` (light) or `outline: 1px solid rgba(255,255,255,0.1); outline-offset: -1px` (dark)
+- Minimum hit area: interactive elements need at least 40×40px; extend with a centered pseudo-element when the visible element is smaller; never let hit areas of two interactive elements overlap
