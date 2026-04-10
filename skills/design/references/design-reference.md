@@ -59,5 +59,6 @@ Check before handoff. These are not aesthetic choices, they are non-negotiable.
 - Modals and drawers: `overscroll-behavior: contain`
 
 ### Typography Details
-- `font-variant-numeric: tabular-nums` for number columns or comparisons
-- `text-wrap: balance` or `text-pretty` on headings to prevent awkward line breaks
+- Text wrapping: `text-wrap: balance` on headings and short text blocks (≤6 lines in Chromium, ≤10 in Firefox); `text-wrap: pretty` on body paragraphs and longer text; leave default on code blocks and pre-formatted text
+- Font smoothing: apply `-webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale` once on the root layout (macOS only)
+- Tabular numbers: use `font-variant-numeric: tabular-nums` for counters, timers, prices, number columns, or any dynamically updating numbers
