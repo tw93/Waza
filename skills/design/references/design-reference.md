@@ -36,6 +36,8 @@ Final test: if you swapped in completely different content and the layout still 
 
 Check before handoff. These are not aesthetic choices, they are non-negotiable.
 
+> Treat the sections below as craft details, not defaults. Only apply them when they serve the locked visual direction. If removing a detail changes nothing about how the interface feels, leave it out.
+
 ### Accessibility
 - Icon-only buttons need `aria-label`
 - Actions use `<button>`, navigation uses `<a>` (not `<div onClick>`)
@@ -71,8 +73,8 @@ Check before handoff. These are not aesthetic choices, they are non-negotiable.
 - Tabular numbers: use `font-variant-numeric: tabular-nums` for counters, timers, prices, number columns, or any dynamically updating numbers
 
 ### Surfaces
-- Concentric border radius: `outerRadius = innerRadius + padding`; if padding is larger than `24px`, treat layers as separate surfaces and choose each radius independently
-- Optical alignment: buttons with text and icon use slightly less padding on the icon side (e.g., `pl-4 pr-3.5`); play triangles and asymmetric icons shift `1px`–`2px` to the heavier side or fix the SVG directly
-- Shadows over borders: use layered `box-shadow` for depth on cards, buttons, and elevated elements; use actual `border` only for dividers, table cells, and layout separation
-- Image outlines: add a subtle inset outline for consistent depth using `outline: 1px solid rgba(0,0,0,0.1); outline-offset: -1px` (light) or `outline: 1px solid rgba(255,255,255,0.1); outline-offset: -1px` (dark)
-- Minimum hit area: interactive elements need at least 40×40px; extend with a centered pseudo-element when the visible element is smaller; never let hit areas of two interactive elements overlap
+- Concentric border radius: calculate `outerRadius = innerRadius + padding` so nested rounded corners feel intentional, not mechanical; if padding exceeds `24px`, treat layers as separate surfaces and choose each radius independently
+- Optical alignment: nudge icons by eye, not just by math, so buttons feel centered; buttons with text and an icon use slightly less padding on the icon side (e.g., `pl-4 pr-3.5`); play triangles and asymmetric icons should shift `1px`–`2px` toward the heavier side, or fix the SVG directly
+- Shadows over borders: use layered `box-shadow` for depth on cards, buttons, and elevated elements so the surface feels lifted, not fenced in; reserve actual `border` for dividers, table cells, and layout separation
+- Image outlines: add a subtle inset outline so images hold their own depth without altering layout dimensions: `outline: 1px solid rgba(0,0,0,0.1); outline-offset: -1px` (light) or `outline: 1px solid rgba(255,255,255,0.1); outline-offset: -1px` (dark)
+- Minimum hit area: keep every interactive target at least 40×40px so even small controls feel generous and precise; extend with a centered pseudo-element when the visible element is smaller, and never let hit areas of two interactive elements overlap
