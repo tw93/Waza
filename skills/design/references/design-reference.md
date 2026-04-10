@@ -49,6 +49,8 @@ Check before handoff. These are not aesthetic choices, they are non-negotiable.
 - Animations must be interruptible by user input
 
 ### Performance
+- Transition specificity: never `transition: all`; list exact properties (e.g., `transition-property: scale, opacity`). Tailwind's `transition-transform` covers `transform, translate, scale, rotate`; use `transition-[scale,opacity,filter]` for mixed properties
+- GPU compositing: only use `will-change` for `transform`, `opacity`, or `filter`. Never `will-change: all`. Add only when you notice first-frame stutter; do not apply preemptively to every element
 - Images: explicit `width` and `height` (prevents layout shift)
 - Below-fold images: `loading="lazy"`
 - Critical fonts: `font-display: swap`
