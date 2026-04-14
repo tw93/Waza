@@ -22,7 +22,9 @@ if ! command -v jq &>/dev/null; then
     echo "Installing jq via Homebrew..."
     brew install jq
   else
-    echo "Error: jq is required but not installed. Run: brew install jq" >&2
+    echo "Error: jq is required but not installed." >&2
+    echo "  macOS:  brew install jq" >&2
+    echo "  Linux:  sudo apt-get install jq  or  sudo dnf install jq" >&2
     exit 1
   fi
 fi

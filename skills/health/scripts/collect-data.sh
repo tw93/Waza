@@ -49,6 +49,19 @@ count_local_skills() {
   printf '%s\n' "${count:-0}"
 }
 
+resolve_symlink() {
+  readlink -f "$1" 2>/dev/null && return
+  # macOS fallback: resolve symlink chain manually
+  local target="$1"
+  while [ -L "$target" ]; do
+    local dir
+    dir=$(cd "$(dirname "$target")" && pwd -P)
+    target=$(readlink "$target")
+    case "$target" in /*) ;; *) target="$dir/$target" ;; esac
+  done
+  printf '%s\n' "$target"
+}
+
 count_file_lines() {
   local file="$1"
   if [ -f "$file" ]; then
@@ -490,7 +503,7 @@ for DIR in "$P/.claude/skills" "$HOME/.claude/skills"; do
     IS_LINK="no"; LINK_TARGET=""
     SKILL_DIR=$(dirname "$f")
     if [ -L "$SKILL_DIR" ]; then
-      IS_LINK="yes"; LINK_TARGET=$(readlink -f "$SKILL_DIR")
+      IS_LINK="yes"; LINK_TARGET=$(resolve_symlink "$SKILL_DIR")
     fi
     echo "path=$f words=$WORDS symlink=$IS_LINK target=$LINK_TARGET"
   done < <(list_skill_files "$DIR")
@@ -521,7 +534,7 @@ for DIR in "$P/.claude/skills" "$HOME/.claude/skills"; do
   [ -d "$DIR" ] || continue
   find "$DIR" -maxdepth 1 -type l 2>/dev/null | while IFS= read -r link; do
     _PROVENANCE_FOUND=1
-    TARGET=$(readlink -f "$link")
+    TARGET=$(resolve_symlink "$link")
     echo "link=$(basename "$link") target=$TARGET"
     GIT_ROOT=$(git -C "$TARGET" rev-parse --show-toplevel 2>/dev/null || echo "")
     if [ -n "$GIT_ROOT" ]; then
