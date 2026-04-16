@@ -67,7 +67,7 @@ Claude corrects your mistakes in place, tagging each one with its pattern name s
 
 ```bash
 # Claude Code
-curl -fsSL https://raw.githubusercontent.com/tw93/Waza/main/rules/english.md -o ~/.claude/rules/english.md
+mkdir -p ~/.claude/rules && curl -fsSL https://raw.githubusercontent.com/tw93/Waza/main/rules/english.md -o ~/.claude/rules/english.md
 
 # Codex
 curl -fsSL https://raw.githubusercontent.com/tw93/Waza/main/rules/english.md >> ~/.codex/AGENTS.md
