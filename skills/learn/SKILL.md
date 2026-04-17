@@ -1,6 +1,6 @@
 ---
 name: learn
-description: Invoke when diving deep into an unfamiliar domain, preparing a research article, or turning collected sources into publish-ready output. Runs a six-phase workflow: collect, digest, outline, fill in, refine, self-review. Not for quick lookups or single-file reads.
+description: "Invoke when diving deep into an unfamiliar domain, preparing a research article, or turning collected sources into publish-ready output. Runs a six-phase workflow: collect, digest, outline, fill in, refine, self-review. Not for quick lookups or single-file reads."
 metadata:
   version: "3.10.0"
 ---
