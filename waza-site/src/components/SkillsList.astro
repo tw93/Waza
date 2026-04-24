@@ -1,0 +1,122 @@
+---
+import { skills } from '../data/skills';
+---
+
+<section class="skills-section" id="skills">
+  <header class="skills-header">
+    <p class="label">SKILLS</p>
+    <h2 class="skills-heading">
+      <span class="en">Eight habits. One install.</span>
+      <span class="zh">八个习惯。一键安装。</span>
+    </h2>
+  </header>
+  <ul class="skills-list">
+    {skills.map((skill) => (
+      <li class="skill-row">
+        <a href={`/skills/${skill.slug}`} class="skill-link">
+          <span class="skill-command mono">{skill.command}</span>
+          <span class="skill-when">
+            <span class="en">{skill.when.en}</span>
+            <span class="zh">{skill.when.zh}</span>
+          </span>
+          <span class="skill-what">
+            <span class="en">{skill.what.en}</span>
+            <span class="zh">{skill.what.zh}</span>
+          </span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</section>
+
+<style>
+  .skills-section {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 64px 40px;
+  }
+
+  .skills-header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  .skills-heading {
+    font-family: var(--font-serif);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-top: 8px;
+    margin-bottom: 0;
+  }
+
+  .skills-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .skill-row {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .skill-link {
+    display: grid;
+    grid-template-columns: 88px 160px 1fr;
+    gap: 0 24px;
+    align-items: baseline;
+    padding: 16px 12px;
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.15s;
+  }
+
+  .skill-link:hover {
+    background: var(--surface);
+    border-radius: 4px;
+  }
+
+  .skill-command {
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 13px;
+  }
+
+  .skill-when {
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-style: italic;
+  }
+
+  .skill-what {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  @media (max-width: 640px) {
+    .skills-section {
+      padding: 40px 20px;
+    }
+
+    .skill-link {
+      grid-template-columns: 1fr;
+      gap: 4px;
+      padding: 14px 8px;
+    }
+
+    .skill-when {
+      font-style: normal;
+    }
+  }
+</style>
