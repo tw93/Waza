@@ -1,0 +1,111 @@
+<section class="hero">
+  <p class="label eyebrow">
+    <span class="en">わざ — TECHNIQUE AS INSTINCT</span>
+    <span class="zh">わざ — 技法即本能</span>
+  </p>
+  <h1 class="hero-title">
+    <span class="en">Engineering habits you already know,<br />turned into skills Claude can run.</span>
+    <span class="zh">你早已熟悉的工程习惯，<br />变成了 Claude 可以执行的技能。</span>
+  </h1>
+  <p class="hero-sub">
+    <span class="en">8 skills · Claude Code · Codex · One install</span>
+    <span class="zh">8 个技能 · Claude Code · Codex · 一键安装</span>
+  </p>
+  <div class="install-block">
+    <code id="install-cmd">npx skills add tw93/Waza</code>
+    <button class="copy-btn" id="copy-btn" aria-label="Copy install command">
+      <span class="en">copy</span>
+      <span class="zh">复制</span>
+    </button>
+  </div>
+  <p class="browse-hint">
+    <span class="en">— or — <a href="#skills">Browse skills ↓</a></span>
+    <span class="zh">— 或者 — <a href="#skills">浏览技能 ↓</a></span>
+  </p>
+</section>
+
+<script>
+  const btn = document.getElementById('copy-btn')!;
+  btn.addEventListener('click', async () => {
+    await navigator.clipboard.writeText('npx skills add tw93/Waza');
+    const enSpan = btn.querySelector('.en') as HTMLElement;
+    const zhSpan = btn.querySelector('.zh') as HTMLElement;
+    if (enSpan) enSpan.textContent = 'copied!';
+    if (zhSpan) zhSpan.textContent = '已复制！';
+    setTimeout(() => {
+      if (enSpan) enSpan.textContent = 'copy';
+      if (zhSpan) zhSpan.textContent = '复制';
+    }, 2000);
+  });
+</script>
+
+<style>
+  .hero {
+    padding: 72px 40px 56px;
+    text-align: center;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .eyebrow {
+    margin-bottom: 20px;
+    font-size: 11px;
+    letter-spacing: 3px;
+  }
+  .hero-title {
+    font-family: var(--font-serif);
+    font-size: clamp(22px, 4vw, 32px);
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.35;
+    margin-bottom: 16px;
+  }
+  .hero-sub {
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-style: italic;
+    margin-bottom: 36px;
+  }
+  .install-block {
+    display: inline-flex;
+    align-items: center;
+    background: var(--code-bg);
+    border-radius: 6px;
+    padding: 10px 18px;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  #install-cmd {
+    background: none;
+    color: var(--code-text);
+    padding: 0;
+    font-size: 13px;
+  }
+  .copy-btn {
+    background: none;
+    border: none;
+    border-left: 1px solid #2a2a2a;
+    padding-left: 16px;
+    font-size: 11px;
+    color: #555;
+    cursor: pointer;
+    font-family: var(--font-sans);
+  }
+  .copy-btn:hover { color: var(--accent); }
+  .browse-hint {
+    font-size: 12px;
+    color: var(--text-faint);
+  }
+  .browse-hint a { color: var(--accent); }
+  .browse-hint a:hover { text-decoration: underline; }
+
+  @media (max-width: 640px) {
+    .hero { padding: 48px 20px 40px; }
+    .install-block { flex-direction: column; gap: 8px; }
+    .copy-btn {
+      border-left: none;
+      border-top: 1px solid #2a2a2a;
+      padding-left: 0;
+      padding-top: 8px;
+    }
+  }
+</style>
