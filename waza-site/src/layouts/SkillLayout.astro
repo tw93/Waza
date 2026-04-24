@@ -1,0 +1,38 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Nav from '../components/Nav.astro';
+import SkillSidebar from '../components/SkillSidebar.astro';
+import Footer from '../components/Footer.astro';
+export interface Props {
+  title?: string;
+  activeSlug: string;
+}
+const { title, activeSlug } = Astro.props;
+---
+<BaseLayout title={title}>
+  <Nav />
+  <div class="skill-page">
+    <SkillSidebar activeSlug={activeSlug} />
+    <main class="skill-content">
+      <slot />
+    </main>
+  </div>
+  <Footer />
+</BaseLayout>
+
+<style>
+  .skill-page {
+    display: flex;
+    min-height: calc(100vh - 57px - 96px);
+  }
+  .skill-content {
+    flex: 1;
+    padding: 40px 48px;
+    max-width: 720px;
+  }
+
+  @media (max-width: 768px) {
+    .skill-page { flex-direction: column; }
+    .skill-content { padding: 28px 20px; }
+  }
+</style>
