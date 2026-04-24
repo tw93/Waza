@@ -1,0 +1,100 @@
+<h2>技能详情页 — /skills/[skill]</h2>
+<p class="subtitle">每个 skill 的文档页统一模板，两种布局</p>
+
+<div class="split">
+
+  <div class="mockup">
+    <div class="mockup-header">选项 A — 左侧导航 + 右侧内容</div>
+    <div class="mockup-body" style="background:#fafaf8;padding:0;min-height:380px;display:flex;flex-direction:column;">
+      <!-- top nav -->
+      <div style="padding:10px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #ede9e0;">
+        <span style="color:#c8a96e;font-size:11px;letter-spacing:2px;">WAZA · 技</span>
+        <span style="color:#bbb;font-size:10px;">EN | 中</span>
+      </div>
+      <!-- body -->
+      <div style="display:flex;flex:1;">
+        <!-- sidebar -->
+        <div style="width:130px;background:#f5f0e8;border-right:1px solid #ede9e0;padding:16px 12px;flex-shrink:0;">
+          <div style="color:#a08060;font-size:9px;letter-spacing:2px;margin-bottom:10px;">SKILLS</div>
+          <div style="color:#1a1a1a;font-family:monospace;font-size:11px;margin-bottom:6px;font-weight:600;">/think ◀</div>
+          <div style="color:#bbb;font-family:monospace;font-size:11px;margin-bottom:6px;">/design</div>
+          <div style="color:#bbb;font-family:monospace;font-size:11px;margin-bottom:6px;">/check</div>
+          <div style="color:#bbb;font-family:monospace;font-size:11px;margin-bottom:6px;">/hunt</div>
+          <div style="color:#bbb;font-family:monospace;font-size:11px;margin-bottom:6px;">/write</div>
+          <div style="color:#bbb;font-family:monospace;font-size:11px;margin-bottom:6px;">/learn</div>
+          <div style="color:#bbb;font-family:monospace;font-size:11px;margin-bottom:6px;">/read</div>
+          <div style="color:#bbb;font-family:monospace;font-size:11px;">/health</div>
+        </div>
+        <!-- content -->
+        <div style="padding:20px 24px;flex:1;">
+          <div style="color:#c8a96e;font-family:monospace;font-size:18px;font-weight:700;margin-bottom:4px;">/think</div>
+          <div style="color:#aaa;font-size:11px;font-style:italic;margin-bottom:18px;">Before building anything new</div>
+
+          <div style="color:#888;font-size:9px;letter-spacing:2px;margin-bottom:6px;">WHAT IT DOES</div>
+          <div style="color:#444;font-size:11px;line-height:1.7;margin-bottom:16px;">Challenges the problem, pressure-tests the design, validates architecture before any code is written.</div>
+
+          <div style="color:#888;font-size:9px;letter-spacing:2px;margin-bottom:6px;">TRIGGER</div>
+          <div style="background:#1a1a1a;color:#c8a96e;padding:7px 12px;border-radius:4px;font-family:monospace;font-size:11px;margin-bottom:16px;">/think I want to add a caching layer</div>
+
+          <div style="color:#888;font-size:9px;letter-spacing:2px;margin-bottom:6px;">CHAIN WITH</div>
+          <div style="font-size:11px;color:#555;">
+            <span style="color:#c8a96e;font-family:monospace;">/think</span>
+            <span style="color:#ccc;margin:0 6px;">→</span>
+            implement
+            <span style="color:#ccc;margin:0 6px;">→</span>
+            <span style="color:#c8a96e;font-family:monospace;">/check</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mockup">
+    <div class="mockup-header">选项 B — 单栏长页（无侧边栏）</div>
+    <div class="mockup-body" style="background:#fafaf8;padding:0;min-height:380px;display:flex;flex-direction:column;">
+      <!-- top nav with breadcrumb -->
+      <div style="padding:10px 28px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #ede9e0;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="color:#c8a96e;font-size:11px;letter-spacing:2px;">WAZA</span>
+          <span style="color:#ddd;">›</span>
+          <span style="color:#aaa;font-size:11px;">Skills</span>
+          <span style="color:#ddd;">›</span>
+          <span style="color:#555;font-size:11px;font-family:monospace;">/think</span>
+        </div>
+        <span style="color:#bbb;font-size:10px;">EN | 中</span>
+      </div>
+
+      <!-- content single col -->
+      <div style="padding:32px 28px;max-width:520px;">
+        <div style="color:#c8a96e;font-family:monospace;font-size:20px;font-weight:700;margin-bottom:4px;">/think</div>
+        <div style="color:#aaa;font-size:12px;font-style:italic;font-family:Georgia,serif;margin-bottom:24px;">Before building anything new</div>
+
+        <div style="color:#888;font-size:9px;letter-spacing:2px;margin-bottom:6px;">WHAT IT DOES</div>
+        <div style="color:#444;font-size:12px;line-height:1.8;margin-bottom:20px;">Challenges the problem, pressure-tests the design, validates architecture before any code is written.</div>
+
+        <div style="color:#888;font-size:9px;letter-spacing:2px;margin-bottom-6px;">TRIGGER</div>
+        <div style="background:#1a1a1a;color:#c8a96e;padding:8px 14px;border-radius:4px;font-family:monospace;font-size:11px;margin:8px 0 20px;">/think I want to add a caching layer</div>
+
+        <div style="color:#888;font-size:9px;letter-spacing:2px;margin-bottom:8px;">CHAIN WITH</div>
+        <div style="font-size:12px;color:#555;margin-bottom:24px;">
+          <span style="color:#c8a96e;font-family:monospace;">/think</span>
+          <span style="color:#ccc;margin:0 6px;">→</span>
+          implement
+          <span style="color:#ccc;margin:0 6px;">→</span>
+          <span style="color:#c8a96e;font-family:monospace;">/check</span>
+        </div>
+
+        <!-- prev/next -->
+        <div style="display:flex;justify-content:space-between;border-top:1px solid #ede9e0;padding-top:16px;margin-top:8px;">
+          <span style="color:#bbb;font-size:11px;">← All skills</span>
+          <span style="color:#c8a96e;font-size:11px;font-family:monospace;">/design →</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="section" style="margin-top:16px;">
+  <p style="color:#888;font-size:12px;">A 有侧边导航，适合频繁切换 skill 查阅；B 更聚焦，面包屑 + 上下翻页，适合线性浏览。</p>
+</div>

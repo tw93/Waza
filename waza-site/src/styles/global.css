@@ -7,9 +7,9 @@
   --accent: #c8a96e;
   --accent-muted: #a08060;
   --text-primary: #1a1a1a;
-  --text-secondary: #888;
-  --text-muted: #aaa;
-  --text-faint: #bbb;
+  --text-secondary: #333;
+  --text-muted: #444;
+  --text-faint: #555;
   --code-bg: #1a1a1a;
   --code-text: #c8a96e;
   --font-serif: Georgia, 'Times New Roman', serif;
@@ -20,7 +20,7 @@
 /* Reset */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { font-size: 16px; scroll-behavior: smooth; }
+html { font-size: 18px; scroll-behavior: smooth; }
 
 body {
   background: var(--bg);
