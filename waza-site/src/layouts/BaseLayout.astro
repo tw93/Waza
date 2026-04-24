@@ -1,0 +1,32 @@
+---
+import '../styles/global.css';
+
+export interface Props {
+  title?: string;
+  description?: string;
+}
+const {
+  title = 'Waza — Engineering habits for Claude Code',
+  description = 'Eight skills for the habits that actually matter. /think, /design, /check, /hunt, /write, /learn, /read, /health.',
+} = Astro.props;
+---
+<!doctype html>
+<html lang="en" data-lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body>
+    <slot />
+    <script>
+      // Restore language preference on every page load
+      const saved = localStorage.getItem('waza-lang');
+      if (saved === 'zh') {
+        document.documentElement.setAttribute('data-lang', 'zh');
+      }
+    </script>
+  </body>
+</html>
