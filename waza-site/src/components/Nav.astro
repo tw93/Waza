@@ -1,0 +1,97 @@
+---
+export interface Props {
+  currentPath?: string;
+}
+const { currentPath = '/' } = Astro.props;
+---
+<nav class="nav">
+  <a href="/" class="nav-logo">WAZA · 技</a>
+  <div class="nav-links">
+    <a href="/#skills" class="nav-link">
+      <span class="en">Skills</span>
+      <span class="zh">技能</span>
+    </a>
+    <a
+      href="https://github.com/tw93/Waza"
+      target="_blank"
+      rel="noopener"
+      class="nav-link"
+    >GitHub ↗</a>
+    <button class="lang-toggle" id="lang-toggle" aria-label="Toggle language">
+      <span class="en-label">EN</span>
+      <span class="sep"> | </span>
+      <span class="zh-label">中</span>
+    </button>
+  </div>
+</nav>
+
+<script>
+  const btn = document.getElementById('lang-toggle')!;
+  function updateToggle() {
+    const lang = document.documentElement.getAttribute('data-lang') ?? 'en';
+    const enLabel = btn.querySelector('.en-label') as HTMLElement;
+    const zhLabel = btn.querySelector('.zh-label') as HTMLElement;
+    enLabel.style.fontWeight = lang === 'en' ? '700' : '400';
+    zhLabel.style.fontWeight = lang === 'zh' ? '700' : '400';
+    enLabel.style.color = lang === 'en' ? 'var(--text-primary)' : 'var(--text-faint)';
+    zhLabel.style.color = lang === 'zh' ? 'var(--text-primary)' : 'var(--text-faint)';
+  }
+  btn.addEventListener('click', () => {
+    const current = document.documentElement.getAttribute('data-lang') ?? 'en';
+    const next = current === 'en' ? 'zh' : 'en';
+    document.documentElement.setAttribute('data-lang', next);
+    localStorage.setItem('waza-lang', next);
+    updateToggle();
+  });
+  updateToggle();
+</script>
+
+<style>
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 40px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-size: 12px;
+    letter-spacing: 2px;
+    font-weight: 600;
+    color: var(--accent);
+  }
+  .nav-links {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+  }
+  .nav-link {
+    font-size: 13px;
+    color: var(--text-secondary);
+    transition: color 0.15s;
+  }
+  .nav-link:hover { color: var(--text-primary); }
+  .lang-toggle {
+    background: none;
+    border: 1px solid var(--border-light);
+    border-radius: 12px;
+    padding: 3px 12px;
+    font-size: 11px;
+    cursor: pointer;
+    display: flex;
+    gap: 2px;
+    color: var(--text-secondary);
+    font-family: var(--font-sans);
+  }
+  .lang-toggle:hover { border-color: var(--accent); }
+  .sep { color: var(--border-light); }
+
+  @media (max-width: 640px) {
+    .nav { padding: 12px 20px; }
+    .nav-link:not(:last-child) { display: none; }
+  }
+</style>
