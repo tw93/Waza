@@ -1,0 +1,110 @@
+---
+import SkillLayout from '../../layouts/SkillLayout.astro';
+import { skills, getSkill } from '../../data/skills';
+
+export function getStaticPaths() {
+  return skills.map((skill) => ({
+    params: { skill: skill.slug },
+  }));
+}
+
+const { skill: slug } = Astro.params;
+const skill = getSkill(slug)!;
+---
+<SkillLayout
+  title={`${skill.command} — Waza`}
+  activeSlug={skill.slug}
+>
+  <article class="skill-article">
+    <header class="skill-header">
+      <h1 class="skill-command mono">{skill.command}</h1>
+      <p class="skill-when">
+        <span class="en">{skill.when.en}</span>
+        <span class="zh">{skill.when.zh}</span>
+      </p>
+    </header>
+
+    <section class="skill-section">
+      <p class="label section-label">
+        <span class="en">WHAT IT DOES</span>
+        <span class="zh">它做什么</span>
+      </p>
+      <p class="skill-what">
+        <span class="en">{skill.what.en}</span>
+        <span class="zh">{skill.what.zh}</span>
+      </p>
+    </section>
+
+    <section class="skill-section">
+      <p class="label section-label">
+        <span class="en">TRIGGER</span>
+        <span class="zh">触发示例</span>
+      </p>
+      <pre class="trigger-block"><code>{skill.trigger}</code></pre>
+    </section>
+
+    <section class="skill-section">
+      <p class="label section-label">
+        <span class="en">CHAIN WITH</span>
+        <span class="zh">组合使用</span>
+      </p>
+      <p class="chain-text mono">
+        <span class="en">{skill.chainWith.en}</span>
+        <span class="zh">{skill.chainWith.zh}</span>
+      </p>
+    </section>
+  </article>
+</SkillLayout>
+
+<style>
+  .skill-article {
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+  }
+  .skill-header {
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .skill-command {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .skill-when {
+    font-size: 14px;
+    color: var(--text-secondary);
+    font-style: italic;
+    font-family: var(--font-serif);
+  }
+  .skill-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .section-label {
+    font-size: 9px;
+    letter-spacing: 2px;
+  }
+  .skill-what {
+    font-size: 15px;
+    color: var(--text-primary);
+    line-height: 1.75;
+  }
+  .trigger-block {
+    background: var(--code-bg);
+    border-radius: 6px;
+    padding: 14px 18px;
+    overflow-x: auto;
+  }
+  .trigger-block code {
+    background: none;
+    padding: 0;
+    font-size: 13px;
+  }
+  .chain-text {
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+</style>
