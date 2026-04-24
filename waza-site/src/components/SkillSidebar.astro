@@ -1,0 +1,101 @@
+---
+import { skills } from '../data/skills';
+
+export interface Props {
+  activeSlug: string;
+}
+
+const { activeSlug } = Astro.props;
+---
+
+<aside class="sidebar">
+  <p class="label sidebar-label">
+    <span class="en">SKILLS</span>
+    <span class="zh">技能</span>
+  </p>
+  <nav>
+    <ul class="sidebar-list">
+      {skills.map((skill) => (
+        <li>
+          <a
+            href={`/skills/${skill.slug}`}
+            class={`sidebar-link mono ${skill.slug === activeSlug ? 'active' : ''}`}
+          >
+            {skill.command}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+</aside>
+
+<style>
+  .sidebar {
+    width: 160px;
+    flex-shrink: 0;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 28px 16px;
+    position: sticky;
+    top: 57px;
+    height: calc(100vh - 57px);
+    overflow-y: auto;
+  }
+
+  .sidebar-label {
+    margin-bottom: 16px;
+    font-size: 9px;
+    letter-spacing: 2px;
+  }
+
+  .sidebar-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .sidebar-link {
+    display: block;
+    padding: 6px 8px;
+    font-size: 13px;
+    color: var(--text-faint);
+    border-radius: 4px;
+    transition: color 0.15s, background 0.15s;
+  }
+
+  .sidebar-link:hover {
+    color: var(--text-primary);
+    background: var(--border-light);
+  }
+
+  .sidebar-link.active {
+    color: var(--text-primary);
+    font-weight: 700;
+    background: var(--border-light);
+  }
+
+  @media (max-width: 768px) {
+    .sidebar {
+      width: 100%;
+      height: auto;
+      position: static;
+      border-right: none;
+      border-bottom: 1px solid var(--border);
+      padding: 16px 20px;
+    }
+
+    .sidebar-list {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .sidebar-link {
+      font-size: 12px;
+      padding: 4px 10px;
+      border: 1px solid var(--border-light);
+      border-radius: 12px;
+    }
+  }
+</style>
