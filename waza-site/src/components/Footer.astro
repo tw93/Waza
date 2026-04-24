@@ -1,0 +1,61 @@
+<footer class="footer">
+  <div class="footer-inner">
+    <span class="footer-logo">WAZA · 技</span>
+    <div class="footer-right">
+      <a
+        href="https://github.com/tw93/Waza"
+        target="_blank"
+        rel="noopener"
+        class="footer-link"
+      >
+        <span class="en">⭐ Star on GitHub</span>
+        <span class="zh">⭐ GitHub 点 Star</span>
+      </a>
+      <span class="footer-sep">·</span>
+      <span class="footer-license">
+        <span class="en">MIT License · tw93</span>
+        <span class="zh">MIT 协议 · tw93</span>
+      </span>
+    </div>
+  </div>
+  <div class="footer-install">
+    <code>npx skills add tw93/Waza</code>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 40px;
+    background: var(--surface);
+  }
+  .footer-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .footer-logo {
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .footer-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+  .footer-link { color: var(--text-secondary); }
+  .footer-link:hover { color: var(--accent); }
+  .footer-sep { color: var(--border); }
+  .footer-install code { font-size: 12px; }
+
+  @media (max-width: 640px) {
+    .footer { padding: 24px 20px; }
+  }
+</style>
