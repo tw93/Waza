@@ -81,7 +81,7 @@ for path in skill_files:
     skill_descriptions[skill_dir] = fields["description"]
     print(f"ok: {path.as_posix()}")
 
-marketplace = json.load(open(root / ".claude-plugin" / "marketplace.json"))
+marketplace = json.load(open(root / "marketplace.json"))
 plugins = marketplace.get("plugins")
 if not isinstance(plugins, list):
     fail("INVALID MARKETPLACE: plugins must be a list")
