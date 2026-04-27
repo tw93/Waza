@@ -189,6 +189,133 @@ for skill in sorted(skill_versions):
             f"  Add a row to a triggers table that references {token!r}."
         )
     print(f"ok: resolver entry for {skill}")
+
+# RESOLVER reverse parity: every skills/<name>/SKILL.md token cited in
+# RESOLVER.md must point to a directory that actually exists. Forward parity
+# (above) catches missing entries; this catches stale entries left over after a
+# rename or deletion. Cheaper than parsing the markdown table.
+referenced_skills = set(re.findall(r'skills/([a-z][a-z0-9_-]*)/SKILL\.md', resolver_text))
+unknown_in_resolver = sorted(referenced_skills - set(skill_versions))
+if unknown_in_resolver:
+    fail(
+        f"RESOLVER REFERENCES MISSING SKILL: {', '.join(unknown_in_resolver)}\n"
+        f"  {resolver_path} cites these skills/<name>/SKILL.md tokens but no matching directory exists under skills/."
+    )
+print(f"ok: resolver has no stale skill references")
+
+# Internal markdown link rot: every [text](path) link inside SKILL.md /
+# references / agents content must resolve to an existing path under the
+# owning skill directory. Skip URLs, mailto, anchors, and links inside
+# fenced code blocks.
+link_pattern = re.compile(r'\[[^\]]*\]\(([^)]+)\)')
+URL_PREFIXES = ("http://", "https://", "mailto:", "ftp://", "tel:", "data:")
+link_targets: list[Path] = []
+for skill in sorted(skill_versions):
+    skill_root = root / "skills" / skill
+    link_targets.append(skill_root / "SKILL.md")
+    for sub in ("references", "agents"):
+        sub_dir = skill_root / sub
+        if sub_dir.is_dir():
+            link_targets.extend(sorted(sub_dir.rglob("*.md")))
+
+for path in link_targets:
+    if not path.exists():
+        continue
+    text = path.read_text()
+    in_code = False
+    for lineno, line in enumerate(text.splitlines(), start=1):
+        if line.lstrip().startswith("```"):
+            in_code = not in_code
+            continue
+        if in_code:
+            continue
+        for match in link_pattern.finditer(line):
+            raw = match.group(1).strip()
+            if not raw or raw.startswith("#"):
+                continue
+            if raw.startswith(URL_PREFIXES) or "://" in raw:
+                continue
+            target = raw.split("#", 1)[0].split("?", 1)[0]
+            if not target:
+                continue
+            if target.startswith("/"):
+                # Absolute paths are out of scope for this lint; left for a
+                # future check if it becomes a recurring issue.
+                continue
+            resolved = (path.parent / target).resolve()
+            if not resolved.exists():
+                fail(
+                    f"BROKEN MARKDOWN LINK: {path}:{lineno} -> {raw}\n"
+                    f"  Link target does not exist at {resolved.relative_to(root.resolve())}."
+                )
+    print(f"ok: markdown links {path.relative_to(root)}")
+
+# Pipe-in-table lint: a literal '|' inside a markdown table data cell
+# terminates the column and breaks GitHub rendering (see upstream issue #35
+# and commit 4fbf4bb). Detect data rows directly following a separator row
+# and fail if the data row carries more unescaped pipes outside inline code
+# than the separator does. Skips fenced code blocks and escaped pipes.
+SEPARATOR_RE = re.compile(r'^[\s|:\-]+$')
+
+
+def count_table_pipes(text: str) -> int:
+    """Count unescaped '|' characters outside inline code spans."""
+    count = 0
+    in_inline = False
+    i = 0
+    while i < len(text):
+        ch = text[i]
+        if ch == "\\" and i + 1 < len(text):
+            i += 2
+            continue
+        if ch == "`":
+            in_inline = not in_inline
+        elif ch == "|" and not in_inline:
+            count += 1
+        i += 1
+    return count
+
+
+pipe_targets: list[Path] = [resolver_path]
+for skill in sorted(skill_versions):
+    skill_root = root / "skills" / skill
+    pipe_targets.append(skill_root / "SKILL.md")
+    for sub in ("references", "agents"):
+        sub_dir = skill_root / sub
+        if sub_dir.is_dir():
+            pipe_targets.extend(sorted(sub_dir.rglob("*.md")))
+
+for path in pipe_targets:
+    if not path.exists():
+        continue
+    in_fenced = False
+    last_separator_pipes = None
+    for lineno, line in enumerate(path.read_text().splitlines(), start=1):
+        stripped = line.strip()
+        if stripped.startswith("```"):
+            in_fenced = not in_fenced
+            last_separator_pipes = None
+            continue
+        if in_fenced:
+            last_separator_pipes = None
+            continue
+        is_separator = (
+            bool(SEPARATOR_RE.match(stripped))
+            and "---" in stripped
+            and "|" in stripped
+        )
+        if is_separator:
+            last_separator_pipes = count_table_pipes(stripped)
+            continue
+        if last_separator_pipes is not None and stripped.startswith("|"):
+            if count_table_pipes(stripped) > last_separator_pipes:
+                fail(
+                    f"UNESCAPED PIPE IN TABLE: {path}:{lineno}\n"
+                    f"  Cell carries an unescaped '|'. Use '\\|' or wrap the cell text in backticks."
+                )
+            continue
+        last_separator_pipes = None
+    print(f"ok: table pipes {path.relative_to(root)}")
 PYEOF
 
 # Rules files (outside skills/ so regex check above does not cover them)
