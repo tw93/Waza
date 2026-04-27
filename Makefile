@@ -90,6 +90,25 @@ smoke-verify-skills:
 			echo "verify-skills should reject wrong source paths"; exit 1; \
 		fi; \
 		grep -q 'WRONG SOURCE: check' "$$tmpdir/source.err"; \
+		cp -R . "$$tmpdir/repo4"; \
+		python3 -c "import re; from pathlib import Path; p=Path('$$tmpdir/repo4/skills/check/SKILL.md'); lines=p.read_text().splitlines(); out=[]; injected=False;\
+[(out.append(l), out.append('| broken | cell with | extra pipe | bad |')) if (not injected and re.match(r'^[\s|:\-]+\$$', l.strip()) and '---' in l and '|' in l) else out.append(l) for l in lines]; injected=True if any('extra pipe' in o for o in out) else False; p.write_text('\n'.join(out) + '\n')"; \
+		if (cd "$$tmpdir/repo4" && ./scripts/verify-skills.sh >"$$tmpdir/pipe.out" 2>"$$tmpdir/pipe.err"); then \
+			echo "verify-skills should reject unescaped pipe in table data row"; exit 1; \
+		fi; \
+		grep -q 'UNESCAPED PIPE IN TABLE' "$$tmpdir/pipe.err"; \
+		cp -R . "$$tmpdir/repo5"; \
+		printf '\n| trigger | skills/ghost/SKILL.md |\n' >> "$$tmpdir/repo5/skills/RESOLVER.md"; \
+		if (cd "$$tmpdir/repo5" && ./scripts/verify-skills.sh >"$$tmpdir/resolver.out" 2>"$$tmpdir/resolver.err"); then \
+			echo "verify-skills should reject stale RESOLVER references"; exit 1; \
+		fi; \
+		grep -q 'RESOLVER REFERENCES MISSING SKILL: ghost' "$$tmpdir/resolver.err"; \
+		cp -R . "$$tmpdir/repo6"; \
+		python3 -c "from pathlib import Path; p=Path('$$tmpdir/repo6/skills/check/SKILL.md'); p.write_text(p.read_text() + '\n[broken](missing-target.md)\n')"; \
+		if (cd "$$tmpdir/repo6" && ./scripts/verify-skills.sh >"$$tmpdir/link.out" 2>"$$tmpdir/link.err"); then \
+			echo "verify-skills should reject broken markdown links"; exit 1; \
+		fi; \
+		grep -q 'BROKEN MARKDOWN LINK' "$$tmpdir/link.err"; \
 		echo "verify-skills smoke: ok"
 
 smoke-health:
