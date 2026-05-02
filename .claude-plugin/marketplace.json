@@ -8,6 +8,14 @@
   },
   "plugins": [
     {
+      "name": "waza",
+      "description": "Install Waza as a single dispatcher skill (matches the default `npx skills add tw93/Waza` behavior). The top-level SKILL.md routes intents to the eight sub-skills (think, check, hunt, design, read, write, learn, health) and preserves the Path Resolution directive plus disambiguation rules. Recommended for users who want the whole bundle.",
+      "version": "3.18.0",
+      "category": "development",
+      "source": "./",
+      "homepage": "https://github.com/tw93/Waza"
+    },
+    {
       "name": "health",
       "description": "Audits the full six-layer Claude Code config stack when Claude ignores instructions, behaves inconsistently, hooks malfunction, or MCP servers need auditing. Flags issues by severity. Not for debugging code or reviewing PRs.",
       "version": "3.16.0",
