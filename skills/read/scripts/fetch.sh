@@ -10,7 +10,7 @@ set -euo pipefail
 URL="${1:?Usage: fetch.sh <url> [proxy_url]}"
 PROXY="${2:-}"
 
-# shellcheck disable=SC2329  # called indirectly via _with_retry / _try_once
+# shellcheck disable=SC2329,SC2317  # called indirectly via _with_retry / _try_once
 _curl() {
   if [ -n "$PROXY" ]; then
     https_proxy="$PROXY" http_proxy="$PROXY" curl -sfL "$@"
