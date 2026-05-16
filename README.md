@@ -62,14 +62,13 @@ npx skills add tw93/Waza -a codex -g -y
 
 Install just one with `npx skills add tw93/Waza --skill think -a codex -g -y`. Codex sessions can invoke installed skills by name or link to the installed `SKILL.md` path shown by `npx skills path tw93/Waza`.
 
-**Claude Code plugin marketplace**
+**Claude Code plugin marketplace** (requires Claude Code v2.1.143+)
 
 ```bash
 /plugin marketplace add tw93/Waza
-/plugin install waza@waza
+/plugin install waza@waza          # full bundle, registers all eight /waza:* skills
+/plugin install waza-think@waza    # or install a single per-skill entry
 ```
-
-Use the bundle for now. Per-skill marketplace entries like `waza-think@waza` are temporarily affected by a Claude Code v2.1.136+ path-validation regression; until upstream fixes it, install one skill with the `npx skills add ... --skill` path above.
 
 **Claude Desktop**
 

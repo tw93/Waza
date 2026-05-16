@@ -9,7 +9,7 @@
   "plugins": [
     {
       "name": "waza",
-      "description": "Installs the full Waza toolkit. Registers all eight skills under the waza namespace, callable as /waza:think, /waza:check, /waza:hunt, /waza:design, /waza:read, /waza:write, /waza:learn, and /waza:health. For one skill, use npx skills add tw93/Waza --skill <name> while Claude Code per-skill marketplace installs are affected upstream.",
+      "description": "Installs the full Waza toolkit. Registers all eight skills under the waza namespace, callable as /waza:think, /waza:check, /waza:hunt, /waza:design, /waza:read, /waza:write, /waza:learn, and /waza:health. For one skill, use /plugin install waza-<name>@waza instead.",
       "version": "3.24.0",
       "category": "development",
       "source": "./",
@@ -21,9 +21,7 @@
       "version": "3.24.0",
       "category": "development",
       "source": "./skills/health",
-      "homepage": "https://github.com/tw93/Waza",
-      "skills": ["./"],
-      "strict": false
+      "homepage": "https://github.com/tw93/Waza"
     },
     {
       "name": "waza-think",
@@ -31,9 +29,7 @@
       "version": "3.24.0",
       "category": "development",
       "source": "./skills/think",
-      "homepage": "https://github.com/tw93/Waza",
-      "skills": ["./"],
-      "strict": false
+      "homepage": "https://github.com/tw93/Waza"
     },
     {
       "name": "waza-check",
@@ -41,9 +37,7 @@
       "version": "3.24.0",
       "category": "development",
       "source": "./skills/check",
-      "homepage": "https://github.com/tw93/Waza",
-      "skills": ["./"],
-      "strict": false
+      "homepage": "https://github.com/tw93/Waza"
     },
     {
       "name": "waza-hunt",
@@ -51,9 +45,7 @@
       "version": "3.24.0",
       "category": "development",
       "source": "./skills/hunt",
-      "homepage": "https://github.com/tw93/Waza",
-      "skills": ["./"],
-      "strict": false
+      "homepage": "https://github.com/tw93/Waza"
     },
     {
       "name": "waza-design",
@@ -61,9 +53,7 @@
       "version": "3.24.0",
       "category": "development",
       "source": "./skills/design",
-      "homepage": "https://github.com/tw93/Waza",
-      "skills": ["./"],
-      "strict": false
+      "homepage": "https://github.com/tw93/Waza"
     },
     {
       "name": "waza-read",
@@ -71,9 +61,7 @@
       "version": "3.24.0",
       "category": "development",
       "source": "./skills/read",
-      "homepage": "https://github.com/tw93/Waza",
-      "skills": ["./"],
-      "strict": false
+      "homepage": "https://github.com/tw93/Waza"
     },
     {
       "name": "waza-write",
@@ -81,9 +69,7 @@
       "version": "3.24.0",
       "category": "development",
       "source": "./skills/write",
-      "homepage": "https://github.com/tw93/Waza",
-      "skills": ["./"],
-      "strict": false
+      "homepage": "https://github.com/tw93/Waza"
     },
     {
       "name": "waza-learn",
@@ -91,9 +77,7 @@
       "version": "3.15.0",
       "category": "development",
       "source": "./skills/learn",
-      "homepage": "https://github.com/tw93/Waza",
-      "skills": ["./"],
-      "strict": false
+      "homepage": "https://github.com/tw93/Waza"
     }
   ]
 }
