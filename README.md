@@ -66,9 +66,10 @@ Install just one with `npx skills add tw93/Waza --skill think -a codex -g -y`. C
 
 ```bash
 /plugin marketplace add tw93/Waza
-/plugin install waza@waza          # full bundle, registers all eight /waza:* skills
-/plugin install waza-think@waza    # or install a single per-skill entry
+/plugin install waza@waza
 ```
+
+This installs all eight skills. Install just one with `/plugin install waza-<name>@waza` (e.g. `waza-think@waza`).
 
 **Claude Desktop**
 
