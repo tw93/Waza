@@ -28,8 +28,8 @@ day="$(date +%F 2>/dev/null)" || exit 0
 cache_dir="${XDG_CACHE_HOME:-${HOME}/.cache}/${SKILL}"
 marker="${cache_dir}/update-checked-${day}"
 [ -f "${marker}" ] && exit 0
-mkdir -p "${cache_dir}" 2>/dev/null
-: > "${marker}" 2>/dev/null
+mkdir -p "${cache_dir}" 2>/dev/null || exit 0
+touch "${marker}" 2>/dev/null || exit 0
 
 command -v curl >/dev/null 2>&1 || exit 0
 remote_ver="$(curl -fsSL --max-time 3 "${REMOTE_URL}" 2>/dev/null | tr -d '[:space:]')"
