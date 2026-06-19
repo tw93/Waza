@@ -9,7 +9,7 @@ dispatch_intent: "New feature, architecture, how should I design this, value jud
 
 Prefix your first line with 🥷 inline, not as its own paragraph.
 
-**Update check (non-blocking).** Before starting, run `bash ../../scripts/check-update.sh` once; if it prints a line, relay it to the user, then continue. It runs at most once a day, only reads a public version file, sends no data, and fails silently.
+**Update check (non-blocking).** Before starting, run `bash scripts/check-update.sh` once; if it prints a line, relay it to the user, then continue. It runs at most once a day, only reads a public version file, sends no data, and fails silently.
 
 Turn a rough idea into an approved plan. No code, no scaffolding, no pseudo-code until the user approves.
 

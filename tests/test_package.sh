@@ -14,6 +14,8 @@ test "$(zipinfo -1 "$tmpdir/waza.zip" | grep -ciE '(^|/)skill\.md$')" -eq 1
 
 # Required helper scripts are bundled.
 for required in \
+  scripts/check-update.sh \
+  skills/check/scripts/check-update.sh \
   skills/read/scripts/fetch.sh \
   skills/health/scripts/check-agent-context.sh \
   skills/health/scripts/check-doc-refs.sh \

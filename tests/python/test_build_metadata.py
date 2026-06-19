@@ -111,9 +111,23 @@ def test_collect_codex_plugin_tree_ignores_local_cache_files(tmp_path):
     (rules_dir / "waza-routing.md").write_text("routing\n")
     (rules_dir / ".DS_Store").write_bytes(b"noise")
 
-    tree = bm.collect_codex_plugin_tree(tmp_path, "{}\n")
+    tree = bm.collect_codex_plugin_tree(tmp_path, "{}\n", {})
 
     assert "plugins/waza/skills/check/scripts/run.py" in tree
     assert "plugins/waza/rules/waza-routing.md" in tree
     assert all("__pycache__" not in path for path in tree)
     assert all(not path.endswith((".pyc", ".DS_Store")) for path in tree)
+
+
+def test_collect_skill_update_scripts_copies_checker_to_each_skill(tmp_path):
+    for name in ("check", "think"):
+        skill_dir = tmp_path / "skills" / name
+        skill_dir.mkdir(parents=True)
+        (skill_dir / "SKILL.md").write_text("---\nname: x\n---\n")
+
+    tree = bm.collect_skill_update_scripts(tmp_path, "checker\n")
+
+    assert tree == {
+        "skills/check/scripts/check-update.sh": b"checker\n",
+        "skills/think/scripts/check-update.sh": b"checker\n",
+    }

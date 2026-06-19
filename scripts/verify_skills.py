@@ -39,6 +39,7 @@ from skill_checks import (  # noqa: E402
     check_resolver,
     check_rules_files_present,
     check_skill_files,
+    check_skill_update_scripts,
     check_table_pipes,
     check_trigger_overlap,
     check_waza_routing_skills,
@@ -98,6 +99,7 @@ def main() -> int:
     check_no_root_skill(root)
     check_trigger_overlap(skill_keywords)
     check_rules_files_present(root)
+    check_skill_update_scripts(root, skill_names)
     check_anti_patterns_contract(root)
     check_waza_routing_skills(root, skill_names)
     check_waza_routing_triggers(root)

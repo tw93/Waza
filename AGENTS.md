@@ -20,7 +20,7 @@ Waza is a skill collection for engineering workflows. The repository contains ei
 - `plugins/waza/` - **generated** Codex plugin tree. Mirrors `skills/` and `rules/` plus `plugins/waza/.codex-plugin/plugin.json`; edit source files and run `make regenerate`.
 - `packaging.allowlist` - default-deny list of paths that ship in `waza.zip`. New shippable assets must be added here explicitly; everything else is excluded.
 - `.github/workflows/` - public test and release automation. `release.yml` runs `make test` before `make package` so the tagged commit is gated by the same suite as PRs.
-- `scripts/build_metadata.py` - codegen for Claude and Codex marketplace metadata, README install URLs, Codex plugin mirror files, and installer-script `WAZA_REF` defaults. Run via `make regenerate`; CI checks drift via `make verify-generated`.
+- `scripts/build_metadata.py` - codegen for Claude and Codex marketplace metadata, README install URLs, Codex plugin mirror files, skill-local update checkers, installer-script `WAZA_REF` defaults, and update-checker `LOCAL_VERSION`. Run via `make regenerate`; CI checks drift via `make verify-generated`.
 - `scripts/verify_skills.py` - the only validator entrypoint. Covers frontmatter, references, marketplace, resolver, links, table pipes, trigger overlap, rule-file presence, README install string, English coaching guard, and AI-attribution leak detection.
 - `scripts/package-skill.sh` + `scripts/packaging_filter.py` - build `dist/waza.zip` from `packaging.allowlist`.
 - `scripts/setup-rule.sh` + `scripts/setup-statusline.sh` - public install helpers; `WAZA_REF` defaults are codegen-pinned to the current release tag.
@@ -31,7 +31,7 @@ Waza is a skill collection for engineering workflows. The repository contains ei
 
 ```bash
 make test             # verify-docs + verify-generated + verify-routing + verify-scripts + all smokes
-make regenerate       # rewrite marketplace.json, README install URLs, installer WAZA_REF defaults
+make regenerate       # rewrite marketplace.json, README install URLs, update checker copies
 make verify-generated # drift check used by CI; non-zero if regenerate would change anything
 make package          # build dist/waza.zip from packaging.allowlist
 ```
@@ -146,7 +146,7 @@ Use this path for any new skill or meaningful behavior change:
 1. **技能名**: 一句话说清楚改了什么以及对用户的影响。
 2. ...
 
-Update: `npx skills add tw93/Waza@latest` · [Claude Desktop](https://github.com/tw93/Waza/releases/latest/download/waza.zip) · ⭐ [tw93/Waza](https://github.com/tw93/Waza)
+Update: `npx skills update -g -y` · [Claude Desktop](https://github.com/tw93/Waza/releases/latest/download/waza.zip) · ⭐ [tw93/Waza](https://github.com/tw93/Waza)
 ```
 
 - Each item: `**Label**: one sentence`. Bold label is the skill or module name; the description leads with what changed.

@@ -9,7 +9,7 @@ dispatch_intent: "Deep research, unfamiliar domain, compile sources into output"
 
 Prefix your first line with 🥷 inline, not as its own paragraph.
 
-**Update check (non-blocking).** Before starting, run `bash ../../scripts/check-update.sh` once; if it prints a line, relay it to the user, then continue. It runs at most once a day, only reads a public version file, sends no data, and fails silently.
+**Update check (non-blocking).** Before starting, run `bash scripts/check-update.sh` once; if it prints a line, relay it to the user, then continue. It runs at most once a day, only reads a public version file, sends no data, and fails silently.
 
 Collect, organize, translate, explain, structure. Support the user's thinking; do not replace it.
 

@@ -38,6 +38,12 @@ for skill in "${expected[@]}"; do
     cat "$tmpdir/install.out" >&2
     exit 1
   fi
+  checker="$test_home/.claude/skills/$skill/scripts/check-update.sh"
+  if [ ! -f "$checker" ]; then
+    echo "skills add e2e smoke: missing $checker after install"
+    cat "$tmpdir/install.out" >&2
+    exit 1
+  fi
 done
 
 # Frontmatter survived the copy: re-run verify_skills.py against the installed

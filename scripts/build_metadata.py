@@ -14,6 +14,8 @@ Generated files:
   - .agents/plugins/marketplace.json   Codex repo marketplace
   - README.md                          install URLs pinned to VERSION
   - package.json                       npm/Pi package metadata pinned to VERSION
+  - skills/*/scripts/check-update.sh   direct-install update checker copies
+  - scripts/check-update.sh            LOCAL_VERSION pinned to VERSION
   - scripts/setup-rule.sh              default WAZA_REF pinned to VERSION
   - scripts/setup-statusline.sh        default WAZA_REF pinned to VERSION
 
@@ -93,6 +95,8 @@ CODEX_MIRROR_IGNORED_SUFFIXES = {
     ".pyc",
     ".pyo",
 }
+CHECK_UPDATE_SCRIPT = Path("scripts/check-update.sh")
+SKILL_UPDATE_CHECK_SCRIPT = Path("scripts/check-update.sh")
 
 
 def read_version(root: Path) -> str:
@@ -308,6 +312,9 @@ README_SWAP_TAG_RE = re.compile(
     r"swap `v\d+\.\d+\.\d+` for `main` if you want bleeding-edge scripts\."
 )
 WAZA_REF_RE = re.compile(r'WAZA_REF="\$\{WAZA_REF:-(?:main|v\d+\.\d+\.\d+)\}"')
+LOCAL_VERSION_RE = re.compile(
+    r'LOCAL_VERSION="\$\{LOCAL_VERSION:-v\d+\.\d+\.\d+\}"'
+)
 
 
 def render_readme(current: str, version: str) -> str:
@@ -323,6 +330,18 @@ def render_readme(current: str, version: str) -> str:
 
 def render_script_ref(current: str, version: str) -> str:
     return WAZA_REF_RE.sub(f'WAZA_REF="${{WAZA_REF:-v{version}}}"', current)
+
+
+def render_update_check_version(current: str, version: str) -> str:
+    rendered, count = LOCAL_VERSION_RE.subn(
+        f'LOCAL_VERSION="${{LOCAL_VERSION:-v{version}}}"', current
+    )
+    if count != 1:
+        raise SystemExit(
+            "ERROR: scripts/check-update.sh must define "
+            'LOCAL_VERSION="${LOCAL_VERSION:-vX.Y.Z}"'
+        )
+    return rendered
 
 
 def diff(label: str, expected: str, actual: str) -> str:
@@ -344,7 +363,19 @@ def bytes_diff(label: str, expected: bytes, actual: bytes) -> str:
     )
 
 
-def collect_codex_plugin_tree(root: Path, plugin_manifest_rendered: str) -> dict[str, bytes]:
+def collect_skill_update_scripts(root: Path, rendered_check_update: str) -> dict[str, bytes]:
+    generated: dict[str, bytes] = {}
+    for skill_file in sorted((root / "skills").glob("*/SKILL.md")):
+        rel = skill_file.parent.relative_to(root) / SKILL_UPDATE_CHECK_SCRIPT
+        generated[rel.as_posix()] = rendered_check_update.encode()
+    return generated
+
+
+def collect_codex_plugin_tree(
+    root: Path,
+    plugin_manifest_rendered: str,
+    generated_skill_files: dict[str, bytes],
+) -> dict[str, bytes]:
     """Build the generated file set for the Codex plugin directory.
 
     Codex installs only the directory referenced by marketplace source.path, so
@@ -366,6 +397,8 @@ def collect_codex_plugin_tree(root: Path, plugin_manifest_rendered: str) -> dict
                 continue
             rel = path.relative_to(root).as_posix()
             generated[f"plugins/waza/{rel}"] = path.read_bytes()
+    for rel, content in generated_skill_files.items():
+        generated[f"plugins/waza/{rel}"] = content
     return generated
 
 
@@ -399,7 +432,6 @@ def main() -> int:
     rendered = render_json(marketplace)
     codex_plugin_rendered = render_json(build_codex_plugin(version))
     codex_marketplace_rendered = render_json(build_codex_marketplace())
-    codex_plugin_tree = collect_codex_plugin_tree(root, codex_plugin_rendered)
     package_rendered = build_package_json(version)
 
     target = root / ".claude-plugin" / "marketplace.json"
@@ -413,14 +445,40 @@ def main() -> int:
     readme = root / "README.md"
     readme_actual = readme.read_text() if readme.exists() else ""
     readme_rendered = render_readme(readme_actual, version)
-    ref_scripts = [
-        root / "scripts" / "setup-rule.sh",
-        root / "scripts" / "setup-statusline.sh",
+    pinned_scripts = [
+        (
+            root / "scripts" / "setup-rule.sh",
+            "default WAZA_REF",
+            lambda actual: render_script_ref(actual, version),
+        ),
+        (
+            root / "scripts" / "setup-statusline.sh",
+            "default WAZA_REF",
+            lambda actual: render_script_ref(actual, version),
+        ),
+        (
+            root / CHECK_UPDATE_SCRIPT,
+            "LOCAL_VERSION",
+            lambda actual: render_update_check_version(actual, version),
+        ),
     ]
     script_pairs = []
-    for script in ref_scripts:
+    for script, field_label, renderer in pinned_scripts:
         actual = script.read_text() if script.exists() else ""
-        script_pairs.append((script, actual, render_script_ref(actual, version)))
+        script_pairs.append((script, field_label, actual, renderer(actual)))
+    rendered_check_update = ""
+    for script, _field_label, _actual, rendered_script in script_pairs:
+        if script.relative_to(root).as_posix() == CHECK_UPDATE_SCRIPT.as_posix():
+            rendered_check_update = rendered_script
+            break
+    if not rendered_check_update:
+        raise SystemExit(f"ERROR: missing {CHECK_UPDATE_SCRIPT}")
+    skill_update_scripts = collect_skill_update_scripts(root, rendered_check_update)
+    codex_plugin_tree = collect_codex_plugin_tree(
+        root,
+        codex_plugin_rendered,
+        skill_update_scripts,
+    )
 
     dispatcher_template = root / "scripts" / "dispatcher-template.md"
     dispatcher_target = root / "scripts" / "dispatcher.md"
@@ -492,11 +550,22 @@ def main() -> int:
             )
             sys.stderr.write(diff("package.json", package_rendered, package_actual))
             drift = True
-        for script, actual, rendered_script in script_pairs:
+        for rel, expected in skill_update_scripts.items():
+            path = root / rel
+            actual = path.read_bytes() if path.exists() else b""
+            if actual != expected:
+                print(
+                    f"DRIFT: {rel} is out of sync with {CHECK_UPDATE_SCRIPT}.\n"
+                    f"Run scripts/build_metadata.py (no flags) to regenerate.",
+                    file=sys.stderr,
+                )
+                sys.stderr.write(bytes_diff(rel, expected, actual))
+                drift = True
+        for script, field_label, actual, rendered_script in script_pairs:
             if actual != rendered_script:
                 label = script.relative_to(root).as_posix()
                 print(
-                    f"DRIFT: {label} default WAZA_REF is not pinned to v{version}.\n"
+                    f"DRIFT: {label} {field_label} is not pinned to v{version}.\n"
                     f"Run scripts/build_metadata.py (no flags) to regenerate.",
                     file=sys.stderr,
                 )
@@ -520,6 +589,7 @@ def main() -> int:
         print("ok: README.md install URLs use latest release assets")
         print(f"ok: package.json pinned to v{version}")
         print(f"ok: installer defaults pinned to v{version}")
+        print("ok: skill-local update checkers match generator")
         print(f"ok: {dispatcher_target.relative_to(root)} matches generator")
         return 0
 
@@ -544,12 +614,18 @@ def main() -> int:
         print("wrote: README.md (installer URLs use latest release assets)")
     else:
         print("ok: README.md install URLs already use latest release assets")
-    for script, actual, rendered_script in script_pairs:
+    for script, field_label, actual, rendered_script in script_pairs:
         if actual != rendered_script:
             script.write_text(rendered_script)
-            print(f"wrote: {script.relative_to(root)} (default WAZA_REF=v{version})")
+            print(f"wrote: {script.relative_to(root)} ({field_label}=v{version})")
         else:
-            print(f"ok: {script.relative_to(root)} default WAZA_REF already pinned")
+            print(f"ok: {script.relative_to(root)} {field_label} already pinned")
+    for rel, expected in skill_update_scripts.items():
+        path = root / rel
+        path.parent.mkdir(parents=True, exist_ok=True)
+        if not path.exists() or path.read_bytes() != expected:
+            path.write_bytes(expected)
+            print(f"wrote: {rel} (copied update checker)")
     if dispatcher_actual != dispatcher_rendered:
         dispatcher_target.write_text(dispatcher_rendered)
         print(

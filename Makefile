@@ -36,7 +36,7 @@ verify-routing:
 
 verify-scripts:
 	git diff --check
-	bash -n scripts/statusline.sh skills/health/scripts/collect-data.sh skills/health/scripts/check-agent-context.sh skills/health/scripts/check-doc-refs.sh skills/health/scripts/check-maintainability.sh skills/health/scripts/check-verifier-output.sh skills/read/scripts/fetch.sh scripts/setup-statusline.sh scripts/setup-rule.sh skills/check/scripts/run-tests.sh scripts/package-skill.sh
+	bash -n scripts/statusline.sh scripts/check-update.sh skills/*/scripts/check-update.sh skills/health/scripts/collect-data.sh skills/health/scripts/check-agent-context.sh skills/health/scripts/check-doc-refs.sh skills/health/scripts/check-maintainability.sh skills/health/scripts/check-verifier-output.sh skills/read/scripts/fetch.sh scripts/setup-statusline.sh scripts/setup-rule.sh skills/check/scripts/run-tests.sh scripts/package-skill.sh
 	echo "bash -n: ok"
 	bash -n $(TEST_FILES) tests/test_helpers.sh
 	echo "bash -n tests/: ok"

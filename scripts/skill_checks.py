@@ -659,6 +659,30 @@ def check_rules_files_present(root: Path):
     print(f"ok: rules/ files present ({', '.join(required)})")
 
 
+def check_skill_update_scripts(root: Path, skill_names: set[str]):
+    """Direct `npx skills add` installs copy each skill directory, not the repo
+    root, so each skill must carry the update checker it asks agents to run.
+    """
+    source = root / "scripts" / "check-update.sh"
+    if not source.exists():
+        fail(f"MISSING UPDATE CHECKER: expected {source}")
+    expected = source.read_bytes()
+    for skill in sorted(skill_names):
+        path = root / "skills" / skill / "scripts" / "check-update.sh"
+        if not path.exists():
+            fail(
+                f"MISSING SKILL UPDATE CHECKER: {path.relative_to(root)}\n"
+                "  Direct `npx skills add` installs only the skill folder, so "
+                "the checker must be present inside every skill directory."
+            )
+        if path.read_bytes() != expected:
+            fail(
+                f"SKILL UPDATE CHECKER DRIFT: {path.relative_to(root)} "
+                f"differs from {source.relative_to(root)}"
+            )
+    print(f"ok: skill-local update checkers present ({len(skill_names)} skills)")
+
+
 def check_anti_patterns_contract(root: Path):
     """Keep shared anti-pattern rules generic and mechanically sane."""
     path = root / "rules" / "anti-patterns.md"

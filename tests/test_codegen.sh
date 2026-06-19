@@ -64,6 +64,7 @@ test "$(jq '.plugins | length' "$tmpdir/regen/.claude-plugin/marketplace.json")"
 test "$(jq -r '.name' "$tmpdir/regen/plugins/waza/.codex-plugin/plugin.json")" = "waza"
 test "$(jq -r '.skills' "$tmpdir/regen/plugins/waza/.codex-plugin/plugin.json")" = "./skills/"
 test -f "$tmpdir/regen/plugins/waza/skills/check/SKILL.md"
+test -f "$tmpdir/regen/plugins/waza/skills/check/scripts/check-update.sh"
 test -f "$tmpdir/regen/plugins/waza/rules/waza-routing.md"
 test "$(jq -r '.plugins[0].source.path' "$tmpdir/regen/.agents/plugins/marketplace.json")" = "./plugins/waza"
 test "$(jq -r '.plugins[0].policy.installation' "$tmpdir/regen/.agents/plugins/marketplace.json")" = "AVAILABLE"
@@ -119,14 +120,21 @@ version=$(cat "$tmpdir/scripts/VERSION")
 sed -i.bak 's|WAZA_REF="${WAZA_REF:-v'"$version"'}"|WAZA_REF="${WAZA_REF:-main}"|g' \
   "$tmpdir/scripts/scripts/setup-rule.sh" \
   "$tmpdir/scripts/scripts/setup-statusline.sh"
-rm "$tmpdir/scripts/scripts/setup-rule.sh.bak" "$tmpdir/scripts/scripts/setup-statusline.sh.bak"
+sed -i.bak 's|LOCAL_VERSION="${LOCAL_VERSION:-v'"$version"'}"|LOCAL_VERSION="${LOCAL_VERSION:-v0.0.0}"|g' \
+  "$tmpdir/scripts/scripts/check-update.sh"
+rm "$tmpdir/scripts/scripts/setup-rule.sh.bak" "$tmpdir/scripts/scripts/setup-statusline.sh.bak" "$tmpdir/scripts/scripts/check-update.sh.bak"
+rm "$tmpdir/scripts/skills/check/scripts/check-update.sh"
 if (cd "$tmpdir/scripts" && python3 scripts/build_metadata.py --check >"$tmpdir/scripts.out" 2>"$tmpdir/scripts.err"); then
-  echo "build_metadata --check should detect unpinned installer WAZA_REF"; exit 1
+  echo "build_metadata --check should detect unpinned installer WAZA_REF and update checker drift"; exit 1
 fi
 grep -q 'default WAZA_REF is not pinned' "$tmpdir/scripts.err"
+grep -q 'LOCAL_VERSION is not pinned' "$tmpdir/scripts.err"
+grep -q 'skills/check/scripts/check-update.sh is out of sync' "$tmpdir/scripts.err"
 (cd "$tmpdir/scripts" && python3 scripts/build_metadata.py >"$tmpdir/scripts-regen.out")
 grep -q 'WAZA_REF="${WAZA_REF:-v'"$version"'}"' "$tmpdir/scripts/scripts/setup-rule.sh"
 grep -q 'WAZA_REF="${WAZA_REF:-v'"$version"'}"' "$tmpdir/scripts/scripts/setup-statusline.sh"
+grep -q 'LOCAL_VERSION="${LOCAL_VERSION:-v'"$version"'}"' "$tmpdir/scripts/scripts/check-update.sh"
+test -f "$tmpdir/scripts/skills/check/scripts/check-update.sh"
 
 # Dispatcher routing table is also generated; tampering the committed copy
 # (or deleting it) must trip drift detection.
