@@ -43,7 +43,7 @@ If unsure, suggest Quick Reference.
 
 ## Canonical Article Mode
 
-Activate when: "一篇就够", "一站式参考", "整理成长文", "目的是大家只需要看这篇就好了", or the user wants a single authoritative reference on a topic.
+Activate when: "One article is enough", "One-stop reference", "Organized into a long article", "The goal is for everyone to only need to read this one", or the user wants a single authoritative reference on a topic.
 
 Goal: after reading the article, no one should need to search for anything else on this topic.
 
