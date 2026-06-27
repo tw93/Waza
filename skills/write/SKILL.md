@@ -16,7 +16,7 @@ Strip AI patterns from prose and rewrite it to sound human. Do not improve vocab
 ## Outcome Contract
 
 - Outcome: the prose preserves the author's intent while sounding natural for its audience and surface.
-- Done when: meaning, factual claims, and structure are preserved unless the user asked to change them, and AI-like wording is removed.
+- Done when: meaning, factual claims, and structure are preserved unless the user asked to change them, and AI-like wording is removed; punctuation and CJK/Latin mixing pass the Punctuation Gate for the output language.
 - Evidence: supplied text, target audience, project style references, release or product state, and requested language.
 - Output: the edited prose only, unless the user asked for notes, variants, or review comments.
 
@@ -58,6 +58,23 @@ For `/write`, voice and format constraints are `decision`, `preference`, and `pr
 - **No em-dash.** Never produce em-dash (U+2014 `—`) or en-dash (U+2013 `–`) in Chinese or English output. Em-dash is the strongest AI-tone fingerprint in this style of writing. Use commas, periods, colons, semicolons, or parentheses to break clauses. Hyphen-minus (`-`) inside compound words is allowed; replace it with a space or a period when possible. When editing a draft that contains em-dashes, replace every one before returning the text.
 - **Stop after output.** Deliver the rewritten text. Do not append a list of changes, a justification, or a closer. (Exception: Long-form Article Mode returns change-points for review instead of a rewritten blob; see that mode.)
 
+## Punctuation Gate
+
+Before returning any produced text (a rewrite, or generated release / reply / social copy), resolve the checker across install layouts and run it:
+
+```bash
+GATE="${CLAUDE_SKILL_DIR:+$CLAUDE_SKILL_DIR/scripts/check-punctuation.sh}"
+[ -f "${GATE:-}" ] || GATE="${CLAUDE_SKILL_DIR:+$CLAUDE_SKILL_DIR/skills/write/scripts/check-punctuation.sh}"
+[ -f "${GATE:-}" ] || GATE="./skills/write/scripts/check-punctuation.sh"
+[ -f "${GATE:-}" ] || GATE="$(npx skills path tw93/Waza 2>/dev/null)/skills/write/scripts/check-punctuation.sh"
+[ -f "${GATE:-}" ] || { echo "punctuation gate not found; reinstall Waza or set CLAUDE_SKILL_DIR" >&2; exit 1; }
+bash "$GATE" --lang <zh|en|ja|auto> <file>   # or pipe text via stdin
+```
+
+`${CLAUDE_SKILL_DIR}` is host-injected. The first path is this skill's own `scripts/` (standalone skill, full bundle, or repo); the fallbacks cover the inlined-root release ZIP, where the script ships under `skills/write/scripts/`.
+
+It enforces character-level punctuation by locale (half/full-width marks, CJK/Latin spacing, em/en dashes) and skips code, inline code, URLs, and markdown link targets, so it never fires on code; the script header documents the exact rule set. Fix every finding while preserving meaning; `--fix` rewrites only the zero-ambiguity zh cases to stdout. `--lang auto` classifies the whole input by fixed priority: any kana routes to ja, else any CJK to zh, else any Hangul to ko (reserved, skipped), else en, so a mostly-Chinese text that merely quotes a Korean glyph still routes to zh; pass an explicit `--lang` for mixed-locale or predominantly-English text. The checker owns character-level punctuation only; quote direction and other judgment calls stay with you and the reference files.
+
 ## Long-form Article Mode
 
 Activate when: editing a Markdown article or file over ~300 lines, or one with multiple `##` sections plus tables and images (technical long-reads, blog posts, deep dives).
@@ -69,7 +86,7 @@ Workflow:
 1. **Map first, read-only.** Before editing anything, read the whole article and list every `##` section, table, list, and image. Flag three structural problems: cross-section repetition (same checklist / judgment list / core claim in 2+ sections), table re-reading (a section whose prose walks the rows of the table above it), and whole redundant sections or paragraphs.
 2. **Propose cuts as change-points.** Show before to after for each structural cut or merge and let the user pick the subset. Never delete a whole section or paragraph silently; confirm first, since it may hold a fact found nowhere else (see `references/write-zh.md` 删段之前先确认信息量).
 3. **Then line-level de-AI**, section by section, per `references/write-zh.md`.
-4. **Output is change-points, not a blob.** Show what changed so the user can review and keep their own hand-edits. Only return fully rewritten text when the user says 直接改 / just rewrite.
+4. **Output is change-points, not a blob.** Show what changed so the user can review and keep their own hand-edits. Only return fully rewritten text when the user says 直接改 / just rewrite; when you do return a full rewrite, run the Punctuation Gate on it first.
 
 Do not single-pass rewrite a 40k-character article: it silently overwrites the author's hand-tuned phrasing and cannot be reviewed as a diff. See `references/write-zh.md` 结构级重复与表格复读（长文专项）for the matching content rules.
 

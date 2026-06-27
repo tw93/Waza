@@ -36,7 +36,7 @@ verify-routing:
 
 verify-scripts:
 	git diff --check
-	bash -n scripts/statusline.sh scripts/check-update.sh skills/*/scripts/check-update.sh skills/health/scripts/collect-data.sh skills/health/scripts/check-agent-context.sh skills/health/scripts/check-doc-refs.sh skills/health/scripts/check-maintainability.sh skills/health/scripts/check-verifier-output.sh skills/read/scripts/fetch.sh scripts/setup-statusline.sh scripts/setup-rule.sh skills/check/scripts/run-tests.sh scripts/package-skill.sh
+	bash -n scripts/statusline.sh scripts/check-update.sh skills/*/scripts/check-update.sh skills/health/scripts/collect-data.sh skills/health/scripts/check-agent-context.sh skills/health/scripts/check-doc-refs.sh skills/health/scripts/check-maintainability.sh skills/health/scripts/check-verifier-output.sh skills/read/scripts/fetch.sh scripts/setup-statusline.sh scripts/setup-rule.sh skills/check/scripts/run-tests.sh skills/write/scripts/check-punctuation.sh scripts/package-skill.sh
 	echo "bash -n: ok"
 	bash -n $(TEST_FILES) tests/test_helpers.sh
 	echo "bash -n tests/: ok"
@@ -60,7 +60,8 @@ verify-scripts:
 	  skills/health/scripts/check_doc_refs.py \
 	  skills/health/scripts/check_verifier_output.py \
 	  skills/health/scripts/check_agent_context.py \
-	  skills/health/scripts/check_maintainability.py
+	  skills/health/scripts/check_maintainability.py \
+	  skills/write/scripts/check_punctuation.py
 	echo "py_compile: ok"
 	bash skills/health/scripts/collect-data.sh auto >/tmp/waza-collect-data.out
 	echo "collect-data: ok"

@@ -95,8 +95,10 @@ CODEX_MIRROR_IGNORED_SUFFIXES = {
     ".pyc",
     ".pyo",
 }
+# Relative location of the update checker under any install root: the repo root
+# ships it at scripts/check-update.sh, and every skill directory carries the same
+# copy so direct `npx skills add` installs (which omit the repo root) still have it.
 CHECK_UPDATE_SCRIPT = Path("scripts/check-update.sh")
-SKILL_UPDATE_CHECK_SCRIPT = Path("scripts/check-update.sh")
 
 
 def read_version(root: Path) -> str:
@@ -366,7 +368,7 @@ def bytes_diff(label: str, expected: bytes, actual: bytes) -> str:
 def collect_skill_update_scripts(root: Path, rendered_check_update: str) -> dict[str, bytes]:
     generated: dict[str, bytes] = {}
     for skill_file in sorted((root / "skills").glob("*/SKILL.md")):
-        rel = skill_file.parent.relative_to(root) / SKILL_UPDATE_CHECK_SCRIPT
+        rel = skill_file.parent.relative_to(root) / CHECK_UPDATE_SCRIPT
         generated[rel.as_posix()] = rendered_check_update.encode()
     return generated
 

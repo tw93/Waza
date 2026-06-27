@@ -42,76 +42,33 @@ Each engineering habit gets an installed skill. In Claude Code, type the slash c
 
 Each skill is a folder with reference docs, helper scripts, and gotchas from real failures.
 
-## Install and Update
+## Install
 
-Most users should install Waza globally, so the same skills are available in every project.
-
-**Claude Code**
+One command installs all eight skills, with no prompts and no errors. Copy and run:
 
 ```bash
-npx skills add tw93/Waza -a claude-code -g -y
+npx skills add tw93/Waza -a claude-code codex cursor -g -y
 ```
 
-This installs `/think`, `/design`, `/check`, `/hunt`, `/write`, `/learn`, `/read`, and `/health`. Install just one with `npx skills add tw93/Waza --skill think -a claude-code -g -y`.
+This installs to Claude Code, Codex, and Cursor, plus any other agent that reads the shared `~/.agents/skills` directory. Update later with `npx skills update -g -y`, or pass one agent (e.g. `-a claude-code`) to scope it.
 
-**Codex**
+**Native plugin** (for host-native update commands)
 
 ```bash
+# Claude Code: install, then `claude plugin update waza`
+/plugin marketplace add tw93/Waza
+/plugin install waza@waza
+
+# Codex: install, then `codex plugin marketplace upgrade waza`
 codex plugin marketplace add tw93/Waza
 codex plugin add waza@waza
 ```
 
-This installs Waza as a Codex plugin from the repo marketplace, so future updates can use `codex plugin marketplace upgrade waza` followed by `codex plugin add waza@waza`.
-If you prefer the legacy skills installer, use `npx skills add tw93/Waza -a codex -g -y`; install just one with `npx skills add tw93/Waza --skill think -a codex -g -y`.
+**Claude Desktop**: download [waza.zip](https://github.com/tw93/Waza/releases/latest/download/waza.zip), then Customize > Skills > "+" > Create skill, and upload the ZIP. Re-upload the latest ZIP to update.
 
-**Antigravity**
+**Pi**: `pi install npm:@tw93/waza` (update with `pi update npm:@tw93/waza`). `/health` audits Pi settings alongside Claude Code and Codex.
 
-```bash
-npx skills add tw93/Waza -a antigravity -g -y
-npx skills add tw93/Waza -a antigravity-cli -g -y
-```
-
-Use `antigravity` for the desktop app and `antigravity-cli` for the terminal agent. Both use Waza's standard `skills/<name>/SKILL.md` layout through the skills installer.
-
-**OpenCode**
-
-```bash
-npx skills add tw93/Waza -a opencode -g -y
-```
-
-OpenCode loads Waza through its native skill tool after installation. Invoke the skills by name when the task matches `think`, `design`, `check`, `hunt`, `write`, `learn`, `read`, or `health`.
-
-**Claude Code plugin marketplace** (single-skill entries require Claude Code v2.1.143+)
-
-```bash
-/plugin marketplace add tw93/Waza
-/plugin install waza@waza
-```
-
-This installs all eight skills. Install just one with `/plugin install waza-<name>@waza` (for example, `waza-think@waza`) on Claude Code v2.1.143 or newer.
-
-**Claude Desktop**
-
-Download [waza.zip](https://github.com/tw93/Waza/releases/latest/download/waza.zip), open Customize > Skills > "+" > Create skill, and upload the ZIP.
-
-**Pi coding agent**
-
-```bash
-pi install npm:@tw93/waza
-```
-
-Pi can load Waza's standard `skills/<name>/SKILL.md` layout from the repo or from the published `@tw93/waza` npm package, which exposes `pi.skills` metadata pointing at `./skills`. `/health` audits Pi settings, configured packages, and local skill roots alongside Claude Code and Codex.
-
-**Update**
-
-```bash
-npx skills update -g -y
-```
-
-Marketplace installs use `claude plugin update <skill>`. Claude Desktop users can replace the old skill with the latest [waza.zip](https://github.com/tw93/Waza/releases/latest/download/waza.zip).
-Codex plugin installs use `codex plugin marketplace upgrade waza`, then `codex plugin add waza@waza` to refresh the installed plugin snapshot.
-Pi users can run `pi update npm:@tw93/waza`, or `pi update --extensions` to update all installed Pi packages.
-To hear about new versions, watch [GitHub Releases](https://github.com/tw93/Waza/releases) for Waza.
+To hear about new versions, watch [GitHub Releases](https://github.com/tw93/Waza/releases).
 
 ## Project Context
 
@@ -160,41 +117,26 @@ status_line_use_colors = true
 
 Codex shows remaining quota; the Claude Code statusline above shows used percentage (upstream does not yet expose `five-hour-used` / `weekly-used`).
 
-### English Coaching
+### Optional Rules
 
-Optional rule for English practice. When your prompt contains an English mistake, the agent appends a short 😇 correction; Chinese-only prompts stay untouched.
+Three independent toggles. Copy the ones you want (swap `claude-code` for `codex` on Codex):
+
+```bash
+# English coaching: appends a short 😇 correction when your prompt has an English mistake
+curl -sL https://github.com/tw93/Waza/releases/latest/download/setup-rule.sh | bash -s -- english claude-code
+
+# Anti-patterns: always-on cross-skill guardrails (read before acting, no scope creep, no unsolicited summaries)
+curl -sL https://github.com/tw93/Waza/releases/latest/download/setup-rule.sh | bash -s -- anti-patterns claude-code
+
+# Routing hint: tells non-Claude hosts to prefer Waza skills when a request matches their triggers
+curl -sL https://github.com/tw93/Waza/releases/latest/download/setup-rule.sh | bash -s -- waza-routing claude-code
+```
 
 <div align="center">
   <img src="https://gw.alipayobjects.com/zos/k/24/vfkGOi.png" width="1000" />
 </div>
 
-```bash
-# Claude Code
-curl -sL https://github.com/tw93/Waza/releases/latest/download/setup-rule.sh | bash -s -- english claude-code
-
-# Codex
-curl -sL https://github.com/tw93/Waza/releases/latest/download/setup-rule.sh | bash -s -- english codex
-```
-
-### Anti-Patterns
-
-Optional always-on guardrails for cross-skill behaviors: stop acting before reading, no hallucinated paths, no scope creep, no unsolicited summaries. Skill-agnostic, applies in every session.
-
-```bash
-curl -sL https://github.com/tw93/Waza/releases/latest/download/setup-rule.sh | bash -s -- anti-patterns claude-code
-```
-
-Use `codex` instead of `claude-code` for Codex. Curl URLs use the latest GitHub release asset. Set `WAZA_REF=main` before the command if you want bleeding-edge scripts.
-
-### Routing Hint
-
-Optional pointer that tells the host to prefer Waza skills when a request matches their triggers. Useful for Codex, Pi, and other agents that do not auto-route from skill `description`. Claude Code already routes through descriptions, so this is opt-in even there.
-
-```bash
-curl -sL https://github.com/tw93/Waza/releases/latest/download/setup-rule.sh | bash -s -- waza-routing claude-code
-```
-
-Use `codex` instead of `claude-code` for Codex.
+Curl URLs use the latest GitHub release asset. Set `WAZA_REF=main` before the command if you want bleeding-edge scripts.
 
 ## Uninstall
 

@@ -822,7 +822,13 @@ def check_readme_install_command(root: Path):
     if not readme.exists():
         fail(f"MISSING README.md at {readme}")
     text = readme.read_text()
-    expected = "npx skills add tw93/Waza -a claude-code -g -y"
+    # One command installs every skill to an explicit agent list, so the README
+    # documents a single copy-paste line. The list is intentional: `-a '*'` (or
+    # the no-`-a` auto-detect path) sweeps in agents like PromptScript and Eve
+    # that lack global-install support and prints a "Failed to install" block.
+    # Naming agents installs cleanly; codex and cursor share `~/.agents/skills`,
+    # so other universal agents pick the skills up without being listed.
+    expected = "npx skills add tw93/Waza -a claude-code codex cursor -g -y"
     if expected not in text:
         fail(
             f"README INSTALL COMMAND: README.md must include {expected!r}\n"
@@ -849,18 +855,6 @@ def check_readme_install_command(root: Path):
             f"README PI INSTALL COMMAND: README.md must include {expected_pi!r}\n"
             f"  The Pi package install path depends on this exact string."
         )
-    expected_agents = {
-        "Antigravity": "npx skills add tw93/Waza -a antigravity -g -y",
-        "Antigravity CLI": "npx skills add tw93/Waza -a antigravity-cli -g -y",
-        "OpenCode": "npx skills add tw93/Waza -a opencode -g -y",
-    }
-    for label, command in expected_agents.items():
-        if command not in text:
-            fail(
-                f"README {label.upper()} INSTALL COMMAND: README.md must "
-                f"include {command!r}\n"
-                f"  Waza's documented agent support depends on this exact string."
-            )
     expected_installers = {
         "setup-rule": "https://github.com/tw93/Waza/releases/latest/download/setup-rule.sh",
         "setup-statusline": "https://github.com/tw93/Waza/releases/latest/download/setup-statusline.sh",
@@ -873,8 +867,8 @@ def check_readme_install_command(root: Path):
                 f"without per-release README churn."
             )
     print(
-        "ok: README installs nested skills, Codex plugin marketplace, Pi package, "
-        "Antigravity, OpenCode, and latest installer assets"
+        "ok: README documents the universal skills install, Codex plugin "
+        "marketplace, Pi package, and latest installer assets"
     )
 
 
