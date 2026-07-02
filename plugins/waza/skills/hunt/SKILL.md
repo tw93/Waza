@@ -20,6 +20,8 @@ A patch applied to a symptom creates a new bug somewhere else.
 - Evidence: source trace, repro command or UI path, logs or state, targeted test/build output, and runtime evidence for UI or native defects.
 - Output: root cause, fix or handoff, verification result, and any unswept sibling risks.
 
+When answering the user after a diagnostic pass, lead with the cause. The first substantive sentence must say what broke, where, and why the evidence supports it. Put the fix after the cause. Never lead a bug answer with "brute force fix", "recommended fix", implementation steps, or a plan template while the root cause is still implicit.
+
 **Do not touch code until you can state the root cause in one sentence:**
 > "I believe the root cause is [X] because [evidence]."
 
@@ -51,6 +53,7 @@ For `/hunt`, diagnostic constraints are `decision`, `preference`, and `principle
 - **Behavioral / lifecycle / async bugs: instrument first, not after failure.** Window lifecycle, event delivery, navigation, focus, timer, state-machine, and async-ordering bugs almost never yield to static reading alone. Do not wait for a failed fix to add logs. The moment your hypothesis involves "this callback fires before/after that one", "this state should be X when Y runs", or "this object should still be alive here", **add the log immediately as part of forming the hypothesis**, before writing any fix. A hypothesis without runtime evidence is a guess; two guesses in a row is the hard-stop signal. Distinguish from visual-rendering bugs (compositor behavior needs DevTools, not logs) and pure-logic bugs (wrong formula, off-by-one) where static analysis is sufficient.
 - **Tuning magic numbers past round three: stop, unify.** When a spacing / sizing / threshold value has been adjusted three times and still looks wrong, the bug is structural, not numeric. Replace the N independent values with one named token (`Spacing.s4`, `--gap-content`, etc.) and verify the asymmetry was hiding a missing constraint. Asymmetry that survives tuning is structural; more tuning will not converge.
 - **Fix the cause, not the symptom.** If the fix touches more than 5 files, pause and confirm scope with the user.
+- **Root cause owns the output order.** If another skill, review format, or planning mode is also active, keep the bug section in root-cause-first order: cause -> evidence -> symptom chain -> fix -> verification. The other skill can shape the handoff, but it must not move the fix before the cause.
 
 ## Fix Scope Discipline
 

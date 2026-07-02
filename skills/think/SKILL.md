@@ -34,6 +34,8 @@ Before outputting any plan, scan the project's `AGENTS.md`, `CLAUDE.md`, `.claud
 
 Activate when the user wants to fix something rather than build something, the problem is already defined, and the only open question is "how to fix it."
 
+Do not use Lightweight Mode as the leading structure for bugs, regressions, crashes, failing tests, or "why is this broken?" requests. If a bug diagnosis is involved, `/hunt` owns the output order: root cause first, then evidence, then symptom chain, then fix. Only append a lightweight implementation plan after the root cause is explicit and supported.
+
 Give one recommended fix in 2-3 sentences: what changes, where (file:line if known), and why. Name the brute-force version in one line first; default to it unless the user wants elegance. List involved files, flag explicitly if more than 5. State one risk. Wait for approval before implementing.
 
 Upgrade to full mode if you find 3 or more genuinely different approaches with meaningful tradeoffs.
@@ -158,6 +160,7 @@ When the user later says "Implement the plan", "可以干", "直接改", "整", 
 | Planned MCP workflow without checking if MCP was loaded | Verify tool availability before handing off, not mid-implementation |
 | Rejected design restarted from scratch | Ask what specifically failed, re-enter with narrowed constraints |
 | User said "just fix X" and skipped /think | If the fix touches 3+ files or needs a method choice, pause and run Lightweight Mode |
+| User used `/think` around a bug or `/hunt` task | Keep `/hunt` root-cause-first ordering. Do not start with "brute force fix" or an implementation plan until the bug cause and evidence are stated. |
 | User approved a concrete plan and the agent debated the plan again | Execute the approved plan. Only stop for repo drift, missing permissions, or unsafe external state |
 | Picked a regional or locale-specific API variant without checking | List all regional or locale differences before writing integration code |
 | Introduced a second language or runtime into a single-stack project | Never add a new language or runtime without explicit approval |
