@@ -15,7 +15,8 @@
     "claude-code",
     "codex",
     "antigravity",
-    "opencode"
+    "opencode",
+    "antigravity-cli"
   ],
   "files": [
     "LICENSE",

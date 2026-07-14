@@ -207,6 +207,14 @@ def build_codex_plugin(version: str) -> dict:
     }
 
 
+def build_agy_plugin() -> dict:
+    return {
+        "$schema": "https://antigravity.google/schemas/v1/plugin.json",
+        "name": "waza",
+        "description": CODEX_DESCRIPTION.replace("Codex", "Antigravity CLI"),
+    }
+
+
 def build_codex_marketplace() -> dict:
     return {
         "name": "waza",
@@ -252,6 +260,7 @@ def build_package_json(version: str) -> str:
             "codex",
             "antigravity",
             "opencode",
+            "antigravity-cli"
         ],
         "files": [
             "LICENSE",
@@ -403,17 +412,19 @@ def shared_asset_source(rel: str) -> str:
 
 def collect_codex_plugin_tree(
     root: Path,
-    plugin_manifest_rendered: str,
+    codex_plugin_rendered: str,
+    agy_plugin_rendered: str,
     generated_skill_files: dict[str, bytes],
 ) -> dict[str, bytes]:
-    """Build the generated file set for the Codex plugin directory.
+    """Build the generated file set for the Codex and Antigravity plugin directory.
 
     Codex installs only the directory referenced by marketplace source.path, so
     the plugin tree contains real copies of the skill and rule files instead of
     symlinks or references back to the repository root.
     """
     generated = {
-        "plugins/waza/.codex-plugin/plugin.json": plugin_manifest_rendered.encode()
+        "plugins/waza/.codex-plugin/plugin.json": codex_plugin_rendered.encode(),
+        "plugins/waza/plugin.json": agy_plugin_rendered.encode(),
     }
     for source_name in ("skills", "rules"):
         source_root = root / source_name
@@ -453,6 +464,7 @@ def main() -> int:
     marketplace = build_marketplace(version, skills)
     rendered = render_json(marketplace)
     codex_plugin_rendered = render_json(build_codex_plugin(version))
+    agy_plugin_rendered = render_json(build_agy_plugin())
     codex_marketplace_rendered = render_json(build_codex_marketplace())
     package_rendered = build_package_json(version)
 
@@ -499,6 +511,7 @@ def main() -> int:
     codex_plugin_tree = collect_codex_plugin_tree(
         root,
         codex_plugin_rendered,
+        agy_plugin_rendered,
         skill_shared_assets,
     )
 

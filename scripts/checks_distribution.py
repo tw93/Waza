@@ -352,7 +352,7 @@ def check_readme_install_command(root: Path):
     # that lack global-install support and prints a "Failed to install" block.
     # Naming agents installs cleanly; codex and cursor share `~/.agents/skills`,
     # so other universal agents pick the skills up without being listed.
-    expected = "npx skills add tw93/Waza -a claude-code codex cursor -g -y"
+    expected = "npx skills add tw93/Waza -a claude-code codex cursor antigravity-cli -g -y"
     if expected not in text:
         fail(
             f"README INSTALL COMMAND: README.md must include {expected!r}\n"
