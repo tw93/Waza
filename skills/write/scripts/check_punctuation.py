@@ -290,7 +290,20 @@ def check_ja(line: str, mask: list[bool], lineno: int, findings: list[Finding]) 
         findings.append(Finding(lineno, m.start() + 1, "ja-extra-space", m.group(), "remove space between Japanese and Latin"))
 
 
-CHECKERS = {"zh": check_zh, "en": check_en, "ja": check_ja}
+def check_ko(line: str, mask: list[bool], lineno: int, findings: list[Finding]) -> None:
+    check_dash(line, mask, lineno, findings)
+    # Half-width punctuation between Hangul characters.
+    for m in re.finditer(r"[\uAC00-\uD7AF]([,.])\s*[\uAC00-\uD7AF]", line):
+        if overlaps_exempt(mask, m.start(), m.end()):
+            continue
+        findings.append(Finding(lineno, m.start(1) + 1, "ko-halfwidth-punct", m.group(), "use full-width or adjust spacing"))
+    # Missing space between Hangul and Latin.
+    for m in re.finditer(r"[\uAC00-\uD7AF][A-Za-z]|[A-Za-z][\uAC00-\uD7AF]", line):
+        if overlaps_exempt(mask, m.start(), m.end()):
+            continue
+        findings.append(Finding(lineno, m.start() + 1, "ko-missing-space", m.group(), "insert space between Hangul and Latin"))
+
+CHECKERS = {"zh": check_zh, "en": check_en, "ja": check_ja, "ko": check_ko}
 
 
 def fix_zh_line(line: str) -> str:
@@ -375,7 +388,7 @@ def iter_findings(text: str, lang: str) -> list[Finding]:
 def main() -> int:
     parser = argparse.ArgumentParser(description="Check punctuation / CJK mixing by locale.")
     parser.add_argument("file", nargs="?", help="File to read (default: stdin)")
-    parser.add_argument("--lang", default="auto", choices=["zh", "en", "ja", "auto"])
+    parser.add_argument("--lang", default="auto", choices=["zh", "en", "ja", "ko", "auto"])
     parser.add_argument("--fix", action="store_true", help="Print corrected text to stdout")
     args = parser.parse_args()
 
@@ -394,11 +407,7 @@ def main() -> int:
 
     lang = detect_lang(text) if args.lang == "auto" else args.lang
 
-    if lang == "ko":
-        print("punctuation: ko locale is reserved (no rules yet); skipped", file=sys.stderr)
-        if args.fix:
-            sys.stdout.write(text)
-        return 0
+
 
     if args.fix:
         if lang != "zh":

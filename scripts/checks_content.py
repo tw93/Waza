@@ -510,8 +510,9 @@ def check_anti_patterns_contract(root: Path):
 
 
 def check_english_coaching_guard(root: Path):
-    """rules/english.md must keep two failure-mode guards intact:
-    (1) silence on Chinese-only messages, (2) silence when English is fine.
+    """rules/english.md must keep failure-mode guards intact:
+    (1) silence on Chinese-only messages, (2) silence on Korean-only messages,
+    (3) silence when English is fine.
     These guards were added after real misfires; do not let them rot."""
     english_rule = root / "rules" / "english.md"
     if not english_rule.exists():
@@ -520,6 +521,8 @@ def check_english_coaching_guard(root: Path):
     missing = []
     if "Chinese-only messages" not in text:
         missing.append("'Chinese-only messages'")
+    if "Korean-only messages" not in text:
+        missing.append("'Korean-only messages'")
     if "already-natural English, stay silent" not in text:
         missing.append("'already-natural English, stay silent'")
     if missing:

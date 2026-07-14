@@ -43,3 +43,4 @@ Reject: Inter, DM Sans, DM Serif Display, DM Serif Text, Outfit, Plus Jakarta Sa
 - `-webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale` once on root layout (macOS only)
 - `font-variant-numeric: tabular-nums` for counters, timers, prices, number columns
 - Letter-spacing: roughly -0.022em for display sizes (32px+), -0.012em for mid-range (20-28px), normal at 16px and below
+- **Korean UI**: Always use [Pretendard](https://github.com/orioncactus/pretendard) as the default sans-serif font for Korean interfaces to ensure optimal legibility and native-like rendering.

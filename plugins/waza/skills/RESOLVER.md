@@ -14,33 +14,33 @@
 
 | 触发 | 技能 |
 |------|------|
-| 新功能 / 架构决策 / "怎么设计" / "应该用什么方案" / "判断一下" / "有没有必要" / "值不值得" / 商业化/产品 pivot / 需要可执行计划或 handoff | `skills/think/SKILL.md` |
-| UI / 组件 / 页面 / 视觉界面 / 前端 / 截图里说"丑"、"不清晰"、"很怪" / 真实截图视觉 polish | `skills/ui/SKILL.md` |
+| 新功能 / 架构决策 / "怎么设计" / "应该用什么方案" / "判断一下" / "有没有必要" / "值不值得" / 商业化/产品 pivot / 需要可执行计划或 handoff / 어떻게설계 / 어떤방식 / 필요한가 | `skills/think/SKILL.md` |
+| UI / 组件 / 页面 / 视觉界面 / 前端 / 截图里说"丑"、"不清晰"、"很怪" / 真实截图视觉 polish / 못생겼다 / 안맞다 | `skills/ui/SKILL.md` |
 
 ### Post-build（交付前）
 
 | 触发 | 技能 |
 |------|------|
-| 实现完成 / 合并前 / "review 一下" / "看看这段代码" / release gate / 生成产物检查 / safety sink 审查 / `code-review` | `skills/check/SKILL.md` |
-| release / publish / push / release reaction / 发布 / 提交 / 关闭 issue / 发布前检查 / 发布表情 / registry/appcast/asset 检查 | `skills/check/SKILL.md` (Ship / Release Follow-through) |
+| 实现完成 / 合并前 / "review 一下" / "看看这段代码" / release gate / 生成产物检查 / safety sink 审查 / `code-review` / 코드봐줘 / 리뷰해줘 | `skills/check/SKILL.md` |
+| release / publish / push / release reaction / 发布 / 提交 / 关闭 issue / 发布前检查 / 发布表情 / registry/appcast/asset 检查 / 릴리즈 / 발행 | `skills/check/SKILL.md` (Ship / Release Follow-through) |
 | review issue / review PR / triage / 批量处理 / "看看有没有 issue" / close issue | `skills/check/SKILL.md` (Triage Mode) |
-| 项目体检 / project audit / 项目评分 / 给项目打分 / 深入分析项目代码 / 评估项目质量 / 代码质量评分 / scorecard / linus 风格 review / rate this codebase / score this project | `skills/check/SKILL.md` (Project Audit Mode) |
+| 项目体检 / project audit / 项目评分 / 给项目打分 / 深入分析项目代码 / 评估项目质量 / 代码质量评分 / scorecard / linus 风格 review / rate this codebase / score this project / 프로젝트 평가 | `skills/check/SKILL.md` (Project Audit Mode) |
 
 ### Diagnostic（出问题了）
 
 | 触发 | 技能 |
 |------|------|
-| 报错 / 崩溃 / 测试失败 / 行为异常 / "为什么不工作" / 以前是好的 / 回归 / 截图回归 / 反复修不好 / stale cache / 队列或生成物边界 | `skills/hunt/SKILL.md` |
-| Claude/Codex/Pi 忽略指令 / hook 失灵 / MCP 异常 / Codex 配置 / Pi 配置 / AGENTS.md / config.toml / agent instructions / 配置审计 / health 消耗 token / AI coding 腐化 / 代码变烂 / 维护性 / hotspot ownership / 上下文混乱 / 验证缺失 / 验证命令失真 | `skills/health/SKILL.md` |
+| 报错 / 崩溃 / 测试失败 / 行为异常 / "为什么不工作" / 以前是好的 / 回归 / 截图回归 / 反复修不好 / stale cache / 队列或生成物边界 / 왜안되지 / 계속안되네 | `skills/hunt/SKILL.md` |
+| Claude/Codex/Pi 忽略指令 / hook 失灵 / MCP 异常 / Codex 配置 / Pi 配置 / AGENTS.md / config.toml / agent instructions / 配置审计 / health 消耗 token / AI coding 腐化 / 代码变烂 / 维护性 / hotspot ownership / 上下文混乱 / 验证缺失 / 验证命令失真 / Claude안듣는다 / 설정점검 | `skills/health/SKILL.md` |
 
 ### Content（内容进出）
 
 | 触发 | 技能 |
 |------|------|
-| 消息含 http(s) URL / 任何网页链接 / PDF 路径 / "看一下这个", "读一下这个" | `skills/read/SKILL.md` |
-| 写作 / 改稿 / 润色 / 去 AI 味（中英文） / 本地化文案 / 多语言产品文案 / 推特推文 / 社交媒体文案 / launch copy / release notes 文案 | `skills/write/SKILL.md` |
+| 消息含 http(s) URL / 任何网页链接 / PDF 路径 / "看一下这个", "读一下这个" / 이링크봐줘 / 읽어봐 | `skills/read/SKILL.md` |
+| 写作 / 改稿 / 润色 / 去 AI 味（中英文、韩文） / 本地化文案 / 多语言产品文案 / 推特推文 / 社交媒体文案 / launch copy / release notes 文案 / 글써줘 / 고쳐줘 | `skills/write/SKILL.md` |
 | 文档审阅 / 白皮书 / release notes prose 审核 / "审稿" / "check this document" | `skills/write/SKILL.md` (Document Review Mode) |
-| 深度研究一个陌生领域 / 六阶段研究到成稿 / 一批材料沉淀成文章 | `skills/learn/SKILL.md` |
+| 深度研究一个陌生领域 / 六阶段研究到成稿 / 一批材料沉淀成文章 / 깊이공부 | `skills/learn/SKILL.md` |
 
 ## Disambiguation（歧义消解）
 

@@ -69,10 +69,31 @@ if bash "$CHECKER" --lang ja "$tmpdir/ja.md" >"$tmpdir/ja.out"; then
 fi
 grep -q 'ja-ascii-punct' "$tmpdir/ja.out"
 
-# 11. Korean is reserved: auto-detect skips with exit 0.
-printf '%s\n' '한국어 문장입니다.' > "$tmpdir/ko.md"
-bash "$CHECKER" "$tmpdir/ko.md" >"$tmpdir/ko.out" 2>"$tmpdir/ko.err"
-grep -q 'reserved' "$tmpdir/ko.err"
+# 11. Korean punctuation rules are active.
+printf '%s\n' '한국어 문장입니다.' > "$tmpdir/ko-ok.md"
+bash "$CHECKER" "$tmpdir/ko-ok.md" >"$tmpdir/ko-ok.out"
+grep -q 'punctuation: ok' "$tmpdir/ko-ok.out"
+
+# 11b. Half-width punctuation between Hangul is flagged.
+printf '%s\n' '한국어 문장이다,다음 문장.' > "$tmpdir/ko-bad.md"
+if bash "$CHECKER" --lang ko "$tmpdir/ko-bad.md" >"$tmpdir/ko-bad.out"; then
+  echo "should flag half-width punct in ko"; exit 1
+fi
+grep -q 'ko-halfwidth-punct' "$tmpdir/ko-bad.out"
+
+# 11c. Missing space between Hangul and Latin is flagged.
+printf '%s\n' 'Python으로만들었습니다.' > "$tmpdir/ko-space.md"
+if bash "$CHECKER" --lang ko "$tmpdir/ko-space.md" >"$tmpdir/ko-space.out"; then
+  echo "should flag missing Hangul/Latin space"; exit 1
+fi
+grep -q 'ko-missing-space' "$tmpdir/ko-space.out"
+
+# 11d. Em-dash in Korean is flagged.
+printf '%s\n' '이것은 판단이다—사실 아니다.' > "$tmpdir/ko-dash.md"
+if bash "$CHECKER" --lang ko "$tmpdir/ko-dash.md" >"$tmpdir/ko-dash.out"; then
+  echo "should flag em-dash in ko"; exit 1
+fi
+grep -q 'dash' "$tmpdir/ko-dash.out"
 
 # 12. Auto-detect routes a Japanese sample to the ja checker.
 if bash "$CHECKER" "$tmpdir/ja.md" >"$tmpdir/ja-auto.out"; then
@@ -149,10 +170,7 @@ if bash "$CHECKER" --lang zh "$tmpdir/urltail.md" >"$tmpdir/urltail.out"; then
 fi
 grep -q 'zh-halfwidth-punct' "$tmpdir/urltail.out"
 
-# 24. --lang ko is rejected (ko is auto-detected only, not a user-facing option).
-if bash "$CHECKER" --lang ko "$tmpdir/clean.md" >/dev/null 2>&1; then
-  echo "--lang ko should be rejected by argparse choices"; exit 1
-fi
+
 
 # 25. A 4-space-indented ```-like line is not a fence opener (text after it is checked).
 printf '%s\n' '    ```' '正文,应该报。' > "$tmpdir/indentfence.md"

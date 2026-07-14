@@ -1,7 +1,7 @@
 ---
 name: read
 description: "Reads URLs and PDFs by fetching source content, defaulting to concise summaries for plain read requests and clean Markdown when asked to convert, save, quote, cite, or feed downstream work. Use when users ask in any language to read, fetch, check, summarize, quote, cite, convert, or save a URL or PDF. Not for local text files already in the repo."
-when_to_use: "any URL or PDF to fetch, 看这个链接, 读一下, 看看这个网页, 抓取网页, read this, check this URL, fetch this page"
+when_to_use: "any URL or PDF to fetch, 看这个链接, 读一下, 看看这个网页, 抓取网页, read this, check this URL, fetch this page, 이 링크 봐줘, 읽어봐, 요약해줘, 마크다운으로, 저장해줘"
 dispatch_intent: "Any URL or PDF to fetch, read this, fetch this page"
 ---
 

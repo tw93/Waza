@@ -4,7 +4,7 @@ Reusable by both Triage Mode and Ship / Release Follow-through. Default to this 
 
 1. Resolve `@<login>` from `gh issue view` / `gh pr view --json author` before posting.
 2. **Language:** Match the **opener's** language when it is Chinese or English. If the opener used Japanese or Korean, use English for the maintainer reply unless project docs override.
-3. Open with `@<login>` and **at most one** short thanks (`感谢反馈`, `thank you for the report`, etc.). Do **not** add closing thanks stacks (`再次感谢`, `Thanks again`, long courtesy endings).
+3. **Open with `@<reporter>` + one thanks line.** Match the reporter's language (Chinese → "感谢反馈" / Korean → "피드백 감사합니다" / English → "thanks for the detailed report"). No exclamation mark. No emoji. No "🙏". Do **not** add closing thanks stacks (`再次感谢`, `Thanks again`, long courtesy endings).
 4. One or two short paragraphs: factual reason, what shipped or what is blocked, no ceremony.
 5. Name the exact boundary: already released, fixed on `main` but unreleased, available in nightly/beta/preview, next release, not planned, duplicate, or still needs evidence. Every sentence must be true at the moment of posting: do not write "landed on main" while the change sits uncommitted, do not write "shipped", "released", or "verified" unless that state was checked in the current turn, and do not imply a verification step (built a branch, ran an artifact) that did not happen.
 6. Always give a **next step tied to releases or verification**: next App Store or GitHub release, nightly upgrade command, cache path to clear once, or exactly what info is still needed.

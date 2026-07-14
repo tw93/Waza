@@ -1,7 +1,7 @@
 ---
 name: write
-description: "Rewrites and polishes prose in Chinese or English, removes AI-like wording, and reviews product localization copy while preserving intent for drafts, docs, release notes, launch copy, and social posts. Use when users ask in any language to draft, rewrite, proofread, localize, polish release notes, remove AI-like wording, or prepare launch and social copy. Not for code comments, commit messages, or inline docs."
-when_to_use: "帮我写, 改稿, 润色, 去AI味, 写一段, 审稿, 文档review, 本地化文案, 多语言文案, i18n copy, localization copy, check this document, 推特, twitter, X推文, tweet, social post, 连贯性, 段落连贯, draft, edit text, proofread, sound natural, polish, rewrite"
+description: "Rewrites and polishes prose in Chinese, English, or Korean, removes AI-like wording, and reviews product localization copy while preserving intent for drafts, docs, release notes, launch copy, and social posts. Use when users ask in any language to draft, rewrite, proofread, localize, polish release notes, remove AI-like wording, or prepare launch and social copy. Not for code comments, commit messages, or inline docs."
+when_to_use: "帮我写, 改稿, 润色, 去AI味, 写一段, 审稿, 文档review, 本地化文案, 多语言文案, i18n copy, localization copy, check this document, 推特, twitter, X推文, tweet, social post, 连贯性, 段落连贯, draft, edit text, proofread, sound natural, polish, rewrite, 글써줘, 고쳐줘, 다듬어줘, AI맛제거, 교정, 윤문, 릴리즈노트"
 dispatch_intent: "Writing, editing prose, polish, release notes, launch/social copy, remove AI tone"
 ---
 
@@ -38,8 +38,11 @@ When distilling a new lesson into this skill, fold it into an existing principle
 3. **Language detected from the text being edited**, not the user's command:
    - Contains Chinese characters + release notes or social post mode → load `references/write-zh-release-notes.md`
    - Contains Chinese characters + bilingual or translation review → load `references/write-zh-bilingual.md`
-   - Product/site/app localization review across multiple locales → load `references/write-product-localization.md`; also load `references/write-zh-bilingual.md` when Chinese copy is present
+   - Product/site/app localization review across multiple locales → load `references/write-product-localization.md`; also load `references/write-zh-bilingual.md` when Chinese copy is present; also load `references/write-ko-bilingual.md` when Korean copy is present
    - Contains Chinese characters (default prose) → load `references/write-zh-prose.md` (quick rules); load `references/write-zh.md` for the full AI-taste pattern catalog
+   - Contains Korean characters (Hangul) + release notes or social post mode → load `references/write-ko-release-notes.md`
+   - Contains Korean characters (Hangul) + bilingual or translation review → load `references/write-ko-bilingual.md`
+   - Contains Korean characters (Hangul, default prose) → load `references/write-ko-prose.md` (quick rules); load `references/write-ko.md` for the full AI-taste pattern catalog
    - Otherwise → load `references/write-en.md`
 
 No summary, no commentary, no explanation of changes unless explicitly asked.
@@ -57,7 +60,7 @@ For `/write`: the supplied text and current release state override memory. Durab
 - **No invented first-person experience.** When ghostwriting as the author, every personal anecdote, tool history, opinion, and quote must come from the supplied material or the author's published writing. The material lacking an example is a question to ask, not a gap to fill. Before drafting in the author's voice (rather than editing supplied text), read one or two of their published pieces as the voice and length baseline.
 - **Shorter than the first draft wants to be.** Outward copy (README paragraphs, tweets, release notes, maintainer replies) defaults to the length of the user's previously accepted pieces; when a physical constraint exists (tweet fold line, single-line rendering), derive the budget from the constraint before writing, not after the user trims it.
 - **Artifact-grounded claims.** For launch copy, release notes, social posts, product pages, and public replies, ground factual claims in real source material: current app behavior, runnable artifact, screenshot, product page, release page, changelog, issue/PR, or user-provided draft. Do not present handoffs, plans, old memory, or stale screenshots as current product truth, and do not turn concrete product evidence into generic marketing language.
-- **No em-dash.** Never produce em-dash (U+2014 `—`) or en-dash (U+2013 `–`) in Chinese or English output. Em-dash is the strongest AI-tone fingerprint in this style of writing. Use commas, periods, colons, semicolons, or parentheses to break clauses. Hyphen-minus (`-`) inside compound words is allowed; replace it with a space or a period when possible. When editing a draft that contains em-dashes, replace every one before returning the text.
+- **No em-dash.** Never produce em-dash (U+2014 `—`) or en-dash (U+2013 `–`) in Chinese, English, or Korean output. Em-dash is the strongest AI-tone fingerprint in this style of writing. Use commas, periods, colons, semicolons, or parentheses to break clauses. Hyphen-minus (`-`) inside compound words is allowed; replace it with a space or a period when possible. When editing a draft that contains em-dashes, replace every one before returning the text.
 - **Stop after output.** Deliver the rewritten text. Do not append a list of changes, a justification, or a closer. (Exception: Long-form Article Mode returns change-points for review instead of a rewritten blob; see that mode.)
 
 ## Punctuation Gate
@@ -70,12 +73,12 @@ GATE="${CLAUDE_SKILL_DIR:+$CLAUDE_SKILL_DIR/scripts/check-punctuation.sh}"
 [ -f "${GATE:-}" ] || GATE="./skills/write/scripts/check-punctuation.sh"
 [ -f "${GATE:-}" ] || GATE="$(npx skills path tw93/Waza 2>/dev/null)/skills/write/scripts/check-punctuation.sh"
 [ -f "${GATE:-}" ] || { echo "punctuation gate not found; reinstall Waza or set CLAUDE_SKILL_DIR" >&2; exit 1; }
-bash "$GATE" --lang <zh|en|ja|auto> <file>   # or pipe text via stdin
+bash "$GATE" --lang <zh|en|ja|ko|auto> <file>   # or pipe text via stdin
 ```
 
 `${CLAUDE_SKILL_DIR}` is host-injected. The first path is this skill's own `scripts/` (standalone skill, full bundle, or repo); the fallbacks cover the inlined-root release ZIP, where the script ships under `skills/write/scripts/`.
 
-It enforces character-level punctuation by locale (half/full-width marks, CJK/Latin spacing, em/en dashes) and skips code, inline code, URLs, and markdown link targets, so it never fires on code; the script header documents the exact rule set. Fix every finding while preserving meaning; `--fix` rewrites only the zero-ambiguity zh cases to stdout. `--lang auto` classifies the whole input by fixed priority: any kana routes to ja, else any CJK to zh, else any Hangul to ko (reserved, skipped), else en, so a mostly-Chinese text that merely quotes a Korean glyph still routes to zh; pass an explicit `--lang` for mixed-locale or predominantly-English text. The checker owns character-level punctuation only; quote direction and other judgment calls stay with you and the reference files.
+It enforces character-level punctuation by locale (half/full-width marks, CJK/Latin spacing, em/en dashes) and skips code, inline code, URLs, and markdown link targets, so it never fires on code; the script header documents the exact rule set. Fix every finding while preserving meaning; `--fix` rewrites only the zero-ambiguity zh cases to stdout. `--lang auto` classifies the whole input by fixed priority: any kana routes to ja, else any CJK to zh, else any Hangul to ko, else en, so a mostly-Chinese text that merely quotes a Korean glyph still routes to zh; pass an explicit `--lang` for mixed-locale or predominantly-English text. The checker owns character-level punctuation only; quote direction and other judgment calls stay with you and the reference files.
 
 ## Long-form Article Mode
 
@@ -109,7 +112,7 @@ Activate when: mixed Chinese/English, "Chinese copywriting", "bilingual consiste
 
 Activate when: "本地化文案", "多语言文案", "localization copy", "i18n copy", product/site/app strings, release feed copy, runtime catalog, or a user asks whether localized copy feels native.
 
-Load `references/write-product-localization.md`. If Chinese is one of the locales, also load `references/write-zh-bilingual.md`.
+Load `references/write-product-localization.md`. If Chinese is one of the locales, also load `references/write-zh-bilingual.md`. If Korean is one of the locales, also load `references/write-ko-bilingual.md`.
 
 Default workflow:
 
@@ -147,8 +150,8 @@ Before drafting, gather style references:
 - **Group by user-perceivable feature**, not by internal taxonomy. "Polish", "细节打磨", "Misc improvements", "Chores" are not categories users can act on. Group by product surface (Clean / Uninstall / Status / Settings) or by user-visible verb (Faster startup / New keyboard shortcut / Fixed crash on M3).
 - **Extract from `git log <last-tag>..HEAD`** rather than from memory. Read every `feat:` and `fix:` commit; do not omit small items just because they look minor in commit form (iOS wrapper support, Dock cleanup, AV-vendor protection boundary are not "minor" from a user point of view).
 - **One sentence per item, naming the user-visible change**, not the implementation. "Use `CKDownloadQueue` observer for App Store updates" is not a release note; "App Store updates now run inside the app instead of opening App Store" is.
-- **Bilingual structure**: when the project ships bilingual release notes, put the English block and the Chinese block as two parallel sections inside the same release item; do not interleave per bullet. For HTML-capable update-feed CDATA, separate language blocks with headings so the rendered update window does not collapse them together.
-- **Punctuation**: Chinese full-width in Chinese blocks, ASCII in English blocks.
+- **Bilingual structure**: when the project ships bilingual release notes, put the English block and the Chinese/Korean block as two parallel sections inside the same release item; do not interleave per bullet. For HTML-capable update-feed CDATA, separate language blocks with headings so the rendered update window does not collapse them together.
+- **Punctuation**: Chinese/Korean full-width in Chinese/Korean blocks, ASCII in English blocks.
 
 ## Public Reply Mode (GitHub issue / PR)
 
@@ -156,7 +159,7 @@ Activate when: "回复 issue", "reply to PR", "comment on #N", "回 issue", or t
 
 Four hard rules for the reply body:
 
-1. **Open with `@<reporter>` + one thanks line.** Match the reporter's language (Chinese → "感谢反馈" / English → "thanks for the detailed report"). No exclamation mark. No emoji. No "🙏".
+1. **Open with `@<reporter>` + one thanks line.** Match the reporter's language (Chinese → "感谢反馈" / Korean → "피드백 감사합니다" / English → "thanks for the detailed report"). No exclamation mark. No emoji. No "🙏".
 2. **Then state the cause in one sentence, the impact in one sentence.** No multi-paragraph background, no internal symbol names, no walk-through of the fix.
 3. **Then state the ship state**, exactly one of: already shipped in v<X.Y.Z>, fixed on `main` and going out in the next release, planned for v<X.Y.Z>, not planned (with one-line reason and an alternative path). Every sentence must be true at the moment of posting: no "already shipped" without release evidence in the current turn, no "landed on main" while the change sits uncommitted, no implied verification (built a branch, ran an artifact) that did not happen.
 4. **Two paragraphs maximum**, separated by one blank line. No bullet lists, no section headers, no code blocks except a one-line command when actually needed.
@@ -175,7 +178,7 @@ Activate when: PDF, document, white paper, "review this document", "check this d
 
 Review checklist:
 - **Privacy scan**: Detect PII (names, companies, employment dates, salary hints, location details). Hard stop if any text implies job seeking, competitor info, or personal data leakage.
-- **Tone consistency**: Flag voice shifts, register mismatches, formulaic phrasing. Check for AI patterns using the loaded `write-zh.md` or `write-en.md` rules.
+- **Tone consistency**: Flag voice shifts, register mismatches, formulaic phrasing. Check for AI patterns using the loaded `write-zh.md`, `write-ko.md`, or `write-en.md` rules.
 - **Bilingual validation**: For CN/EN pairs, confirm translation accuracy and terminology consistency. Apply Bilingual Review Mode rules.
 - **Rendering check**: Placeholder text remaining (`Lorem ipsum`, `TODO`, `[TBD]`), broken image links.
 - **Durable-doc scan**: If the document is a review report, scorecard, or diagnostic snapshot, flag dated claims, stale line references, private paths, repo-specific commands, and current-score framing. Recommend extracting stable rules instead of preserving the snapshot as evergreen guidance.
