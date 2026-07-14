@@ -1,0 +1,5 @@
+{
+  "$schema": "https://antigravity.google/schemas/v1/plugin.json",
+  "name": "waza",
+  "description": "Engineering workflow skills for Antigravity CLI: think, check, hunt, ui, read, write, learn, and health."
+}

@@ -3,7 +3,7 @@
 # (~/.codex/AGENTS.md, wrapped in markers so re-runs replace the block).
 #
 # Usage:
-#   setup-rule.sh <rule-name> [claude-code|codex]
+#   setup-rule.sh <rule-name> [claude-code|codex|antigravity-cli]
 #
 # rule-name corresponds to a file at rules/<rule-name>.md in this repo. Marker
 # label is derived from the rule slug (e.g. anti-patterns -> Anti-Patterns,
@@ -16,7 +16,7 @@ TARGET="${2:-claude-code}"
 WAZA_REF="${WAZA_REF:-v3.31.2}"
 
 if [ -z "$RULE" ]; then
-  echo "Usage: setup-rule.sh <rule-name> [claude-code|codex]" >&2
+  echo "Usage: setup-rule.sh <rule-name> [claude-code|codex|antigravity-cli]" >&2
   echo "Examples: setup-rule.sh anti-patterns" >&2
   echo "          setup-rule.sh english codex" >&2
   exit 1
@@ -104,8 +104,14 @@ PYEOF
     echo "Waza ${MARKER_LABEL} installed for Codex."
     ;;
 
+  antigravity-cli|antigravity|agy)
+    mkdir -p "$HOME/.gemini/antigravity-cli/rules"
+    curl -fsSL --connect-timeout 10 --max-time 60 "$RAW" -o "$HOME/.gemini/antigravity-cli/rules/${RULE}.md"
+    echo "Waza ${MARKER_LABEL} installed for Antigravity."
+    ;;
+
   *)
-    echo "Usage: setup-rule.sh <rule-name> [claude-code|codex]" >&2
+    echo "Usage: setup-rule.sh <rule-name> [claude-code|codex|antigravity-cli]" >&2
     exit 1
     ;;
 esac
