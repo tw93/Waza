@@ -113,10 +113,11 @@ def test_collect_codex_plugin_tree_ignores_local_cache_files(tmp_path):
     (rules_dir / "waza-routing.md").write_text("routing\n")
     (rules_dir / ".DS_Store").write_bytes(b"noise")
 
-    tree = bm.collect_codex_plugin_tree(tmp_path, "{}\n", {})
+    tree = bm.collect_codex_plugin_tree(tmp_path, "{}\n", "{}\n", {})
 
     assert "plugins/waza/skills/check/scripts/run.py" in tree
     assert "plugins/waza/rules/waza-routing.md" in tree
+    assert "plugins/waza/plugin.json" in tree
     assert all("__pycache__" not in path for path in tree)
     assert all(not path.endswith((".pyc", ".DS_Store")) for path in tree)
 
