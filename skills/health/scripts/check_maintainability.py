@@ -87,7 +87,8 @@ def iter_files(root: Path) -> list[Path]:
     try:
         proc = subprocess.run(
             ["git", "-C", str(root), "ls-files", "--cached", "--others", "--exclude-standard"],
-            text=True,
+            encoding="utf-8",
+            errors="replace",
             stdout=subprocess.PIPE,
             stderr=subprocess.DEVNULL,
             check=False,
@@ -453,9 +454,15 @@ def main() -> int:
     doc_ref_detail = ""
     checker = os.environ.get("DOC_REF_CHECKER")
     if checker and Path(checker).is_file():
+        checker_command = (
+            [sys.executable, checker, str(root)]
+            if Path(checker).suffix == ".py"
+            else ["bash", checker, str(root)]
+        )
         proc = subprocess.run(
-            ["bash", checker, str(root)],
-            text=True,
+            checker_command,
+            encoding="utf-8",
+            errors="replace",
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             check=False,

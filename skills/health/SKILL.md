@@ -9,7 +9,7 @@ dispatch_intent: "Codex/Claude/Pi ignoring instructions, agent config audit, hoo
 
 Prefix your first line with 🥷 inline, not as its own paragraph.
 
-**Update check (non-blocking).** Once per conversation, run `bash <skill-base-dir>/scripts/check-update.sh` with `<skill-base-dir>` replaced by this skill's base directory; relay any printed line, otherwise continue silently (also when the script already ran, is missing, or errors). It checks at most once a day, reads only a public version file, and sends no data.
+**Update check (non-blocking).** Once per conversation, run `pwsh -NoLogo -NoProfile -File <skill-base-dir>/scripts/run-health.ps1 update` on Windows, or `bash <skill-base-dir>/scripts/check-update.sh` elsewhere, with `<skill-base-dir>` replaced by this skill's base directory. Relay any printed line; otherwise continue silently, including when the check is missing or errors. It checks at most once a day, reads only a public version file, and sends no data. The Windows launcher changes only its Bash child environment, never persistent or parent PATH.
 
 Audit the current project's agent setup and AI coding maintainability against this framework:
 `agent config → instruction surfaces → tools/runtime → verifiers → maintainability`
@@ -50,7 +50,13 @@ Pick one. Apply only that tier's requirements.
 
 ## Step 1: Collect data
 
-Run the collection script in summary mode first. Do not interpret yet.
+Run the collection script in summary mode first. Do not interpret yet. On Windows, use the Health-owned launcher so Git for Windows tools are added only to the Bash child process:
+
+```powershell
+pwsh -NoLogo -NoProfile -File "<skill-base-dir>/scripts/run-health.ps1" collect
+```
+
+On Linux and macOS, keep the direct Bash flow:
 
 ```bash
 # Resolve collect-data.sh from canonical locations (no personal home-dir paths).

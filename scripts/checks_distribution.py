@@ -314,6 +314,18 @@ UPDATE_CHECK_LINE = (
     "version file, and sends no data."
 )
 
+HEALTH_UPDATE_CHECK_LINE = (
+    "**Update check (non-blocking).** Once per conversation, run "
+    "`pwsh -NoLogo -NoProfile -File <skill-base-dir>/scripts/run-health.ps1 "
+    "update` on Windows, or `bash <skill-base-dir>/scripts/check-update.sh` "
+    "elsewhere, with `<skill-base-dir>` replaced by this skill's base "
+    "directory. Relay any printed line; otherwise continue silently, "
+    "including when the check is missing or errors. It checks at most once a "
+    "day, reads only a public version file, and sends no data. The Windows "
+    "launcher changes only its Bash child environment, never persistent or "
+    "parent PATH."
+)
+
 
 def check_skill_update_scripts(root: Path, skill_names: set[str]):
     """Direct `npx skills add` installs copy each skill directory, not the repo
@@ -339,13 +351,15 @@ def check_skill_update_scripts(root: Path, skill_names: set[str]):
                 f"differs from {source.relative_to(root)}"
             )
         skill_md = root / "skills" / skill / "SKILL.md"
-        if UPDATE_CHECK_LINE not in skill_md.read_text():
+        expected_line = (
+            HEALTH_UPDATE_CHECK_LINE if skill == "health" else UPDATE_CHECK_LINE
+        )
+        if expected_line not in skill_md.read_text():
             fail(
                 f"UPDATE CHECK LINE DRIFT: {skill_md.relative_to(root)}\n"
-                "  The update-check instruction must match "
-                "skill_checks.UPDATE_CHECK_LINE verbatim. Relative invocations "
-                "like `bash ../../scripts/check-update.sh` break installed "
-                "copies (issue #71)."
+                "  The update-check instruction must match its canonical "
+                "distribution line verbatim. Relative invocations break "
+                "installed copies (issue #71)."
             )
     dispatcher_template = root / "scripts" / "dispatcher-template.md"
     if not dispatcher_template.exists():

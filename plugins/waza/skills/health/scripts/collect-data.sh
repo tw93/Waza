@@ -502,8 +502,9 @@ echo "global_claude_words: $(count_file_words "$HOME/.claude/CLAUDE.md")"
 echo "local_claude_words: $(count_file_words "$P/CLAUDE.md")"
 echo "rules_words: $(rules_word_count)"
 echo "skill_desc_words: $(skill_description_word_count)"
-if command -v python3 >/dev/null 2>&1; then
-python3 - "$SETTINGS" "$MODE" <<'PYEOF' 2>/dev/null || echo "(unavailable)"
+PYTHON_BIN="${WAZA_PYTHON:-python3}"
+if command -v "$PYTHON_BIN" >/dev/null 2>&1 || [ -x "$PYTHON_BIN" ]; then
+"$PYTHON_BIN" - "$SETTINGS" "$MODE" <<'PYEOF' 2>/dev/null || echo "(unavailable)"
 import json
 import sys
 
