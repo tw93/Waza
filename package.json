@@ -22,7 +22,6 @@
     "LICENSE",
     "README.md",
     "rules",
-    "scripts/check-update.sh",
     "scripts/setup-rule.sh",
     "scripts/setup-statusline.sh",
     "scripts/statusline.sh",

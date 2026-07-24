@@ -18,4 +18,3 @@ scripts/setup-rule.sh
 scripts/setup-statusline.sh
 scripts/statusline.sh
 skills/**
-scripts/check-update.sh

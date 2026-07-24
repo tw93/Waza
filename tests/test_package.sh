@@ -21,8 +21,6 @@ fi
 
 # Required helper scripts are bundled.
 for required in \
-  scripts/check-update.sh \
-  skills/check/scripts/check-update.sh \
   skills/check/scripts/release_gate.py \
   skills/read/scripts/fetch.sh \
   skills/health/scripts/check-agent-context.sh \

@@ -13,11 +13,54 @@ from skill_checks import (
     check_codex_plugin,
     check_context_classifier_literals,
     check_description_conformance,
+    check_no_automatic_update_checks,
     check_outcome_contract,
     check_portable_skill_surface,
     check_trigger_overlap,
     pipe_count,
 )
+
+
+# ---- check_no_automatic_update_checks ------------------------------------
+
+
+def write_update_check_surfaces(tmp_path):
+    scripts = tmp_path / "scripts"
+    scripts.mkdir()
+    (scripts / "dispatcher-template.md").write_text("# Waza\n")
+    skill = tmp_path / "skills" / "check"
+    skill.mkdir(parents=True)
+    (skill / "SKILL.md").write_text("# Check\n")
+    return skill
+
+
+def test_no_automatic_update_checks_happy_path(tmp_path, capsys):
+    write_update_check_surfaces(tmp_path)
+
+    check_no_automatic_update_checks(tmp_path, {"check"})
+
+    assert "do not perform automatic update checks" in capsys.readouterr().out
+
+
+def test_no_automatic_update_checks_rejects_checker_file(tmp_path, capsys):
+    write_update_check_surfaces(tmp_path)
+    checker = tmp_path / "scripts" / "check-update.sh"
+    checker.write_text("#!/usr/bin/env bash\n")
+
+    with pytest.raises(SystemExit):
+        check_no_automatic_update_checks(tmp_path, {"check"})
+
+    assert "AUTOMATIC UPDATE CHECKER PRESENT" in capsys.readouterr().err
+
+
+def test_no_automatic_update_checks_rejects_skill_instruction(tmp_path, capsys):
+    skill = write_update_check_surfaces(tmp_path)
+    (skill / "SKILL.md").write_text("Run scripts/check-update.sh now.\n")
+
+    with pytest.raises(SystemExit):
+        check_no_automatic_update_checks(tmp_path, {"check"})
+
+    assert "AUTOMATIC UPDATE INSTRUCTION PRESENT" in capsys.readouterr().err
 
 
 # ---- pipe_count -----------------------------------------------------------

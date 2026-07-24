@@ -14,12 +14,10 @@ Generated files:
   - .agents/plugins/marketplace.json   Codex repo marketplace
   - README.md                          install URLs pinned to VERSION
   - package.json                       npm/Pi package metadata pinned to VERSION
-  - skills/*/scripts/check-update.sh   direct-install update checker copies
   - skills/*/references/durable-context.md
                                         direct-install copies of the shared
                                         durable-context preamble (only skills
                                         whose SKILL.md links it)
-  - scripts/check-update.sh            LOCAL_VERSION pinned to VERSION
   - scripts/setup-rule.sh              default WAZA_REF pinned to VERSION
   - scripts/setup-statusline.sh        default WAZA_REF pinned to VERSION
 
@@ -90,10 +88,6 @@ CODEX_DESCRIPTION = (
     "Engineering workflow skills for Codex: think, check, hunt, ui, read, "
     "write, learn, and health."
 )
-# Relative location of the update checker under any install root: the repo root
-# ships it at scripts/check-update.sh, and every skill directory carries the same
-# copy so direct `npx skills add` installs (which omit the repo root) still have it.
-CHECK_UPDATE_SCRIPT = Path("scripts/check-update.sh")
 # Shared durable-context preamble: source of truth in rules/, copied into each
 # referencing skill's references/ so direct installs resolve the link locally.
 DURABLE_CONTEXT_RULE = Path("rules/durable-context.md")
@@ -267,7 +261,6 @@ def build_package_json(version: str) -> str:
             "LICENSE",
             "README.md",
             "rules",
-            "scripts/check-update.sh",
             "scripts/setup-rule.sh",
             "scripts/setup-statusline.sh",
             "scripts/statusline.sh",
@@ -329,9 +322,6 @@ README_SWAP_TAG_RE = re.compile(
     r"swap `v\d+\.\d+\.\d+` for `main` if you want bleeding-edge scripts\."
 )
 WAZA_REF_RE = re.compile(r'WAZA_REF="\$\{WAZA_REF:-(?:main|v\d+\.\d+\.\d+)\}"')
-LOCAL_VERSION_RE = re.compile(
-    r'LOCAL_VERSION="\$\{LOCAL_VERSION:-v\d+\.\d+\.\d+\}"'
-)
 
 
 def render_readme(current: str) -> str:
@@ -347,18 +337,6 @@ def render_readme(current: str) -> str:
 
 def render_script_ref(current: str, version: str) -> str:
     return WAZA_REF_RE.sub(f'WAZA_REF="${{WAZA_REF:-v{version}}}"', current)
-
-
-def render_update_check_version(current: str, version: str) -> str:
-    rendered, count = LOCAL_VERSION_RE.subn(
-        f'LOCAL_VERSION="${{LOCAL_VERSION:-v{version}}}"', current
-    )
-    if count != 1:
-        raise SystemExit(
-            "ERROR: scripts/check-update.sh must define "
-            'LOCAL_VERSION="${LOCAL_VERSION:-vX.Y.Z}"'
-        )
-    return rendered
 
 
 def diff(label: str, expected: str, actual: str) -> str:
@@ -380,21 +358,18 @@ def bytes_diff(label: str, expected: bytes, actual: bytes) -> str:
     )
 
 
-def collect_skill_shared_assets(root: Path, rendered_check_update: str) -> dict[str, bytes]:
+def collect_skill_shared_assets(root: Path) -> dict[str, bytes]:
     """Per-skill copies of shared assets that direct installs need locally.
 
-    `npx skills add` copies only each skill directory, so every skill carries
-    its own update checker, and every skill whose SKILL.md links the shared
-    durable-context preamble carries a references/ copy of it.
+    `npx skills add` copies only each skill directory, so every skill whose
+    SKILL.md links the shared durable-context preamble carries a references/
+    copy of it.
     """
     generated: dict[str, bytes] = {}
     durable_source = root / DURABLE_CONTEXT_RULE
     durable_bytes = durable_source.read_bytes() if durable_source.exists() else None
     for skill_file in sorted((root / "skills").glob("*/SKILL.md")):
         skill_dir = skill_file.parent.relative_to(root)
-        generated[(skill_dir / CHECK_UPDATE_SCRIPT).as_posix()] = (
-            rendered_check_update.encode()
-        )
         if DURABLE_CONTEXT_COPY.as_posix() in skill_file.read_text():
             if durable_bytes is None:
                 raise SystemExit(
@@ -406,9 +381,7 @@ def collect_skill_shared_assets(root: Path, rendered_check_update: str) -> dict[
 
 
 def shared_asset_source(rel: str) -> str:
-    if rel.endswith(DURABLE_CONTEXT_COPY.name):
-        return DURABLE_CONTEXT_RULE.as_posix()
-    return CHECK_UPDATE_SCRIPT.as_posix()
+    return DURABLE_CONTEXT_RULE.as_posix()
 
 
 def collect_codex_plugin_tree(
@@ -487,24 +460,12 @@ def main() -> int:
             "default WAZA_REF",
             lambda actual: render_script_ref(actual, version),
         ),
-        (
-            root / CHECK_UPDATE_SCRIPT,
-            "LOCAL_VERSION",
-            lambda actual: render_update_check_version(actual, version),
-        ),
     ]
     script_pairs = []
     for script, field_label, renderer in pinned_scripts:
         actual = script.read_text() if script.exists() else ""
         script_pairs.append((script, field_label, actual, renderer(actual)))
-    rendered_check_update = ""
-    for script, _field_label, _actual, rendered_script in script_pairs:
-        if script.relative_to(root).as_posix() == CHECK_UPDATE_SCRIPT.as_posix():
-            rendered_check_update = rendered_script
-            break
-    if not rendered_check_update:
-        raise SystemExit(f"ERROR: missing {CHECK_UPDATE_SCRIPT}")
-    skill_shared_assets = collect_skill_shared_assets(root, rendered_check_update)
+    skill_shared_assets = collect_skill_shared_assets(root)
     codex_plugin_tree = collect_codex_plugin_tree(
         root,
         codex_plugin_rendered,

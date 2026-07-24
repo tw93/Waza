@@ -301,63 +301,37 @@ def check_rules_files_present(root: Path):
             fail(f"MISSING RULE FILE: {path}")
     print(f"ok: rules/ files present ({', '.join(required)})")
 
-# Canonical update-check instruction every SKILL.md must carry verbatim. The
-# base-dir wording is load-bearing: agents that run the literal command from
-# their own cwd hit exit 127 on any relative path (issue #71), so the line must
-# tell them to resolve against the skill's install directory and to fail quiet.
-UPDATE_CHECK_LINE = (
-    "**Update check (non-blocking).** Once per conversation, run "
-    "`bash <skill-base-dir>/scripts/check-update.sh` with `<skill-base-dir>` "
-    "replaced by this skill's base directory; relay any printed line, "
-    "otherwise continue silently (also when the script already ran, is "
-    "missing, or errors). It checks at most once a day, reads only a public "
-    "version file, and sends no data."
-)
+
+AUTOMATIC_UPDATE_CHECK_FRAGMENT = "scripts/check-update.sh"
 
 
-def check_skill_update_scripts(root: Path, skill_names: set[str]):
-    """Direct `npx skills add` installs copy each skill directory, not the repo
-    root, so each skill must carry the update checker it asks agents to run,
-    and every surface that invokes it (each SKILL.md plus the Desktop
-    dispatcher template) must use the exact canonical line.
-    """
-    source = root / "scripts" / "check-update.sh"
-    if not source.exists():
-        fail(f"MISSING UPDATE CHECKER: expected {source}")
-    expected = source.read_bytes()
-    for skill in sorted(skill_names):
-        path = root / "skills" / skill / "scripts" / "check-update.sh"
-        if not path.exists():
-            fail(
-                f"MISSING SKILL UPDATE CHECKER: {path.relative_to(root)}\n"
-                "  Direct `npx skills add` installs only the skill folder, so "
-                "the checker must be present inside every skill directory."
-            )
-        if path.read_bytes() != expected:
-            fail(
-                f"SKILL UPDATE CHECKER DRIFT: {path.relative_to(root)} "
-                f"differs from {source.relative_to(root)}"
-            )
-        skill_md = root / "skills" / skill / "SKILL.md"
-        if UPDATE_CHECK_LINE not in skill_md.read_text():
-            fail(
-                f"UPDATE CHECK LINE DRIFT: {skill_md.relative_to(root)}\n"
-                "  The update-check instruction must match "
-                "skill_checks.UPDATE_CHECK_LINE verbatim. Relative invocations "
-                "like `bash ../../scripts/check-update.sh` break installed "
-                "copies (issue #71)."
-            )
-    dispatcher_template = root / "scripts" / "dispatcher-template.md"
-    if not dispatcher_template.exists():
-        fail(f"MISSING DISPATCHER TEMPLATE: expected {dispatcher_template}")
-    if UPDATE_CHECK_LINE not in dispatcher_template.read_text():
+def check_no_automatic_update_checks(root: Path, skill_names: set[str]):
+    """Updates are explicit maintenance, never work every skill invocation."""
+    forbidden_files = [root / AUTOMATIC_UPDATE_CHECK_FRAGMENT]
+    forbidden_files.extend(
+        root / "skills" / skill / AUTOMATIC_UPDATE_CHECK_FRAGMENT
+        for skill in sorted(skill_names)
+    )
+    present = [path.relative_to(root) for path in forbidden_files if path.exists()]
+    if present:
         fail(
-            f"UPDATE CHECK LINE DRIFT: {dispatcher_template.relative_to(root)}\n"
-            "  The Desktop ZIP root SKILL.md is generated from this template, "
-            "so its update-check instruction must match "
-            "skill_checks.UPDATE_CHECK_LINE verbatim."
+            "AUTOMATIC UPDATE CHECKER PRESENT: updates must remain explicit; "
+            f"remove {', '.join(map(str, present))}"
         )
-    print(f"ok: skill-local update checkers present ({len(skill_names)} skills)")
+
+    surfaces = [root / "scripts" / "dispatcher-template.md"]
+    surfaces.extend(root / "skills" / skill / "SKILL.md" for skill in skill_names)
+    referenced = [
+        path.relative_to(root)
+        for path in surfaces
+        if path.exists() and AUTOMATIC_UPDATE_CHECK_FRAGMENT in path.read_text()
+    ]
+    if referenced:
+        fail(
+            "AUTOMATIC UPDATE INSTRUCTION PRESENT: updates must remain explicit; "
+            f"remove the checker invocation from {', '.join(map(str, referenced))}"
+        )
+    print("ok: skill invocations do not perform automatic update checks")
 
 
 def check_readme_install_command(root: Path):

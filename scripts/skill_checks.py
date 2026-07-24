@@ -57,8 +57,7 @@ from checks_distribution import (  # noqa: F401
     check_codex_plugin_mirror,
     check_codex_marketplace,
     check_rules_files_present,
-    UPDATE_CHECK_LINE,
-    check_skill_update_scripts,
+    check_no_automatic_update_checks,
     check_readme_install_command,
     check_release_workflow_npm_surface,
 )
