@@ -51,7 +51,7 @@ resolve_health_helper() {
 
 count_project_files() {
   local count
-  count=$(git -C "$P" ls-files 2>/dev/null | wc -l | tr -d ' ' || true)
+  count=$(git -c core.fsmonitor=false -C "$P" ls-files 2>/dev/null | wc -l | tr -d ' ' || true)
   if [ -z "$count" ] || [ "$count" = "0" ]; then
     count=$(find "$P" -type f \
       -not -path "*/.git/*" \
@@ -65,7 +65,7 @@ count_project_files() {
 
 count_contributors() {
   local count
-  count=$(git -C "$P" log -n 500 --format='%ae' 2>/dev/null | sort -u | wc -l | tr -d ' ' || true)
+  count=$(git -c core.fsmonitor=false -C "$P" log -n 500 --format='%ae' 2>/dev/null | sort -u | wc -l | tr -d ' ' || true)
   printf '%s\n' "${count:-0}"
 }
 
@@ -594,7 +594,7 @@ else
   echo "(none)"
 fi
 echo "=== GITIGNORE ==="
-_GITIGNORE_HIT=$(git -C "$P" check-ignore -v .claude/settings.local.json 2>/dev/null || true)
+_GITIGNORE_HIT=$(git -c core.fsmonitor=false -C "$P" check-ignore -v .claude/settings.local.json 2>/dev/null || true)
 if [ -n "$_GITIGNORE_HIT" ]; then
   _GITIGNORE_SOURCE=${_GITIGNORE_HIT%%:*}
   case "$_GITIGNORE_SOURCE" in
@@ -715,10 +715,10 @@ for DIR in "$P/.claude/skills" "$HOME/.claude/skills"; do
     _PROVENANCE_FOUND=1
     TARGET=$(resolve_symlink "$link")
     echo "link=$(basename "$link") target=$TARGET"
-    GIT_ROOT=$(git -C "$TARGET" rev-parse --show-toplevel 2>/dev/null || echo "")
+    GIT_ROOT=$(git -c core.fsmonitor=false -C "$TARGET" rev-parse --show-toplevel 2>/dev/null || echo "")
     if [ -n "$GIT_ROOT" ]; then
-      REMOTE=$(git -C "$GIT_ROOT" remote get-url origin 2>/dev/null || echo "unknown")
-      COMMIT=$(git -C "$GIT_ROOT" rev-parse --short HEAD 2>/dev/null || echo "unknown")
+      REMOTE=$(git -c core.fsmonitor=false -C "$GIT_ROOT" remote get-url origin 2>/dev/null || echo "unknown")
+      COMMIT=$(git -c core.fsmonitor=false -C "$GIT_ROOT" rev-parse --short HEAD 2>/dev/null || echo "unknown")
       echo "  git_remote=$REMOTE commit=$COMMIT"
     fi
   done

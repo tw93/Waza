@@ -86,7 +86,17 @@ def read_text(path: Path, limit: int | None = None) -> str:
 def iter_files(root: Path) -> list[Path]:
     try:
         proc = subprocess.run(
-            ["git", "-C", str(root), "ls-files", "--cached", "--others", "--exclude-standard"],
+            [
+                "git",
+                "-c",
+                "core.fsmonitor=false",
+                "-C",
+                str(root),
+                "ls-files",
+                "--cached",
+                "--others",
+                "--exclude-standard",
+            ],
             encoding="utf-8",
             errors="replace",
             stdout=subprocess.PIPE,

@@ -1,6 +1,6 @@
 param(
     [Parameter(Mandatory = $true, Position = 0)]
-    [ValidateSet("update", "collect")]
+    [ValidateSet("collect", "agent-context", "maintainability", "doc-refs", "verifier-output")]
     [string]$Action,
 
     [Parameter(ValueFromRemainingArguments = $true)]
@@ -14,7 +14,12 @@ function Find-GitRoot([string]$Executable) {
         return $null
     }
 
-    $current = Split-Path -Parent ([IO.Path]::GetFullPath($Executable))
+    $fullPath = [IO.Path]::GetFullPath($Executable)
+    $current = if (Test-Path -LiteralPath $fullPath -PathType Container) {
+        $fullPath
+    } else {
+        Split-Path -Parent $fullPath
+    }
     while ($current) {
         if (
             (Test-Path -LiteralPath (Join-Path $current "bin\bash.exe") -PathType Leaf) -and
@@ -31,14 +36,29 @@ function Find-GitRoot([string]$Executable) {
     return $null
 }
 
-function Find-Python {
-    if ($env:WAZA_PYTHON -and (Test-Path -LiteralPath $env:WAZA_PYTHON -PathType Leaf)) {
-        return (Resolve-Path -LiteralPath $env:WAZA_PYTHON).Path
+function Resolve-Executable([string]$Candidate) {
+    if (-not $Candidate) {
+        return $null
     }
-    foreach ($name in @("python3.exe", "python.exe")) {
-        $command = Get-Command $name -ErrorAction SilentlyContinue
-        if ($command) {
-            return $command.Source
+    if (Test-Path -LiteralPath $Candidate -PathType Leaf) {
+        return (Resolve-Path -LiteralPath $Candidate).Path
+    }
+    $command = Get-Command $Candidate -ErrorAction SilentlyContinue
+    if ($command) {
+        return $command.Source
+    }
+    return $null
+}
+
+function Find-Python {
+    $override = Resolve-Executable $env:WAZA_PYTHON
+    if ($override) {
+        return $override
+    }
+    foreach ($name in @("python3.exe", "python.exe", "py.exe")) {
+        $executable = Resolve-Executable $name
+        if ($executable) {
+            return $executable
         }
     }
     $candidates = @(
@@ -56,7 +76,14 @@ function Find-Python {
     return $null
 }
 
-$scriptName = if ($Action -eq "update") { "check-update.sh" } else { "collect-data.sh" }
+$scriptNames = @{
+    "collect" = "collect-data.sh"
+    "agent-context" = "check-agent-context.sh"
+    "maintainability" = "check-maintainability.sh"
+    "doc-refs" = "check-doc-refs.sh"
+    "verifier-output" = "check-verifier-output.sh"
+}
+$scriptName = $scriptNames[$Action]
 $scriptPath = Join-Path $PSScriptRoot $scriptName
 if (-not (Test-Path -LiteralPath $scriptPath -PathType Leaf)) {
     [Console]::Error.WriteLine("Health runtime script not found: $scriptPath")
@@ -65,12 +92,23 @@ if (-not (Test-Path -LiteralPath $scriptPath -PathType Leaf)) {
 
 $bashPath = $null
 $childPath = $env:PATH
-if ($IsWindows) {
+$pythonPath = $null
+$isWindowsHost = $env:OS -eq "Windows_NT"
+if ($isWindowsHost) {
     $git = Get-Command git.exe -ErrorAction SilentlyContinue
     $bash = Get-Command bash.exe -ErrorAction SilentlyContinue
-    $gitRoot = Find-GitRoot $git.Source
+    $gitRoot = Find-GitRoot $env:GIT_INSTALL_ROOT
     if (-not $gitRoot) {
-        $gitRoot = Find-GitRoot $bash.Source
+        $gitRoot = Find-GitRoot $(if ($git) { $git.Source } else { $null })
+    }
+    if (-not $gitRoot) {
+        $gitRoot = Find-GitRoot $(if ($bash) { $bash.Source } else { $null })
+    }
+    if (-not $gitRoot -and $git) {
+        $gitExecPath = & $git.Source --exec-path 2>$null
+        if ($LASTEXITCODE -eq 0) {
+            $gitRoot = Find-GitRoot $gitExecPath
+        }
     }
     if (-not $gitRoot) {
         [Console]::Error.WriteLine(
@@ -97,19 +135,10 @@ if ($IsWindows) {
     $bashPath = $bash.Source
 }
 
-$startInfo = [Diagnostics.ProcessStartInfo]::new()
-$startInfo.FileName = $bashPath
-$startInfo.UseShellExecute = $false
-$startInfo.WorkingDirectory = (Get-Location).Path
-$startInfo.ArgumentList.Add($scriptPath)
-foreach ($arg in $ScriptArgs) {
-    $startInfo.ArgumentList.Add($arg)
-}
-$startInfo.Environment["PATH"] = $childPath
+$env:PATH = $childPath
 if ($pythonPath) {
-    $startInfo.Environment["WAZA_PYTHON"] = $pythonPath.Replace("\", "/")
+    $env:WAZA_PYTHON = $pythonPath.Replace("\", "/")
 }
 
-$process = [Diagnostics.Process]::Start($startInfo)
-$process.WaitForExit()
-exit $process.ExitCode
+& $bashPath $scriptPath @ScriptArgs
+exit $LASTEXITCODE

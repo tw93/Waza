@@ -9,8 +9,6 @@ dispatch_intent: "Codex/Claude/Pi ignoring instructions, agent config audit, hoo
 
 Prefix your first line with 🥷 inline, not as its own paragraph.
 
-**Update check (non-blocking).** Once per conversation, run `pwsh -NoLogo -NoProfile -File <skill-base-dir>/scripts/run-health.ps1 update` on Windows, or `bash <skill-base-dir>/scripts/check-update.sh` elsewhere, with `<skill-base-dir>` replaced by this skill's base directory. Relay any printed line; otherwise continue silently, including when the check is missing or errors. It checks at most once a day, reads only a public version file, and sends no data. The Windows launcher changes only its Bash child environment, never persistent or parent PATH.
-
 Audit the current project's agent setup and AI coding maintainability against this framework:
 `agent config → instruction surfaces → tools/runtime → verifiers → maintainability`
 
@@ -53,7 +51,7 @@ Pick one. Apply only that tier's requirements.
 Run the collection script in summary mode first. Do not interpret yet. On Windows, use the Health-owned launcher so Git for Windows tools are added only to the Bash child process:
 
 ```powershell
-pwsh -NoLogo -NoProfile -File "<skill-base-dir>/scripts/run-health.ps1" collect
+powershell.exe -NoLogo -NoProfile -File "<skill-base-dir>/scripts/run-health.ps1" collect
 ```
 
 On Linux and macOS, keep the direct Bash flow:
@@ -133,7 +131,7 @@ Confirm the tier. Then route:
 
 - **Simple:** Analyze locally. No subagents.
 - **Standard:** Analyze locally from the summary output. Do not launch subagents by default. If the user asks for a deep/full/thorough audit, or if local analysis cannot classify a security/control issue, escalate to deep mode and explain the likely token cost.
-- **Complex, remembered deep preference, explicit deep audit, or explicit AI maintainability audit:** Re-run collection with `bash "$HEALTH_SCRIPT" auto deep`, then launch the relevant subagents in parallel. Redact credentials to `[REDACTED]`.
+- **Complex, remembered deep preference, explicit deep audit, or explicit AI maintainability audit:** Re-run collection with `powershell.exe -NoLogo -NoProfile -File "<skill-base-dir>/scripts/run-health.ps1" collect auto deep` on Windows, or `bash "$HEALTH_SCRIPT" auto deep` on Linux and macOS. Then launch the relevant subagents in parallel. Redact credentials to `[REDACTED]`.
   - **Agent 1** (Context + Security): Read `agents/inspector-context.md`. Feed `CONVERSATION SIGNALS` section.
   - **Agent 2** (Control + Behavior): Read `agents/inspector-control.md`. Feed detected tier.
   - **Agent 3** (AI Maintainability): Read `agents/inspector-maintainability.md`. Feed only `TIER METRICS`, `AI MAINTAINABILITY SUMMARY` or `AI MAINTAINABILITY DETAIL`, and the script hotspot lists. Launch this agent only for deep health audits, Complex projects, or explicit code-rot/AI-maintainability requests.
@@ -177,6 +175,12 @@ Agent instructions in the wrong layer, missing hooks, oversized descriptions, ve
 
 Quick check from the project root, reusing `$HEALTH_SCRIPT` resolved in Step 1:
 
+```powershell
+powershell.exe -NoLogo -NoProfile -File "<skill-base-dir>/scripts/run-health.ps1" agent-context . summary
+```
+
+On Linux and macOS:
+
 ```bash
 bash "$(dirname "$HEALTH_SCRIPT")/check-agent-context.sh" . summary
 ```
@@ -197,7 +201,7 @@ Layering rule: project-specific commands, app names, artifact names, and release
 
 Scope by load surface, not just by layer. A rule kept in the project still pays context on every session unless it is bound to where it applies: language and framework rules carry file-type `paths` scope, project-domain rules bind to their source directories (`paths` frontmatter or a nested-directory `CLAUDE.md`), and only genuinely cross-cutting constraints load unconditionally in the always-loaded root. A rule that only matters under one path does not belong in an always-loaded file.
 
-**Concentrated fix chains.** Run `git log --oneline --since='2 weeks ago' | grep -i fix` and group by area (the prefix before `:` or `(`). When the same area has 3+ fix commits in a short window, it signals a missing structural invariant: each fix is a guess at a rule that was never written down. Report a Structural `WARN` with the area name, fix count, and recommend adding an explicit rule to `AGENTS.md` / `CLAUDE.md` / project rules that captures the invariant those fixes were converging toward. A concentrated fix chain that touches the same file 4+ times is a stronger signal than scattered fixes across different files.
+**Concentrated fix chains.** Run `git -c core.fsmonitor=false log --oneline --since='2 weeks ago' | grep -i fix` and group by area (the prefix before `:` or `(`). When the same area has 3+ fix commits in a short window, it signals a missing structural invariant: each fix is a guess at a rule that was never written down. Report a Structural `WARN` with the area name, fix count, and recommend adding an explicit rule to `AGENTS.md` / `CLAUDE.md` / project rules that captures the invariant those fixes were converging toward. A concentrated fix chain that touches the same file 4+ times is a stronger signal than scattered fixes across different files.
 
 **Hotspot ownership gaps.** In deep mode, read `HOTSPOT OWNERSHIP SURFACE`. If a largest source file exceeds the hotspot threshold and `AGENTS.md` / `CLAUDE.md` / shared instruction files do not name who owns the hotspot, what boundary should stay stable, and which verification command covers it, report a Structural `WARN`. Do not treat documented large files as code rot by size alone; some modules are intentionally large.
 
@@ -205,11 +209,23 @@ Scope by load surface, not just by layer. A rule kept in the project still pays 
 
 Quick check from the project root, reusing `$HEALTH_SCRIPT` resolved in Step 1:
 
+```powershell
+powershell.exe -NoLogo -NoProfile -File "<skill-base-dir>/scripts/run-health.ps1" maintainability . summary
+```
+
+On Linux and macOS:
+
 ```bash
 bash "$(dirname "$HEALTH_SCRIPT")/check-maintainability.sh" . summary
 ```
 
 For deep audits:
+
+```powershell
+powershell.exe -NoLogo -NoProfile -File "<skill-base-dir>/scripts/run-health.ps1" maintainability . deep
+```
+
+On Linux and macOS:
 
 ```bash
 bash "$(dirname "$HEALTH_SCRIPT")/check-maintainability.sh" . deep
@@ -227,6 +243,12 @@ Common offenders:
 
 Quick check from the project root, reusing `$HEALTH_SCRIPT` resolved in Step 1:
 
+```powershell
+powershell.exe -NoLogo -NoProfile -File "<skill-base-dir>/scripts/run-health.ps1" doc-refs .
+```
+
+On Linux and macOS:
+
 ```bash
 bash "$(dirname "$HEALTH_SCRIPT")/check-doc-refs.sh" .
 ```
@@ -238,6 +260,12 @@ Report missing references as Structural findings, not Critical, unless the missi
 **Broken Markdown references.** In deep mode, `check-maintainability.sh` also scans repository Markdown links. Report these as Structural findings when they point to missing local files, especially design, security, release, or handoff docs that agents may follow during future work.
 
 **Stale verifier cache output.** If validation output points at a deleted temp worktree or non-existent `/tmp` / `/private/tmp` file, parse the captured log with:
+
+```powershell
+powershell.exe -NoLogo -NoProfile -File "<skill-base-dir>/scripts/run-health.ps1" verifier-output . <log-file>
+```
+
+On Linux and macOS:
 
 ```bash
 bash "$(dirname "$HEALTH_SCRIPT")/check-verifier-output.sh" . <log-file>

@@ -32,3 +32,12 @@ jobs:
           rm -rf "shellcheck-${SHELLCHECK_VERSION}" "$tarball"
           shellcheck --version
       - run: make test
+  health-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install pytest
+      - run: python -m pytest tests/python/test_health_windows_launcher.py -q

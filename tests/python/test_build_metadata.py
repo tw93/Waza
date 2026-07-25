@@ -122,20 +122,6 @@ def test_collect_codex_plugin_tree_ignores_local_cache_files(tmp_path):
     assert all(not path.endswith((".pyc", ".DS_Store")) for path in tree)
 
 
-def test_collect_skill_shared_assets_copies_checker_to_each_skill(tmp_path):
-    for name in ("check", "think"):
-        skill_dir = tmp_path / "skills" / name
-        skill_dir.mkdir(parents=True)
-        (skill_dir / "SKILL.md").write_text("---\nname: x\n---\n")
-
-    tree = bm.collect_skill_shared_assets(tmp_path, "checker\n")
-
-    assert tree == {
-        "skills/check/scripts/check-update.sh": b"checker\n",
-        "skills/think/scripts/check-update.sh": b"checker\n",
-    }
-
-
 def test_collect_skill_shared_assets_copies_durable_context_when_linked(tmp_path):
     rules_dir = tmp_path / "rules"
     rules_dir.mkdir()
@@ -149,7 +135,7 @@ def test_collect_skill_shared_assets_copies_durable_context_when_linked(tmp_path
     unlinked.mkdir(parents=True)
     (unlinked / "SKILL.md").write_text("---\nname: x\n---\n")
 
-    tree = bm.collect_skill_shared_assets(tmp_path, "checker\n")
+    tree = bm.collect_skill_shared_assets(tmp_path)
 
     assert tree["skills/check/references/durable-context.md"] == b"preamble\n"
     assert "skills/read/references/durable-context.md" not in tree
@@ -163,4 +149,4 @@ def test_collect_skill_shared_assets_fails_when_link_has_no_source(tmp_path):
     )
 
     with pytest.raises(SystemExit):
-        bm.collect_skill_shared_assets(tmp_path, "checker\n")
+        bm.collect_skill_shared_assets(tmp_path)

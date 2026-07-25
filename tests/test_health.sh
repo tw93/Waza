@@ -25,4 +25,22 @@ if grep -q '^USER CORRECTION: Please build a dashboard for sales data\.$' "$tmpd
   echo "false positive correction detected"; exit 1
 fi
 
+# Repository-configured fsmonitor hooks are executable project code. Health
+# collection must disable them rather than relying on a clean Git status.
+fsmonitor_repo="$tmpdir/fsmonitor"
+mkdir -p "$fsmonitor_repo"
+(
+  cd "$fsmonitor_repo"
+  git init -q
+  printf '%s\n' \
+    '#!/usr/bin/env bash' \
+    'printf executed > fsmonitor-marker' \
+    "printf '2.0.0\\n'" \
+    > fsmonitor.sh
+  chmod +x fsmonitor.sh
+  git config core.fsmonitor "$fsmonitor_repo/fsmonitor.sh"
+  HOME="$tmpdir" bash "$ROOT/skills/health/scripts/collect-data.sh" auto > "$tmpdir/fsmonitor.out"
+  test ! -e fsmonitor-marker
+)
+
 echo "health smoke: ok"
