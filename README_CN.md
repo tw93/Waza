@@ -1,10 +1,9 @@
-<h4 align="right"><a href="README.md">English</a> | <strong>简体中文</strong></h4>
+<h4 align="right"><a href="README.md">English</a> | <strong>中文</strong></h4>
 
 <div align="center">
   <img src="https://gw.alipayobjects.com/zos/k/2h/waza.svg" width="120" />
   <h1>Waza</h1>
   <p><b>把熟练的工程习惯，变成 AI 能跑的技能</b></p>
-  <p><a href="llms.txt">LLM 指南</a></p>
   <a href="https://github.com/tw93/Waza/actions/workflows/test.yml"><img src="https://img.shields.io/github/actions/workflow/status/tw93/Waza/test.yml?branch=main&style=flat-square&label=tests" alt="Tests"></a>
   <a href="https://github.com/tw93/Waza/stargazers"><img src="https://img.shields.io/github/stars/tw93/Waza?style=flat-square" alt="Stars"></a>
   <a href="https://github.com/tw93/Waza/releases"><img src="https://img.shields.io/github/v/tag/tw93/Waza?label=version&style=flat-square" alt="Version"></a>
@@ -42,6 +41,9 @@
 ```bash
 npx skills add tw93/Waza -a claude-code codex cursor -g -y
 ```
+
+也可以直接告诉你的 Agent 帮你安装：
+> 阅读 https://github.com/tw93/Waza/blob/main/llms.txt 帮我安装 Waza
 
 技能统一存放在 `~/.agents/skills` 共享目录。Claude Code 通过软链接接入；Codex、Cursor、Gemini CLI、Copilot、Amp、Kimi Code CLI 以及其他能读取该目录的 Agent，都会自动加载这 8 个技能。拥有独立技能目录的 Agent 可在 `-a` 后指定其 ID，比如 `antigravity-cli` 或 `qwen-code`。后续通过 `npx skills update -g -y` 保持更新。
 

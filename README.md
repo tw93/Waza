@@ -1,10 +1,9 @@
-<h4 align="right"><strong>English</strong> | <a href="README_CN.md">简体中文</a></h4>
+<h4 align="right"><strong>English</strong> | <a href="README_CN.md">中文</a></h4>
 
 <div align="center">
   <img src="https://gw.alipayobjects.com/zos/k/2h/waza.svg" width="120" />
   <h1>Waza</h1>
   <p><b>Essential engineering habits, turned into skills that help AI write better code.</b></p>
-  <p><a href="llms.txt">LLM guide</a></p>
   <a href="https://github.com/tw93/Waza/actions/workflows/test.yml"><img src="https://img.shields.io/github/actions/workflow/status/tw93/Waza/test.yml?branch=main&style=flat-square&label=tests" alt="Tests"></a>
   <a href="https://github.com/tw93/Waza/stargazers"><img src="https://img.shields.io/github/stars/tw93/Waza?style=flat-square" alt="Stars"></a>
   <a href="https://github.com/tw93/Waza/releases"><img src="https://img.shields.io/github/v/tag/tw93/Waza?label=version&style=flat-square" alt="Version"></a>
@@ -42,6 +41,9 @@ Each skill is a folder with reference docs, helper scripts, and gotchas from rea
 ```bash
 npx skills add tw93/Waza -a claude-code codex cursor -g -y
 ```
+
+Or tell your agent to install:
+> Install Waza for me by reading https://github.com/tw93/Waza/blob/main/llms.txt
 
 One copy lands in `~/.agents/skills`, the shared skills directory. Claude Code is symlinked in; Codex, Cursor, Gemini CLI, Copilot, Amp, Kimi Code CLI, and every other agent that reads that directory picks the eight skills up as `/check`, `/think`, and so on. Agents with a private skills directory take their id after `-a` (for example `antigravity-cli` or `qwen-code`). Update with `npx skills update -g -y`.
 
