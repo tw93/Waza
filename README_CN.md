@@ -19,7 +19,7 @@
 
 ## 技能
 
-每个工程习惯对应一个独立技能。Claude Code 输入斜杠命令即可触发，Codex 则直接按技能名调用。
+每个工程习惯对应一个独立技能，Claude Code 输入斜杠命令即可触发，Codex 则直接按技能名调用
 
 | 技能 | 触发时机 | 它做什么 |
 | :--- | :--- | :--- |
@@ -32,7 +32,7 @@
 | [`/read`](skills/read/SKILL.md) | 阅读网页链接或 PDF | 快速提取精炼摘要，或转成方便引用归档的干净 Markdown |
 | [`/health`](skills/health/SKILL.md) | 检查智能体运行状态 | 排查 Agent 配置与指令漂移，先轻量概览再深入诊断 |
 
-每个技能都是一个独立目录，内置参考文档、辅助脚本以及真实踩坑沉淀的避坑指南。
+每个技能都是一个独立目录，内置参考文档、辅助脚本以及真实踩坑沉淀的避坑指南
 
 ## 安装
 
@@ -45,7 +45,7 @@ npx skills add tw93/Waza -a claude-code codex cursor -g -y
 也可以直接告诉你的 Agent 帮你安装：
 > 阅读 https://github.com/tw93/Waza/blob/main/llms.txt 帮我安装 Waza
 
-技能统一存放在 `~/.agents/skills` 共享目录。Claude Code 通过软链接接入；Codex、Cursor、Gemini CLI、Copilot、Amp、Kimi Code CLI 以及其他能读取该目录的 Agent，都会自动加载这 8 个技能。拥有独立技能目录的 Agent 可在 `-a` 后指定其 ID，比如 `antigravity-cli` 或 `qwen-code`。后续通过 `npx skills update -g -y` 保持更新。
+技能统一存放在 `~/.agents/skills` 共享目录，Claude Code 通过软链接接入，Codex、Cursor、Gemini CLI、Copilot、Amp、Kimi Code CLI 以及其他能读取该目录的 Agent 都会自动加载这 8 个技能。拥有独立技能目录的 Agent 可在 `-a` 后指定其 ID，比如 `antigravity-cli` 或 `qwen-code`，后续通过 `npx skills update -g -y` 保持更新
 
 **宿主插件方式**，如果你更习惯使用宿主自有的更新命令（技能带有命名空间前缀，如 `/waza:check`）：
 
@@ -59,13 +59,13 @@ codex plugin marketplace add tw93/Waza
 codex plugin add waza@waza
 ```
 
-**Claude Desktop**：下载 [waza.zip](https://github.com/tw93/Waza/releases/latest/download/waza.zip)，打开 Customize > Skills > "+" > Create skill 并上传压缩包。更新时点击卡片上的 "..." 选择 Replace，再上传最新的 ZIP 即可。
+**Claude Desktop**：下载 [waza.zip](https://github.com/tw93/Waza/releases/latest/download/waza.zip)，打开 Customize > Skills > "+" > Create skill 并上传压缩包，更新时点击卡片上的 "..." 选择 Replace 再上传最新的 ZIP 即可
 
-**Pi**：`pi install npm:@tw93/waza`，通过 `pi update npm:@tw93/waza` 更新。
+**Pi**：`pi install npm:@tw93/waza`，通过 `pi update npm:@tw93/waza` 更新
 
 ## 技能串联
 
-技能串联由你做主。每个技能跑完既定目标就停下，拿到明确授权后会自动接力完成整套流程，不需要在每个环节反复确认。
+技能串联由你做主，每个技能跑完既定目标就停下，拿到明确授权后会自动接力完成整套流程，不需要在每个环节反复确认
 
 **常见工作流：**
 
@@ -76,13 +76,13 @@ codex plugin add waza@waza
 
 ## 项目上下文
 
-Waza 只沉淀通用的工程习惯。`/check` 运行时只从目标仓库公开的项目文件与你的任务要求提炼约束，比如 README、包清单、Makefile 和 CI 配置，绝不读取私有路径、凭证或 Token。具体上下文模板可参考 [`skills/check/references/project-context.md`](skills/check/references/project-context.md)。
+Waza 只沉淀通用的工程习惯，`/check` 运行时只从目标仓库公开的项目文件与你的任务要求提炼约束，比如 README、包清单、Makefile 和 CI 配置，绝不读取私有路径、凭证或 Token，具体上下文模板可参考 [`skills/check/references/project-context.md`](skills/check/references/project-context.md)
 
 ## 附加工具与规则
 
 ### 状态栏
 
-Claude Code 极简状态栏：显示上下文窗口、5 小时配额与 7 天配额，按用量着色，没有进度条，没有视觉噪音。
+Claude Code 极简状态栏：显示上下文窗口、5 小时配额与 7 天配额，按用量着色，没有进度条，没有视觉噪音
 
 <div align="center">
   <img src="https://gw.alipayobjects.com/zos/k/y9/RUgevg.png" width="1000" />
@@ -107,11 +107,11 @@ status_line = ["model-with-reasoning", "current-dir", "context-used", "five-hour
 status_line_use_colors = true
 ```
 
-Codex 显示剩余额度；上方 Claude Code 状态栏显示已用百分比。
+Codex 显示剩余额度，上方 Claude Code 状态栏显示已用百分比
 
 ### 可选规则
 
-可选规则用于补充技能之外的持久化习惯，写入 Agent 的系统提示词中生效，只安装技能默认不会开启。按需复制执行即可（在对应 Agent 上将 `claude-code` 替换为 `codex` 或 `antigravity-cli`）：
+可选规则用于补充技能之外的持久化习惯，写入 Agent 的系统提示词中生效，只安装技能默认不会开启，按需复制执行即可（在对应 Agent 上将 `claude-code` 替换为 `codex` 或 `antigravity-cli`）：
 
 ```bash
 (
@@ -136,19 +136,19 @@ Codex 显示剩余额度；上方 Claude Code 状态栏显示已用百分比。
 )
 ```
 
-[Clarity](rules/clarity.md) 借鉴了 ASD-STE100 的清晰写作原则，不会强加受控英文语法，也不会改变你的个人表达风格。重新运行命令可更新已装规则，生效需重启新会话。Codex 会在 `~/.codex/AGENTS.md` 写入标记块；Claude Code 与 Antigravity 则安装为规则文件；其他工具直接复制进对应的系统提示词即可。
+[Clarity](rules/clarity.md) 借鉴了 ASD-STE100 的清晰写作原则，不会强加受控英文语法，也不会改变你的个人表达风格。重新运行命令可更新已装规则，生效需重启新会话。Codex 会在 `~/.codex/AGENTS.md` 写入标记块，Claude Code 与 Antigravity 则安装为规则文件，其他工具直接复制进对应的系统提示词即可
 
 <div align="center">
   <img src="https://gw.alipayobjects.com/zos/k/24/vfkGOi.png" width="1000" />
 </div>
 
-下载脚本默认使用最新的 GitHub Release 资源，如需体验 bleeding-edge 脚本，可在命令前指定 `WAZA_REF=main`。
+下载脚本默认使用最新的 GitHub Release 资源，如需体验 bleeding-edge 脚本可在命令前指定 `WAZA_REF=main`
 
 ## 为什么做 Waza
 
-Waza 在日文中意为技艺，是千锤百炼后化为本能的招式。好工程师从不只是写代码，更懂动手前推敲边界、排查时深挖根因、交付前逐行把关。AI 算力充沛，但缺少工程约束容易输出平庸。每个 Waza 技能只明确结果、红线与验证方式，把具体路径留给模型自主发挥。
+Waza 在日文中意为技艺，是千锤百炼后化为本能的招式。好工程师从不只是写代码，更懂动手前推敲边界、排查时深挖根因、交付前逐行把关。AI 算力充沛，但缺少工程约束容易输出平庸，每个 Waza 技能只明确结果、红线与验证方式，把具体路径留给模型自主发挥
 
-像 Superpowers 或 gstack 这类工具虽然强大但体量较重，Waza 保持克制，只收录 8 个真正核心的工程习惯，每个技能专心做好一件事。来自 7 个项目、300 多次真实会话的实战沉淀，每一条避坑指南都来自踩过的真实深坑。它与另外两款工具组成三部曲：[Kaku](https://github.com/tw93/Kaku) 负责写代码，[Waza](https://github.com/tw93/Waza) 负责磨习惯，[Kami](https://github.com/tw93/Kami) 负责出文档。
+像 Superpowers 或 gstack 这类工具虽然强大但体量较重，Waza 保持克制，只收录 8 个真正核心的工程习惯，每个技能专心做好一件事。来自 7 个项目、300 多次真实会话的实战沉淀，每一条避坑指南都来自踩过的真实深坑，并与另外两款工具组成三部曲：[Kaku](https://github.com/tw93/Kaku) 负责写代码，[Waza](https://github.com/tw93/Waza) 负责磨习惯，[Kami](https://github.com/tw93/Kami) 负责出文档
 
 ## 卸载
 
@@ -161,7 +161,7 @@ rm -f ~/.claude/rules/waza-routing.md
 rm -f ~/.claude/rules/clarity.md
 ```
 
-Claude Desktop 直接在 Customize > Skills 中删除 Waza；Codex 规则安装从 `~/.codex/AGENTS.md` 中移除对应的 Waza 标记块；Antigravity 从 `~/.gemini/antigravity-cli/rules/` 删除对应规则文件；其他工具从系统提示词中移除即可。移除后开启新会话生效。
+Claude Desktop 直接在 Customize > Skills 中删除 Waza，Codex 规则安装从 `~/.codex/AGENTS.md` 中移除对应的 Waza 标记块，Antigravity 从 `~/.gemini/antigravity-cli/rules/` 删除对应规则文件，其他工具从系统提示词中移除即可，移除后开启新会话生效
 
 ## 支持
 
