@@ -1,0 +1,173 @@
+<h4 align="right"><a href="README.md">English</a> | <a href="README_CN.md">中文</a> | <a href="README_TW.md">繁體</a> | <a href="README_JA.md">日本語</a> | <a href="README_KR.md">한국어</a> | <strong>Deutsch</strong> | <a href="README_FR.md">Français</a></h4>
+
+<div align="center">
+  <img src="https://gw.alipayobjects.com/zos/k/2h/waza.svg" width="120" />
+  <h1>Waza</h1>
+  <p><b>Bewährte Entwicklergewohnheiten als praxistaugliche KI-Skills</b></p>
+  <a href="https://github.com/tw93/Waza/actions/workflows/test.yml"><img src="https://img.shields.io/github/actions/workflow/status/tw93/Waza/test.yml?branch=main&style=flat-square&label=tests" alt="Tests"></a>
+  <a href="https://github.com/tw93/Waza/stargazers"><img src="https://img.shields.io/github/stars/tw93/Waza?style=flat-square" alt="Stars"></a>
+  <a href="https://github.com/tw93/Waza/releases"><img src="https://img.shields.io/github/v/tag/tw93/Waza?label=version&style=flat-square" alt="Version"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square" alt="License"></a>
+  <a href="https://twitter.com/HiTw93"><img src="https://img.shields.io/badge/follow-Tw93-red?style=flat-square&logo=Twitter" alt="Twitter"></a>
+</div>
+
+<br/>
+
+<div align="center">
+  <img src="assets/waza_skills.svg" width="1000" />
+</div>
+
+## Skills
+
+Jede Entwicklergewohnheit entspricht einem eigenständigen Skill. In Claude Code über Slash-Befehle aufrufbar, in Codex direkt über den Skill-Namen
+
+| Skill | Wann nutzen | Was er tut |
+| :--- | :--- | :--- |
+| [`/think`](skills/think/SKILL.md) | Vor neuem Code | Hinterfragt Anforderungen und erstellt direkt umsetzbare, entscheidungsreife Pläne |
+| [`/ui`](skills/ui/SKILL.md) | Frontend-UIs bauen | Entwickelt unverwechselbare UIs mit echtem Screenshot-Feedback statt Standard-Vorlagen |
+| [`/check`](skills/check/SKILL.md) | Vor Merge oder Release | Prüft Diffs gegen Projektvorgaben, verifiziert Ergebnisse und regelt Releases |
+| [`/hunt`](skills/hunt/SKILL.md) | Bugs und Regressionen | Systematisches Debugging: Ursache klären, bevor Code geändert wird |
+| [`/write`](skills/write/SKILL.md) | Texte schreiben oder feilen | Formuliert Texte auf Deutsch und Englisch natürlich um, entfernt hölzernen KI-Ton |
+| [`/learn`](skills/learn/SKILL.md) | Unbekannte Themen erforschen | Strukturierte 6-Phasen-Recherche: recherchieren, verdichten und publizieren |
+| [`/read`](skills/read/SKILL.md) | Webseiten oder PDFs lesen | Erstellt prägnante Zusammenfassungen oder sauberes Markdown für Zitate und Notizen |
+| [`/health`](skills/health/SKILL.md) | Agenten-Status prüfen | Prüft Agenten-Konfiguration und Prompt-Drift ressourcenschonend auf Stabilität |
+
+Jeder Skill ist ein eigenständiger Ordner mit Referenzdokumenten, Skripten und erprobten Best Practices
+
+## Installation
+
+**Claude Code, Codex, Cursor und andere Agenten**
+
+```bash
+npx skills add tw93/Waza -a claude-code codex cursor -g -y
+```
+
+Oder beauftrage deinen Agenten direkt mit der Installation:
+> Install Waza for me by reading https://github.com/tw93/Waza/blob/main/llms.txt
+
+Skills landen zentral in `~/.agents/skills`. Claude Code bindet sie per Symlink ein; Codex, Cursor, Gemini CLI, Copilot, Amp, Kimi Code CLI und alle Agenten, die dieses Verzeichnis nutzen, laden die 8 Skills automatisch. Aktualisierung über `npx skills update -g -y`
+
+**Host-Plugin-Methode** (Skills erhalten einen Namespace-Präfix, z. B. `/waza:check`):
+
+```bash
+# Claude Code (Update: claude plugin update waza)
+/plugin marketplace add tw93/Waza
+/plugin install waza@waza
+
+# Codex (Update: codex plugin marketplace upgrade waza, dann codex plugin add waza@waza)
+codex plugin marketplace add tw93/Waza
+codex plugin add waza@waza
+```
+
+**Claude Desktop**: Lade [waza.zip](https://github.com/tw93/Waza/releases/latest/download/waza.zip) herunter, öffne Customize > Skills > "+" > Create skill und lade die ZIP-Datei hoch
+
+**Pi**: `pi install npm:@tw93/waza`, Update über `pi update npm:@tw93/waza`
+
+## Skill-Kombinationen
+
+Du entscheidest, wie Skills kombiniert werden. Jeder Skill stoppt nach Erreichen des Zielergebnisses; autorisierte Workflows laufen nahtlos durch
+
+**Typische Workflows:**
+
+- **Neues Feature**: `/think` Plan prüfen → Implementieren → `/check` Mergen
+- **Bugfix**: `/hunt` Ursache finden → Beheben → `/check` Verifizieren und Releasen
+- **Recherche**: `/read` Material holen → `/learn` Strukturieren → `/write` Ausformulieren
+- **Fehlersuche**: `/hunt` Ursache finden → Fixen → `/check` Diffs prüfen
+
+## Projekt-Kontext
+
+Waza liefert universelle Entwicklergewohnheiten. `/check` liest zur Laufzeit nur öffentliche Projektdateien (README, Paketdefinitionen, Makefile, CI-Workflows) und deine Vorgaben, niemals private Pfade oder Tokens
+
+## Extras
+
+### Statusleiste
+
+Minimale Statusleiste für Claude Code: Kontext-Window, 5-Stunden- und 7-Tage-Kontingente farbcodiert ohne Ablenkung
+
+<div align="center">
+  <img src="https://gw.alipayobjects.com/zos/k/y9/RUgevg.png" width="1000" />
+</div>
+
+```bash
+(
+  set -e
+  WAZA_STATUSLINE_SCRIPT="$(mktemp -t waza-statusline.XXXXXX)"
+  trap 'rm -f "$WAZA_STATUSLINE_SCRIPT"' EXIT
+  curl -fL https://github.com/tw93/Waza/releases/latest/download/setup-statusline.sh -o "$WAZA_STATUSLINE_SCRIPT"
+  bash "$WAZA_STATUSLINE_SCRIPT"
+)
+```
+
+**Codex**-Statuszeile in `~/.codex/config.toml`:
+
+```toml
+[tui]
+status_line = ["model-with-reasoning", "current-dir", "context-used", "five-hour-limit", "weekly-limit"]
+status_line_use_colors = true
+```
+
+### Optionale Regeln
+
+Regeln für die dauerhafte Arbeitsweise deiner Agenten:
+
+```bash
+(
+  set -e
+  WAZA_RULE_SCRIPT="$(mktemp -t waza-rule.XXXXXX)"
+  trap 'rm -f "$WAZA_RULE_SCRIPT"' EXIT
+  curl -fL https://github.com/tw93/Waza/releases/latest/download/setup-rule.sh -o "$WAZA_RULE_SCRIPT"
+
+  # Englisch-Coaching: Kurze Korrekturhinweise bei Formulierungsfehlern
+  bash "$WAZA_RULE_SCRIPT" english claude-code
+
+  # Anti-Patterns: Verhindert voreilige Änderungen und überflüssige Zusammenfassungen
+  bash "$WAZA_RULE_SCRIPT" anti-patterns claude-code
+
+  # Skill-Routing: Bevorzugt Waza-Skills bei passenden Anfragen
+  bash "$WAZA_RULE_SCRIPT" waza-routing claude-code
+
+  # Klare Antworten: Verständliche Kommunikation basierend auf ASD-STE100
+  WAZA_REF=main bash "$WAZA_RULE_SCRIPT" clarity claude-code
+)
+```
+
+<div align="center">
+  <img src="https://gw.alipayobjects.com/zos/k/24/vfkGOi.png" width="1000" />
+</div>
+
+## Warum Waza
+
+Waza (技, わざ) bezeichnet in den Kampfkünsten eine Technik, die durch ständiges Üben zur instinktiven Gewohnheit wird.
+
+Gute Entwickler schreiben nicht nur Code. Sie hinterfragen Annahmen, suchen nach Ursachen und prüfen ihre eigenen Diffs. KI bringt enorme Rechenleistung mit, liefert ohne klare Grenzen jedoch oft beliebiges Mittelmaß. Waza setzt präzise Ziele und Leitplanken, überlässt den optimalen Lösungsweg aber dem Modell.
+
+Statt überladener Frameworks konzentriert sich Waza auf 8 essenzielle Gewohnheiten. Entstanden aus über 300 Praxissitzungen. Teil einer Trilogie: [Kaku](https://github.com/tw93/Kaku) schreibt Code, [Waza](https://github.com/tw93/Waza) trainiert Gewohnheiten, [Kami](https://github.com/tw93/Kami) gestaltet Dokumente
+
+## Deinstallation
+
+```bash
+npx skills remove tw93/Waza -g
+rm -f ~/.claude/statusline.sh
+rm -f ~/.claude/rules/english.md
+rm -f ~/.claude/rules/anti-patterns.md
+rm -f ~/.claude/rules/waza-routing.md
+rm -f ~/.claude/rules/clarity.md
+```
+
+## Unterstützung
+
+- Die direkteste Unterstützung ist der Kauf meiner Mac-Bereinigungs-App [Mole for Mac](https://mole.fit)
+- Wenn dir Waza hilft, freuen wir uns über einen Stern auf GitHub oder eine Weiterempfehlung
+- Du kannst auch meinen beiden Katzen TangYuan und Coke eine <a href="https://cats.tw93.fun?name=Waza" target="_blank">Dose Futter 🥩</a> spendieren
+
+<details>
+<summary>Unsere Unterstützer 🐱</summary>
+<br/>
+<div align="center">
+  <a href="https://cats.tw93.fun?name=Waza"><img src="https://cdn.jsdelivr.net/gh/tw93/sponsors@main/assets/sponsors.svg" width="1000" loading="lazy" /></a>
+</div>
+</details>
+
+## Lizenz
+
+MIT License

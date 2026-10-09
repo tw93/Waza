@@ -1,4 +1,4 @@
-<h4 align="right"><strong>English</strong> | <a href="README_CN.md">中文</a></h4>
+<h4 align="right"><strong>English</strong> | <a href="README_CN.md">中文</a> | <a href="README_TW.md">繁體</a> | <a href="README_JA.md">日本語</a> | <a href="README_KR.md">한국어</a> | <a href="README_DE.md">Deutsch</a> | <a href="README_FR.md">Français</a></h4>
 
 <div align="center">
   <img src="https://gw.alipayobjects.com/zos/k/2h/waza.svg" width="120" />

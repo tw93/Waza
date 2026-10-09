@@ -14,6 +14,11 @@
 LICENSE
 README.md
 README_CN.md
+README_TW.md
+README_JA.md
+README_KR.md
+README_DE.md
+README_FR.md
 rules/**
 scripts/setup-rule.sh
 scripts/setup-statusline.sh
