@@ -13,6 +13,7 @@
 
 LICENSE
 README.md
+README_CN.md
 rules/**
 scripts/setup-rule.sh
 scripts/setup-statusline.sh

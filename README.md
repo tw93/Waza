@@ -1,3 +1,5 @@
+<h4 align="right"><strong>English</strong> | <a href="README_CN.md">简体中文</a></h4>
+
 <div align="center">
   <img src="https://gw.alipayobjects.com/zos/k/2h/waza.svg" width="120" />
   <h1>Waza</h1>
