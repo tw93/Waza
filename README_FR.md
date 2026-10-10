@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://gw.alipayobjects.com/zos/k/2h/waza.svg" width="120" />
+  <img src="https://raw.githubusercontent.com/tw93/Waza/main/assets/logo.svg" width="120" />
   <h1>Waza</h1>
   <p><b>Les réflexes d'ingénierie de Tw93, transformés en vos compétences</b></p>
   <p><a href="README.md">English</a> · <a href="README_CN.md">中文</a> · <a href="README_TW.md">繁體</a> · <a href="README_JA.md">日本語</a> · <a href="README_KR.md">한국어</a> · <a href="README_DE.md">Deutsch</a> · Français</p>
@@ -84,7 +84,7 @@ Waza n'embarque que des méthodes d'ingénierie universelles. `/check` lit au mo
 Une barre d'état minimale pour Claude Code : fenêtre de contexte, quotas 5 heures et 7 jours avec code couleur sans encombrement.
 
 <div align="center">
-  <img src="https://gw.alipayobjects.com/zos/k/y9/RUgevg.png" width="1000" />
+  <img src="https://raw.githubusercontent.com/tw93/Waza/main/assets/statusline.png" width="1000" />
 </div>
 
 ```bash
@@ -138,7 +138,7 @@ Les règles optionnelles s'appliquent au-delà des appels de compétences une fo
 [Clarity](rules/clarity.md) reprend les principes d'écriture claire d'ASD-STE100 sans imposer la grammaire de l'anglais contrôlé ni changer votre style. Relancez sa commande pour mettre à jour la règle installée, puis ouvrez une nouvelle session. Codex installe un bloc balisé dans `~/.codex/AGENTS.md` ; Claude Code et Antigravity installent un fichier de règle. Pour les autres outils, copiez la règle dans leurs instructions personnalisées persistantes.
 
 <div align="center">
-  <img src="https://gw.alipayobjects.com/zos/k/24/vfkGOi.png" width="1000" />
+  <img src="https://raw.githubusercontent.com/tw93/Waza/main/assets/clarity.png" width="1000" />
 </div>
 
 Les URL curl utilisent le dernier asset de release GitHub. Ajoutez `WAZA_REF=main` avant la commande pour utiliser les scripts les plus récents de main.
@@ -182,4 +182,4 @@ Pour Claude Desktop, supprimez Waza dans Customize > Skills. Pour les règles in
 
 ## Licence
 
-MIT License. Utilisez Waza librement et n'hésitez pas à contribuer.
+MIT License. Please feel free to use and contribute to the development.

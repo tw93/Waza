@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://gw.alipayobjects.com/zos/k/2h/waza.svg" width="120" />
+  <img src="https://raw.githubusercontent.com/tw93/Waza/main/assets/logo.svg" width="120" />
   <h1>Waza</h1>
   <p><b>把 Tw93 的工程习惯，变成你的技能</b></p>
   <p><a href="README.md">English</a> · 中文 · <a href="README_TW.md">繁體</a> · <a href="README_JA.md">日本語</a> · <a href="README_KR.md">한국어</a> · <a href="README_DE.md">Deutsch</a> · <a href="README_FR.md">Français</a></p>
@@ -84,7 +84,7 @@ Waza 只沉淀通用的工程习惯，`/check` 运行时只从目标仓库公开
 Claude Code 极简状态栏：显示上下文窗口、5 小时配额与 7 天配额，按用量着色，没有进度条，没有视觉噪音
 
 <div align="center">
-  <img src="https://gw.alipayobjects.com/zos/k/y9/RUgevg.png" width="1000" />
+  <img src="https://raw.githubusercontent.com/tw93/Waza/main/assets/statusline.png" width="1000" />
 </div>
 
 ```bash
@@ -138,7 +138,7 @@ Codex 显示剩余额度，上方 Claude Code 状态栏显示已用百分比（�
 [Clarity](rules/clarity.md) 借鉴了 ASD-STE100 的清晰写作原则，不会强加受控英文语法，也不会改变你的个人表达风格。重新运行命令即可更新，开一个新会话后生效。Codex 会在 `~/.codex/AGENTS.md` 写入标记块，Claude Code 与 Antigravity 则安装为规则文件，其他工具把规则复制进各自的自定义指令即可
 
 <div align="center">
-  <img src="https://gw.alipayobjects.com/zos/k/24/vfkGOi.png" width="1000" />
+  <img src="https://raw.githubusercontent.com/tw93/Waza/main/assets/clarity.png" width="1000" />
 </div>
 
 下载脚本默认使用最新的 GitHub Release 资源，想用 main 上最新的脚本，可以在命令前加 `WAZA_REF=main`
@@ -180,4 +180,4 @@ Claude Desktop 直接在 Customize > Skills 中删除 Waza，Codex 规则安装�
 
 ## 许可证
 
-MIT License，欢迎自由使用和参与贡献
+MIT License. Please feel free to use and contribute to the development.

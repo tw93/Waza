@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://gw.alipayobjects.com/zos/k/2h/waza.svg" width="120" />
+  <img src="https://raw.githubusercontent.com/tw93/Waza/main/assets/logo.svg" width="120" />
   <h1>Waza</h1>
   <p><b>Tw93s Entwicklergewohnheiten, als Skills für deine Agenten</b></p>
   <p><a href="README.md">English</a> · <a href="README_CN.md">中文</a> · <a href="README_TW.md">繁體</a> · <a href="README_JA.md">日本語</a> · <a href="README_KR.md">한국어</a> · Deutsch · <a href="README_FR.md">Français</a></p>
@@ -84,7 +84,7 @@ Waza liefert universelle Entwicklergewohnheiten. `/check` liest zur Laufzeit nur
 Minimale Statusleiste für Claude Code: Kontext-Window, 5-Stunden- und 7-Tage-Kontingente farbcodiert ohne Ablenkung.
 
 <div align="center">
-  <img src="https://gw.alipayobjects.com/zos/k/y9/RUgevg.png" width="1000" />
+  <img src="https://raw.githubusercontent.com/tw93/Waza/main/assets/statusline.png" width="1000" />
 </div>
 
 ```bash
@@ -138,7 +138,7 @@ Optionale Regeln wirken auch außerhalb von Skill-Aufrufen, sobald sie in den da
 [Clarity](rules/clarity.md) übernimmt Prinzipien für klares Schreiben aus ASD-STE100, ohne die Grammatik von kontrolliertem Englisch vorzuschreiben oder deinen Stil zu ändern. Führe den Befehl erneut aus, um die installierte Regel zu aktualisieren, und starte danach eine neue Sitzung. Codex installiert einen markierten Block in `~/.codex/AGENTS.md`; Claude Code und Antigravity installieren eine Regeldatei. Bei anderen Tools kopierst du die Regel in deren dauerhafte benutzerdefinierte Anweisungen.
 
 <div align="center">
-  <img src="https://gw.alipayobjects.com/zos/k/24/vfkGOi.png" width="1000" />
+  <img src="https://raw.githubusercontent.com/tw93/Waza/main/assets/clarity.png" width="1000" />
 </div>
 
 Die curl-URLs verwenden das neueste GitHub-Release-Asset. Für die neuesten Skripte von main setzt du `WAZA_REF=main` vor den Befehl.
@@ -182,4 +182,4 @@ In Claude Desktop löschst du Waza unter Customize > Skills. Bei Codex-Regelinst
 
 ## Lizenz
 
-MIT License. Nutze Waza frei und trag gern etwas bei.
+MIT License. Please feel free to use and contribute to the development.

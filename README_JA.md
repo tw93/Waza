@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://gw.alipayobjects.com/zos/k/2h/waza.svg" width="120" />
+  <img src="https://raw.githubusercontent.com/tw93/Waza/main/assets/logo.svg" width="120" />
   <h1>Waza</h1>
   <p><b>Tw93 のエンジニアリング習慣を、あなたのスキルに</b></p>
   <p><a href="README.md">English</a> · <a href="README_CN.md">中文</a> · <a href="README_TW.md">繁體</a> · 日本語 · <a href="README_KR.md">한국어</a> · <a href="README_DE.md">Deutsch</a> · <a href="README_FR.md">Français</a></p>
@@ -84,7 +84,7 @@ Waza は汎用的なエンジニアリングの型のみを提供します。`/c
 Claude Code 向けのミニマルなステータスライン：コンテキストウィンドウ、5時間制限、7日間制限の使用率を色分け表示し、余計なノイズを排除します。
 
 <div align="center">
-  <img src="https://gw.alipayobjects.com/zos/k/y9/RUgevg.png" width="1000" />
+  <img src="https://raw.githubusercontent.com/tw93/Waza/main/assets/statusline.png" width="1000" />
 </div>
 
 ```bash
@@ -138,7 +138,7 @@ Codex は残りの枠を、上の Claude Code ステータスラインは使用�
 [Clarity](rules/clarity.md) は ASD-STE100 のわかりやすい文章の原則を取り入れていますが、制限英語の文法を押し付けたり、あなたの文体を変えたりはしません。更新するにはコマンドを再実行し、新しいセッションを開始してください。Codex は `~/.codex/AGENTS.md` にマーク付きブロックを追加し、Claude Code と Antigravity はルールファイルをインストールします。ほかのツールでは、ルールを各ツールの永続的なカスタム指示にコピーしてください。
 
 <div align="center">
-  <img src="https://gw.alipayobjects.com/zos/k/24/vfkGOi.png" width="1000" />
+  <img src="https://raw.githubusercontent.com/tw93/Waza/main/assets/clarity.png" width="1000" />
 </div>
 
 curl の URL は最新の GitHub リリースアセットを使います。main の最新スクリプトを使いたい場合は、コマンドの前に `WAZA_REF=main` を指定してください。
@@ -182,4 +182,4 @@ Claude Desktop では Customize > Skills から Waza を削除してください
 
 ## ライセンス
 
-MIT License。Waza は自由に使え、コントリビュートも歓迎します。
+MIT License. Please feel free to use and contribute to the development.
