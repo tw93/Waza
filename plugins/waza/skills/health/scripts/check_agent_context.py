@@ -31,6 +31,13 @@ OPERATIONAL_RULE_RE = re.compile(
     re.IGNORECASE,
 )
 CJK_CONTEXT_RE = re.compile(r"[\u3400-\u9fff\u3040-\u30ff\uac00-\ud7af]")
+ASSIGNMENT_RE = re.compile(r"[A-Za-z_][A-Za-z0-9_]*=.*")
+# Assignments that choose the interpreter, its imports, or injected libraries.
+RISKY_ENV_RE = re.compile(r"(PATH|PYTHON[A-Za-z0-9_]*|LD_[A-Za-z0-9_]+|DYLD_[A-Za-z0-9_]+)=")
+SHELL_BUILTINS = frozenset({
+    "cd", "exec", "source", ".", "export", "eval", "[[", "{", "(", "!", "if", "for",
+    "while", "case", "set", "true", "false", ":", "[", "test", "echo", "printf",
+})
 MAX_FILE_BYTES = 2_000_000
 MAX_CONTEXT_PROJECT_FILES = 50_000
 MAX_CONTEXT_MATCH_EVALUATIONS = 2_000_000
@@ -813,6 +820,30 @@ def parse_codex_config(
     )
 
 
+def shell_tokens(command: str) -> list[str]:
+    try:
+        lexer = shlex.shlex(command, posix=True, punctuation_chars=True)
+        lexer.whitespace_split = True
+        return list(lexer)
+    except ValueError:
+        return []
+
+
+def command_word_index(tokens: list[str]) -> int:
+    """Skip leading NAME=value assignments and an env prefix to the executed word."""
+    index = 0
+    while index < len(tokens) and ASSIGNMENT_RE.fullmatch(tokens[index]):
+        index += 1
+    if index < len(tokens) and Path(tokens[index]).name == "env":
+        index += 1
+        while index < len(tokens) and (
+            tokens[index] in {"-i", "--ignore-environment"}
+            or ASSIGNMENT_RE.fullmatch(tokens[index])
+        ):
+            index += 1
+    return index
+
+
 def runtime_inventory(root: Path, home: Path) -> list[str]:
     """Inspect configured sources without starting servers or exposing arguments."""
     lines = ["=== RUNTIME CONFIGURATION ===",
@@ -830,7 +861,7 @@ def runtime_inventory(root: Path, home: Path) -> list[str]:
     def executable_state(command: object) -> str:
         if not isinstance(command, str) or not command:
             return "remote"
-        if "${" in command or "$" in command:
+        if "$" in command:
             return "unresolved"
         if command.startswith("~/"):
             path = home / command[2:]
@@ -854,6 +885,20 @@ def runtime_inventory(root: Path, home: Path) -> list[str]:
             for entry in entries if isinstance(entries, list) else []:
                 if isinstance(entry, dict) and entry.get("scope") == "user" and isinstance(entry.get("installPath"), str):
                     sources.append(("claude:plugin:" + str(name), Path(entry["installPath"]) / ".mcp.json"))
+    # Claude resolves same-name MCP servers as local > project > user.
+    precedence = {"claude:user": 1, "claude:project": 2, "claude:local-project": 3}
+    disabled_names: set[str] = set()
+    disabled_mcpjson: set[str] = set()
+    user_servers: dict[str, dict] = {}
+
+    def add_claude_server(name: str, label: str, config: dict) -> None:
+        if label == "claude:user":
+            user_servers[name] = config
+        existing = servers["claude"].get(name)
+        if existing and precedence.get(existing[0], 0) > precedence.get(label, 0) > 0:
+            return
+        servers["claude"][name] = (label, config)
+
     for label, path in sources:
         data, error = load_json(path)
         if error:
@@ -865,14 +910,24 @@ def runtime_inventory(root: Path, home: Path) -> list[str]:
             for name, config in mappings.items():
                 if isinstance(config, dict):
                     server_name = label + ":" + str(name) if ":plugin:" in label else str(name)
-                    servers["claude"][server_name] = (label, config)
+                    add_claude_server(server_name, label, config)
+        if label in {"claude:global", "claude:shared", "claude:local"}:
+            names = data.get("disabledMcpjsonServers", [])
+            if isinstance(names, list):
+                disabled_mcpjson.update(n for n in names if isinstance(n, str))
         if label == "claude:user":
             projects = data.get("projects", {})
             local = projects.get(str(root), {}) if isinstance(projects, dict) else {}
-            mappings = local.get("mcpServers", {}) if isinstance(local, dict) else {}
+            local = local if isinstance(local, dict) else {}
+            mappings = local.get("mcpServers", {})
             for name, config in mappings.items() if isinstance(mappings, dict) else []:
                 if isinstance(config, dict):
-                    servers["claude"][str(name)] = ("claude:local-project", config)
+                    add_claude_server(str(name), "claude:local-project", config)
+            for key, target in (("disabledMcpServers", disabled_names),
+                                ("disabledMcpjsonServers", disabled_mcpjson)):
+                names = local.get(key, [])
+                if isinstance(names, list):
+                    target.update(n for n in names if isinstance(n, str))
         hooks = data.get("hooks", {})
         if not isinstance(hooks, dict):
             continue
@@ -888,32 +943,39 @@ def runtime_inventory(root: Path, home: Path) -> list[str]:
                     lines.append(f"{label} hook={safe_label(str(event))} type={safe_label(str(kind))}")
                     command = handler.get("command", "")
                     if kind == "command" and isinstance(command, str):
-                        if "supacode-managed-hook" in command:
-                            lines.append(f"{label} managed_hook=supacode; review owner installation")
-                        try:
-                            parts = shlex.split(command)
-                        except ValueError:
-                            parts = []
-                        if parts and parts[0] not in {"[", "test", "if", "true", "echo", "printf"}:
-                            lines.append(f"{label} hook_executable={executable_state(parts[0])}")
+                        parts = shell_tokens(command)
+                        index = command_word_index(parts)
+                        if index < len(parts) and parts[index] == "exec":
+                            index += 1
+                        word = parts[index] if index < len(parts) else ""
+                        # Builtins, keywords and exec flags have no file to verify.
+                        if (word and word not in SHELL_BUILTINS and not word.startswith("-")
+                                and not set(word) <= set("();<>|&")):
+                            lines.append(f"{label} hook_executable={executable_state(word)}")
                     elif kind == "mcp_tool":
                         if not handler.get("server") or not handler.get("tool"):
                             lines.append(f"{label} mcp_hook=missing server or tool")
                     elif kind not in {"prompt", "agent", "http", "command"}:
                         lines.append(f"{label} hook_type=unverified")
 
-    # TOML parsing is optional on Python 3.9/3.10; report the gap, never a false zero.
-    try:
-        import tomllib
-    except ImportError:
-        lines.append("codex_runtime_config: unavailable; Python 3.11+ TOML parser required")
+    # Codex runs without config.toml and still applies its default limit; no ~/.codex means no budget.
+    codex_config = home / ".codex" / "config.toml"
+    codex = {} if (home / ".codex").is_dir() else None
+    if codex is not None and codex_config.exists() and yes(codex_config) == "no":
         codex = None
-    else:
+        lines.append("codex_runtime_config: unavailable; config.toml is outside the audit scope")
+    elif yes(codex_config) == "yes":
+        codex = None
+        # TOML parsing is optional on Python 3.9/3.10; report the gap, never a false zero.
         try:
-            codex = tomllib.loads(read(home / ".codex" / "config.toml"))
-        except (ValueError, OSError):
-            codex = None
-            lines.append("codex_runtime_config: invalid")
+            import tomllib
+        except ImportError:
+            lines.append("codex_runtime_config: unavailable; Python 3.11+ TOML parser required")
+        else:
+            try:
+                codex = tomllib.loads(read(codex_config))
+            except (ValueError, OSError):
+                lines.append("codex_runtime_config: invalid")
     if codex is not None:
         mappings = codex.get("mcp_servers", {})
         for name, config in mappings.items() if isinstance(mappings, dict) else []:
@@ -921,17 +983,24 @@ def runtime_inventory(root: Path, home: Path) -> list[str]:
                 servers["codex"][name] = ("codex:user", config)
         limit = codex.get("project_doc_max_bytes", 32768)
         if isinstance(limit, int) and not isinstance(limit, bool) and limit > 0:
-            candidates = [home / ".codex" / "AGENTS.override.md", home / ".codex" / "AGENTS.md"]
-            global_file = next((p for p in candidates if read(p).strip()), None)
+            # Codex charges only project docs against the limit; ~/.codex/AGENTS.md is separate.
             project_file = next((p for p in [root / "AGENTS.override.md", root / "AGENTS.md"] if read(p).strip()), None)
-            total = sum(len(read_bytes(p)) for p in [global_file, project_file] if p)
-            lines.append("instruction_budget_scope: user config, global and current root; overrides, ancestors and nested files not included")
+            total = len(read_bytes(project_file)) if project_file else 0
+            lines.append("instruction_budget_scope: user config and current root project doc; global AGENTS.md not charged; ancestors, nested and fallback-name docs not included")
             lines.append(f"project_instruction_bytes: {total}")
             lines.append(f"project_instruction_limit: {limit}")
             lines.append(f"project_instruction_limit_exceeded: {'yes' if total > limit else 'no'}")
     for runtime, entries in servers.items():
         for name, (label, config) in sorted(entries.items()):
+            # A rejected .mcp.json entry is never loaded, so a same-name user server stays live.
+            if label == "claude:project" and name in disabled_mcpjson and name in user_servers:
+                label, config = "claude:user", user_servers[name]
             disabled = config.get("enabled") is False or config.get("disabled") is True
+            if runtime == "claude" and (
+                name in disabled_names
+                or (label == "claude:project" and name in disabled_mcpjson)
+            ):
+                disabled = True
             state = "disabled" if disabled else "enabled"
             executable = "skipped" if disabled else executable_state(config.get("command"))
             lines.append(f"{label} mcp={safe_label(name)} state={state} executable={executable}")
@@ -1008,24 +1077,12 @@ def resolve_command_path(token: str, home: Path, project_root: Path) -> Path | N
 
 
 def resolve_hook_handler(command: str, home: Path, project_root: Path) -> Path | None:
-    try:
-        lexer = shlex.shlex(command, posix=True, punctuation_chars=True)
-        lexer.whitespace_split = True
-        tokens = list(lexer)
-    except ValueError:
-        return None
-    if not tokens:
-        return None
-
-    command_index = 0
-    if Path(tokens[0]).name == "env":
-        command_index += 1
-        while command_index < len(tokens) and (
-            tokens[command_index] in {"-i", "--ignore-environment"}
-            or re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*=.*", tokens[command_index])
-        ):
-            command_index += 1
+    tokens = shell_tokens(command)
+    command_index = command_word_index(tokens)
     if command_index >= len(tokens):
+        return None
+    # PATH, PYTHONPATH and loader overrides can swap what the hook runs, so the floor cannot credit it.
+    if any(RISKY_ENV_RE.match(token) for token in tokens[:command_index]):
         return None
 
     executable = tokens[command_index]

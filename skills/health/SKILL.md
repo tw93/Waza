@@ -104,9 +104,9 @@ The collector includes both runtime-specific and agent-agnostic surfaces:
 - `AGENT CONFIG SUMMARY` / `AGENT CONFIG DETAIL` for Codex, Claude, Pi, and project instruction files; its sections start at `=== AGENT INSTRUCTION SURFACE ===`.
 - `AI MAINTAINABILITY SUMMARY` / `AI MAINTAINABILITY DETAIL` for project signals, verification surface, generated mirrors, wrappers, and doc links; its sections start at `=== PROJECT SHAPE ===`.
 
-## Step 1b: MCP Live Check
+## Step 1b: Runtime Inventory and MCP Check
 
-Inspect configured global, project, and installed-plugin sources first, retaining source and enablement. Use the runtime inventory to flag missing executables and managed hooks whose owner may be gone; unknown working directories or plugin state remain coverage gaps. Call a harmless tool only on already connected servers. Never launch an unverified GUI executable just to test MCP. Record connected, failed, disabled, or untested separately; static presence is not live health. Never emit credentials. Compare discovered instruction bytes with the effective configured limit and state any uninspected ancestors, nested files, or runtime overrides.
+Inspect configured global, project, and installed-plugin sources first, retaining source and enablement. Use the runtime inventory to flag missing hook and MCP executables; unknown working directories or plugin state remain coverage gaps. Call a harmless tool only on already connected servers. Never launch an unverified GUI executable just to test MCP. Record connected, failed, disabled, or untested separately; static presence is not live health. Never emit credentials. Compare discovered instruction bytes with the effective configured limit and state any uninspected ancestors, nested files, or runtime overrides.
 
 ## Step 1c: Safety and security checks
 
