@@ -34,10 +34,19 @@ CJK_CONTEXT_RE = re.compile(r"[\u3400-\u9fff\u3040-\u30ff\uac00-\ud7af]")
 ASSIGNMENT_RE = re.compile(r"[A-Za-z_][A-Za-z0-9_]*=.*")
 # Assignments that choose the interpreter, its imports, or injected libraries.
 RISKY_ENV_RE = re.compile(r"(PATH|PYTHON[A-Za-z0-9_]*|LD_[A-Za-z0-9_]+|DYLD_[A-Za-z0-9_]+)=")
+# Builtins and reserved words have no file to verify.
 SHELL_BUILTINS = frozenset({
-    "cd", "exec", "source", ".", "export", "eval", "[[", "{", "(", "!", "if", "for",
-    "while", "case", "set", "true", "false", ":", "[", "test", "echo", "printf",
+    "cd", "exec", "source", ".", "export", "eval", "set", "unset", "true", "false", ":",
+    "[", "[[", "((", "test", "echo", "printf", "exit", "return", "local", "declare",
+    "typeset", "readonly", "shift", "trap", "builtin", "command", "type", "wait", "alias",
+    "unalias", "read", "ulimit", "umask", "pushd", "popd", "hash", "getopts", "let", "shopt",
+    "for", "case", "select", "function", "in", "}", ")", "fi", "done", "esac",
 })
+# Reserved words that introduce the next command word.
+COMMAND_PREFIX_WORDS = frozenset({"!", "{", "(", "if", "then", "else", "elif", "do", "while", "until"})
+CONTROL_OPERATORS = frozenset({";", "&&", "||", "|", "&", ";;", "|&"})
+REDIRECT_OPERATORS = frozenset({"<", ">", ">>", "<<", "<<-", "<<<", "<>", ">|", "&>", "&>>", ">&", "<&"})
+ENV_FLAGS = frozenset({"-i", "--ignore-environment", "-0", "--null", "-v", "--debug", "--"})
 MAX_FILE_BYTES = 2_000_000
 MAX_CONTEXT_PROJECT_FILES = 50_000
 MAX_CONTEXT_MATCH_EVALUATIONS = 2_000_000
@@ -829,19 +838,73 @@ def shell_tokens(command: str) -> list[str]:
         return []
 
 
-def command_word_index(tokens: list[str]) -> int:
-    """Skip leading NAME=value assignments and an env prefix to the executed word."""
-    index = 0
-    while index < len(tokens) and ASSIGNMENT_RE.fullmatch(tokens[index]):
-        index += 1
-    if index < len(tokens) and Path(tokens[index]).name == "env":
-        index += 1
-        while index < len(tokens) and (
-            tokens[index] in {"-i", "--ignore-environment"}
-            or ASSIGNMENT_RE.fullmatch(tokens[index])
-        ):
+def command_word_index(tokens: list[str], start: int = 0) -> int:
+    """Return the executed word of the simple command at start, or -1 for an unmodeled prefix.
+
+    Skips assignments, redirections, reserved prefix words, and env, exec and command
+    prefixes in any order. An index at the end or on a control operator means no word.
+    """
+    index = start
+    while index < len(tokens):
+        token = tokens[index]
+        if token in CONTROL_OPERATORS:
+            return index
+        if ASSIGNMENT_RE.fullmatch(token) or token in COMMAND_PREFIX_WORDS:
             index += 1
+        elif token in REDIRECT_OPERATORS:
+            index += 2
+        elif token.isdigit() and index + 1 < len(tokens) and tokens[index + 1] in REDIRECT_OPERATORS:
+            index += 3
+        elif Path(token).name == "env":
+            index += 1
+            while index < len(tokens) and tokens[index].startswith("-"):
+                flag = tokens[index]
+                if flag in {"-u", "--unset"}:
+                    index += 2
+                elif flag in ENV_FLAGS or flag.startswith("--unset="):
+                    index += 1
+                else:
+                    return -1
+        elif token == "exec":
+            index += 1
+            while index < len(tokens) and tokens[index].startswith("-"):
+                flag = tokens[index]
+                if flag == "-a":
+                    index += 2
+                elif set(flag[1:]) <= {"c", "l"}:
+                    index += 1
+                else:
+                    return -1
+        elif token == "time":
+            index += 1
+            while index < len(tokens) and tokens[index] in {"-p", "--"}:
+                index += 1
+        elif token == "command" and index + 1 < len(tokens) and tokens[index + 1] == "-p":
+            index += 2
+        elif token == "command" and index + 1 < len(tokens) and not tokens[index + 1].startswith("-"):
+            index += 1
+        elif token.startswith("-"):
+            return -1
+        else:
+            return index
     return index
+
+
+def hook_command_words(tokens: list[str]) -> list[Optional[str]]:
+    """Executed word of each simple command in a hook; None marks an unmodeled prefix."""
+    words: list[Optional[str]] = []
+    index = 0
+    while index < len(tokens):
+        word_index = command_word_index(tokens, index)
+        if word_index < 0:
+            words.append(None)
+            word_index = index
+        elif word_index < len(tokens) and tokens[word_index] not in CONTROL_OPERATORS:
+            words.append(tokens[word_index])
+        while word_index < len(tokens) and tokens[word_index] not in CONTROL_OPERATORS:
+            word_index += 1
+        index = word_index + 1
+    return words
 
 
 def runtime_inventory(root: Path, home: Path) -> list[str]:
@@ -889,7 +952,19 @@ def runtime_inventory(root: Path, home: Path) -> list[str]:
     precedence = {"claude:user": 1, "claude:project": 2, "claude:local-project": 3}
     disabled_names: set[str] = set()
     disabled_mcpjson: set[str] = set()
+    approved_mcpjson: set[str] = set()
+    approve_all_mcpjson = False
     user_servers: dict[str, dict] = {}
+    # Claude names plugin servers plugin:<plugin>:<server>; that name is what disable lists hold.
+    plugin_runtime_names: dict[str, str] = {}
+
+    def listed(name: Optional[str], names: set[str]) -> bool:
+        # Approval and disable lists may hold the normalized form Claude shows in /mcp.
+        if name is None:
+            return False
+        return name in names or re.sub(r"[^A-Za-z0-9_-]", "_", name) in {
+            re.sub(r"[^A-Za-z0-9_-]", "_", item) for item in names
+        }
 
     def add_claude_server(name: str, label: str, config: dict) -> None:
         if label == "claude:user":
@@ -905,16 +980,21 @@ def runtime_inventory(root: Path, home: Path) -> list[str]:
             lines.append(f"{label} config=invalid")
         if not isinstance(data, dict):
             continue
-        mappings = data.get("mcpServers", data if ":plugin:" in label else {})
-        if isinstance(mappings, dict):
-            for name, config in mappings.items():
+        if label in {"claude:user", "claude:project"} or ":plugin:" in label:
+            mappings = data.get("mcpServers", data if ":plugin:" in label else {})
+            for name, config in mappings.items() if isinstance(mappings, dict) else []:
                 if isinstance(config, dict):
                     server_name = label + ":" + str(name) if ":plugin:" in label else str(name)
+                    if ":plugin:" in label:
+                        plugin = label.split(":plugin:", 1)[1].split("@", 1)[0]
+                        plugin_runtime_names[server_name] = f"plugin:{plugin}:{name}"
                     add_claude_server(server_name, label, config)
+        elif "mcpServers" in data:
+            # Claude reads MCP servers from ~/.claude.json, .mcp.json and plugins, never settings files.
+            lines.append(f"{label} mcp_servers=ignored; not an MCP source")
+        approval_sources: list[dict] = []
         if label in {"claude:global", "claude:shared", "claude:local"}:
-            names = data.get("disabledMcpjsonServers", [])
-            if isinstance(names, list):
-                disabled_mcpjson.update(n for n in names if isinstance(n, str))
+            approval_sources.append(data)
         if label == "claude:user":
             projects = data.get("projects", {})
             local = projects.get(str(root), {}) if isinstance(projects, dict) else {}
@@ -923,11 +1003,18 @@ def runtime_inventory(root: Path, home: Path) -> list[str]:
             for name, config in mappings.items() if isinstance(mappings, dict) else []:
                 if isinstance(config, dict):
                     add_claude_server(str(name), "claude:local-project", config)
-            for key, target in (("disabledMcpServers", disabled_names),
-                                ("disabledMcpjsonServers", disabled_mcpjson)):
-                names = local.get(key, [])
+            names = local.get("disabledMcpServers", [])
+            if isinstance(names, list):
+                disabled_names.update(n for n in names if isinstance(n, str))
+            approval_sources.append(local)
+        for source in approval_sources:
+            for key, target in (("disabledMcpjsonServers", disabled_mcpjson),
+                                ("enabledMcpjsonServers", approved_mcpjson)):
+                names = source.get(key, [])
                 if isinstance(names, list):
                     target.update(n for n in names if isinstance(n, str))
+            if source.get("enableAllProjectMcpServers") is True:
+                approve_all_mcpjson = True
         hooks = data.get("hooks", {})
         if not isinstance(hooks, dict):
             continue
@@ -943,15 +1030,17 @@ def runtime_inventory(root: Path, home: Path) -> list[str]:
                     lines.append(f"{label} hook={safe_label(str(event))} type={safe_label(str(kind))}")
                     command = handler.get("command", "")
                     if kind == "command" and isinstance(command, str):
-                        parts = shell_tokens(command)
-                        index = command_word_index(parts)
-                        if index < len(parts) and parts[index] == "exec":
-                            index += 1
-                        word = parts[index] if index < len(parts) else ""
-                        # Builtins, keywords and exec flags have no file to verify.
-                        if (word and word not in SHELL_BUILTINS and not word.startswith("-")
-                                and not set(word) <= set("();<>|&")):
-                            lines.append(f"{label} hook_executable={executable_state(word)}")
+                        states: list[str] = []
+                        for word in hook_command_words(shell_tokens(command)):
+                            if word is None:
+                                state = "unverified; unmodeled command prefix"
+                            elif word in SHELL_BUILTINS or set(word) <= set("();<>|&"):
+                                continue
+                            else:
+                                state = executable_state(word)
+                            if state not in states:
+                                states.append(state)
+                                lines.append(f"{label} hook_executable={state}")
                     elif kind == "mcp_tool":
                         if not handler.get("server") or not handler.get("tool"):
                             lines.append(f"{label} mcp_hook=missing server or tool")
@@ -992,16 +1081,21 @@ def runtime_inventory(root: Path, home: Path) -> list[str]:
             lines.append(f"project_instruction_limit_exceeded: {'yes' if total > limit else 'no'}")
     for runtime, entries in servers.items():
         for name, (label, config) in sorted(entries.items()):
-            # A rejected .mcp.json entry is never loaded, so a same-name user server stays live.
-            if label == "claude:project" and name in disabled_mcpjson and name in user_servers:
+            # .mcp.json entries load only once approved; until then a same-name user server stays live.
+            rejected = label == "claude:project" and listed(name, disabled_mcpjson)
+            pending = (label == "claude:project" and not rejected
+                       and not approve_all_mcpjson and not listed(name, approved_mcpjson))
+            if (rejected or pending) and name in user_servers:
                 label, config = "claude:user", user_servers[name]
+                rejected = pending = False
             disabled = config.get("enabled") is False or config.get("disabled") is True
             if runtime == "claude" and (
-                name in disabled_names
-                or (label == "claude:project" and name in disabled_mcpjson)
+                rejected
+                or listed(name, disabled_names)
+                or listed(plugin_runtime_names.get(name), disabled_names)
             ):
                 disabled = True
-            state = "disabled" if disabled else "enabled"
+            state = "disabled" if disabled else "pending" if pending else "enabled"
             executable = "skipped" if disabled else executable_state(config.get("command"))
             lines.append(f"{label} mcp={safe_label(name)} state={state} executable={executable}")
     return lines
@@ -1079,10 +1173,15 @@ def resolve_command_path(token: str, home: Path, project_root: Path) -> Path | N
 def resolve_hook_handler(command: str, home: Path, project_root: Path) -> Path | None:
     tokens = shell_tokens(command)
     command_index = command_word_index(tokens)
-    if command_index >= len(tokens):
+    if command_index < 0 or command_index >= len(tokens) or tokens[command_index] in CONTROL_OPERATORS:
         return None
-    # PATH, PYTHONPATH and loader overrides can swap what the hook runs, so the floor cannot credit it.
-    if any(RISKY_ENV_RE.match(token) for token in tokens[:command_index]):
+    # PATH, PYTHONPATH and loader overrides can swap what the hook runs, `!` can invert its exit
+    # status, and a redirect can cut it off from the tool input on stdin, so the floor credits none.
+    if any(
+        RISKY_ENV_RE.match(token) or token in COMMAND_PREFIX_WORDS or token in REDIRECT_OPERATORS
+        or token == "time"
+        for token in tokens[:command_index]
+    ):
         return None
 
     executable = tokens[command_index]

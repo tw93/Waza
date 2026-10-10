@@ -13,6 +13,7 @@ SCRIPT = ROOT / "skills" / "health" / "scripts" / "check_agent_context.py"
 CANONICAL_PIPE_HOOK = (
     ROOT / "skills" / "health" / "scripts" / "block-pipe-to-shell.py"
 )
+needs_tomllib = pytest.mark.skipif(sys.version_info < (3, 11), reason="tomllib required")
 
 
 def run_context(project: Path, home: Path) -> str:
@@ -55,6 +56,7 @@ def test_disabled_plugins_are_not_reported_enabled(tmp_path: Path):
     assert "mcp_servers" not in enabled
 
 
+@needs_tomllib
 def test_global_runtime_inventory_and_instruction_limit(tmp_path: Path):
     project, home = tmp_path / "project", tmp_path / "home"
     project.mkdir()
@@ -102,6 +104,7 @@ def test_runtime_inventory_tolerates_malformed_collections(tmp_path: Path):
     assert "=== RUNTIME CONFIGURATION ===" in run_context(project, home)
 
 
+@needs_tomllib
 def test_codex_budget_charges_only_the_project_doc(tmp_path: Path):
     project, home = tmp_path / "project", tmp_path / "home"
     project.mkdir()
@@ -179,6 +182,18 @@ def test_claude_local_mcp_entry_outranks_project_and_user(tmp_path: Path):
         ("exec /definitely/missing/bin", "hook_executable=missing", None),
         (f"exec {sys.executable}", "hook_executable=found", "hook_executable=missing"),
         ("FOO=1 && true", None, "hook_executable="),
+        (f"2>/dev/null {sys.executable} x.py", "hook_executable=found", "hook_executable=missing"),
+        (f"exec 2>>log {sys.executable} x.py", "hook_executable=found", "hook_executable=missing"),
+        ("exit 0", None, "hook_executable="),
+        (f"unset FOO; {sys.executable} x.py", "hook_executable=found", "hook_executable=missing"),
+        ("exec env /definitely/missing/bin", "hook_executable=missing", "hook_executable=found"),
+        ("env -u HOME /definitely/missing/bin", "hook_executable=missing", None),
+        ("exec -a name /definitely/missing/bin", "hook_executable=missing", None),
+        ("env -S 'a b' x", "hook_executable=unverified", None),
+        ('cd "$CLAUDE_PROJECT_DIR" && /definitely/missing/bin', "hook_executable=missing", None),
+        ("command -v jq >/dev/null", None, "hook_executable="),
+        (f"time -p {sys.executable} x.py", "hook_executable=found", "hook_executable=missing"),
+        ("time -p /definitely/missing/bin", "hook_executable=missing", None),
     ],
 )
 def test_hook_executable_skips_assignments_and_shell_builtins(
@@ -212,6 +227,76 @@ def test_settings_mcpjson_rejects_apply_and_keep_user_server(tmp_path: Path):
     assert "claude:project mcp=shared" not in output
 
 
+def test_mcpjson_reject_leaves_same_name_local_server_enabled(tmp_path: Path):
+    project, home = tmp_path / "project", tmp_path / "home"
+    project.mkdir()
+    write_json(home / ".claude.json", {"projects": {str(project.resolve()): {
+        "mcpServers": {"shared": {"command": sys.executable}},
+        "disabledMcpjsonServers": ["shared"],
+    }}})
+    write_json(project / ".mcp.json", {"mcpServers": {"shared": {"command": "/definitely/missing/bin"}}})
+    output = run_context(project, home)
+    assert "claude:local-project mcp=shared state=enabled executable=found" in output
+
+
+def test_unapproved_mcpjson_server_is_pending(tmp_path: Path):
+    project, home = tmp_path / "project", tmp_path / "home"
+    project.mkdir()
+    write_json(home / ".claude.json", {
+        "mcpServers": {"shared": {"url": "https://example.com/user"}},
+        "projects": {str(project.resolve()): {"enabledMcpjsonServers": ["approved", "my_srv"]}},
+    })
+    write_json(project / ".mcp.json", {"mcpServers": {
+        "approved": {"command": "python3"},
+        "my.srv": {"command": "python3"},
+        "fresh": {"command": "python3"},
+        "shared": {"command": "/definitely/missing/bin"},
+    }})
+    output = run_context(project, home)
+    assert "claude:project mcp=approved state=enabled" in output
+    assert "claude:project mcp=fresh state=pending" in output
+    assert "claude:project mcp=my.srv state=enabled" in output
+    assert "claude:user mcp=shared state=enabled executable=remote" in output
+
+
+def test_enable_all_project_mcp_servers_approves_mcpjson(tmp_path: Path):
+    project, home = tmp_path / "project", tmp_path / "home"
+    project.mkdir()
+    write_json(project / ".claude" / "settings.local.json", {"enableAllProjectMcpServers": True})
+    write_json(project / ".mcp.json", {"mcpServers": {"fresh": {"command": "python3"}}})
+    output = run_context(project, home)
+    assert "claude:project mcp=fresh state=enabled" in output
+
+
+def test_plugin_mcp_server_honors_disabled_runtime_name(tmp_path: Path):
+    project, home = tmp_path / "project", tmp_path / "home"
+    project.mkdir()
+    plugin = home / "plugins" / "github"
+    write_json(home / ".claude" / "plugins" / "installed_plugins.json", {"plugins": {
+        "github@market": [{"scope": "user", "installPath": str(plugin)}],
+    }})
+    write_json(home / ".claude" / "settings.json", {"enabledPlugins": {"github@market": True}})
+    write_json(plugin / ".mcp.json", {"github": {"command": "python3"}})
+    write_json(home / ".claude.json", {"projects": {str(project.resolve()): {
+        "disabledMcpServers": ["plugin:github:github"],
+    }}})
+    output = run_context(project, home)
+    assert "mcp=claude:plugin:github@market:github state=disabled executable=skipped" in output
+
+
+def test_settings_mcp_servers_are_not_claude_sources(tmp_path: Path):
+    project, home = tmp_path / "project", tmp_path / "home"
+    project.mkdir()
+    write_json(home / ".claude.json", {"projects": {str(project.resolve()): {
+        "mcpServers": {"shared": {"command": sys.executable}},
+    }}})
+    write_json(home / ".claude" / "settings.json", {"mcpServers": {"shared": {"url": "https://x"}}})
+    output = run_context(project, home)
+    assert "claude:local-project mcp=shared state=enabled executable=found" in output
+    assert "claude:global mcp=shared" not in output
+    assert "claude:global mcp_servers=ignored" in output
+
+
 def test_mcpjson_reject_does_not_disable_same_name_user_server(tmp_path: Path):
     project, home = tmp_path / "project", tmp_path / "home"
     project.mkdir()
@@ -233,6 +318,12 @@ def test_mcpjson_reject_does_not_disable_same_name_user_server(tmp_path: Path):
         ("env PATH=/tmp/evil ", "no"),
         ("DYLD_INSERT_LIBRARIES=/tmp/evil.dylib ", "no"),
         ("LD_PRELOAD=/tmp/evil.so ", "no"),
+        ("exec ", "yes"),
+        ("! ", "no"),
+        ("</dev/null ", "no"),
+        ("0</dev/null ", "no"),
+        ("<<< '' ", "no"),
+        ("exec 0<&- ", "no"),
     ],
 )
 def test_pipe_hook_floor_rejects_python_env_overrides(tmp_path: Path, prefix: str, credited: str):

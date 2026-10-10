@@ -106,7 +106,7 @@ The collector includes both runtime-specific and agent-agnostic surfaces:
 
 ## Step 1b: Runtime Inventory and MCP Check
 
-Inspect configured global, project, and installed-plugin sources first, retaining source and enablement. Use the runtime inventory to flag missing hook and MCP executables; unknown working directories or plugin state remain coverage gaps. Call a harmless tool only on already connected servers. Never launch an unverified GUI executable just to test MCP. Record connected, failed, disabled, or untested separately; static presence is not live health. Never emit credentials. Compare discovered instruction bytes with the effective configured limit and state any uninspected ancestors, nested files, or runtime overrides.
+Inspect configured global, project, and installed-plugin sources first, retaining source and enablement. Use the runtime inventory to flag missing hook and MCP executables; unknown working directories or plugin state remain coverage gaps. Call a harmless tool only on already connected servers. Never launch an unverified GUI executable just to test MCP. Record connected, failed, disabled, pending approval, or untested separately; static presence is not live health. Never emit credentials. Compare discovered instruction bytes with the effective configured limit and state any uninspected ancestors, nested files, or runtime overrides.
 
 ## Step 1c: Safety and security checks
 
