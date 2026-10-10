@@ -1,8 +1,8 @@
 <div align="center">
   <img src="https://gw.alipayobjects.com/zos/k/2h/waza.svg" width="120" />
   <h1>Waza</h1>
-  <p><b>Bewährte Entwicklergewohnheiten als praxistaugliche KI-Skills</b></p>
-  <p><a href="README.md">English</a> · <a href="README_CN.md">中文</a> · <a href="README_TW.md">繁體</a> · <a href="README_JA.md">日本語</a> · <a href="README_KR.md">한국어</a> · Deutsch · <a href="README_FR.md">Français</a></p>
+  <p><b>Entwicklergewohnheiten, die du schon kennst, als Skills, die KI-Agenten ausführen können</b></p>
+  <p><a href="README.md">English</a> · <a href="README_CN.md">简体中文</a> · <a href="README_TW.md">繁體中文</a> · <a href="README_JA.md">日本語</a> · <a href="README_KR.md">한국어</a> · Deutsch · <a href="README_FR.md">Français</a></p>
   <a href="https://github.com/tw93/Waza/actions/workflows/test.yml"><img src="https://img.shields.io/github/actions/workflow/status/tw93/Waza/test.yml?branch=main&style=flat-square&label=tests" alt="Tests"></a>
   <a href="https://github.com/tw93/Waza/stargazers"><img src="https://img.shields.io/github/stars/tw93/Waza?style=flat-square" alt="Stars"></a>
   <a href="https://github.com/tw93/Waza/releases"><img src="https://img.shields.io/github/v/tag/tw93/Waza?label=version&style=flat-square" alt="Version"></a>
@@ -18,20 +18,20 @@
 
 ## Skills
 
-Jede Entwicklergewohnheit entspricht einem eigenständigen Skill. In Claude Code über Slash-Befehle aufrufbar, in Codex direkt über den Skill-Namen
+Jede Entwicklergewohnheit entspricht einem eigenständigen Skill. In Claude Code rufst du ihn per Slash-Befehl auf, in Codex direkt über den Skill-Namen.
 
 | Skill | Wann nutzen | Was er tut |
 | :--- | :--- | :--- |
-| [`/think`](skills/think/SKILL.md) | Vor neuem Code | Hinterfragt Anforderungen und erstellt direkt umsetzbare, entscheidungsreife Pläne |
-| [`/ui`](skills/ui/SKILL.md) | Frontend-UIs bauen | Entwickelt unverwechselbare UIs mit echtem Screenshot-Feedback statt Standard-Vorlagen |
-| [`/check`](skills/check/SKILL.md) | Vor Merge oder Release | Prüft Diffs gegen Projektvorgaben, verifiziert Ergebnisse und regelt Releases |
-| [`/hunt`](skills/hunt/SKILL.md) | Bugs und Regressionen | Systematisches Debugging: Ursache klären, bevor Code geändert wird |
-| [`/write`](skills/write/SKILL.md) | Texte schreiben oder feilen | Formuliert Texte auf Deutsch und Englisch natürlich um, entfernt hölzernen KI-Ton |
-| [`/learn`](skills/learn/SKILL.md) | Unbekannte Themen erforschen | Strukturierte 6-Phasen-Recherche: recherchieren, verdichten und publizieren |
-| [`/read`](skills/read/SKILL.md) | Webseiten oder PDFs lesen | Erstellt prägnante Zusammenfassungen oder sauberes Markdown für Zitate und Notizen |
-| [`/health`](skills/health/SKILL.md) | Agenten-Status prüfen | Prüft Agenten-Konfiguration und Prompt-Drift ressourcenschonend auf Stabilität |
+| [`/think`](skills/think/SKILL.md) | Vor neuem Code | Hinterfragt Anforderungen und erstellt direkt umsetzbare, entscheidungsreife Pläne. |
+| [`/ui`](skills/ui/SKILL.md) | Frontend-UIs bauen | Entwickelt unverwechselbare UIs mit klarer gestalterischer Richtung statt Standard-Vorlagen, auf Wunsch auch mit Iteration anhand von Screenshots. |
+| [`/check`](skills/check/SKILL.md) | Nach einer Aufgabe, vor Merge oder Release | Prüft Diffs gegen Projektvorgaben, verifiziert Ergebnisse und übernimmt freigegebene Release- und Maintainer-Aufgaben. |
+| [`/hunt`](skills/hunt/SKILL.md) | Bugs und Regressionen | Systematisches Debugging: Ursache klären, bevor Code geändert wird. |
+| [`/write`](skills/write/SKILL.md) | Texte schreiben oder feilen | Formuliert chinesische und englische Texte natürlich um, entfernt hölzernen KI-Ton. |
+| [`/learn`](skills/learn/SKILL.md) | Unbekannte Themen erforschen | Strukturierte 6-Phasen-Recherche: recherchieren, verdichten und publizieren. |
+| [`/read`](skills/read/SKILL.md) | Webseiten oder PDFs lesen | Erstellt prägnante Zusammenfassungen oder sauberes Markdown für Zitate und Notizen. |
+| [`/health`](skills/health/SKILL.md) | Agenten-Konfiguration prüfen | Prüft Agenten-Konfiguration und Anweisungs-Drift, zuerst als ressourcenschonende Übersicht, dann im Detail. |
 
-Jeder Skill ist ein eigenständiger Ordner mit Referenzdokumenten, Skripten und erprobten Best Practices
+Jeder Skill ist ein eigenständiger Ordner mit Referenzdokumenten, Skripten und Fallstricken aus echten Fehlschlägen.
 
 ## Installation
 
@@ -42,9 +42,9 @@ npx skills add tw93/Waza -a claude-code codex cursor -g -y
 ```
 
 Oder beauftrage deinen Agenten direkt mit der Installation:
-> Install Waza for me by reading https://github.com/tw93/Waza/blob/main/llms.txt
+> Lies https://github.com/tw93/Waza/blob/main/llms.txt und installiere Waza für mich
 
-Skills landen zentral in `~/.agents/skills`. Claude Code bindet sie per Symlink ein; Codex, Cursor, Gemini CLI, Copilot, Amp, Kimi Code CLI und alle Agenten, die dieses Verzeichnis nutzen, laden die 8 Skills automatisch. Aktualisierung über `npx skills update -g -y`
+Skills landen zentral in `~/.agents/skills`. Claude Code bindet sie per Symlink ein; Codex, Cursor, Gemini CLI, Copilot, Amp, Kimi Code CLI und alle Agenten, die dieses Verzeichnis nutzen, laden die 8 Skills automatisch. Agenten mit eigenem Skill-Verzeichnis gibst du nach `-a` mit ihrer ID an (zum Beispiel `antigravity-cli` oder `qwen-code`). Aktualisierung über `npx skills update -g -y`.
 
 **Host-Plugin-Methode** (Skills erhalten einen Namespace-Präfix, z. B. `/waza:check`):
 
@@ -58,30 +58,30 @@ codex plugin marketplace add tw93/Waza
 codex plugin add waza@waza
 ```
 
-**Claude Desktop**: Lade [waza.zip](https://github.com/tw93/Waza/releases/latest/download/waza.zip) herunter, öffne Customize > Skills > "+" > Create skill und lade die ZIP-Datei hoch
+**Claude Desktop**: Lade [waza.zip](https://github.com/tw93/Waza/releases/latest/download/waza.zip) herunter, öffne Customize > Skills > "+" > Create skill und lade die ZIP-Datei hoch. Zum Aktualisieren klickst du auf der Skill-Karte auf "...", wählst Replace und lädst die neueste ZIP-Datei hoch.
 
-**Pi**: `pi install npm:@tw93/waza`, Update über `pi update npm:@tw93/waza`
+**Pi**: `pi install npm:@tw93/waza`, Update über `pi update npm:@tw93/waza`.
 
 ## Skill-Kombinationen
 
-Du entscheidest, wie Skills kombiniert werden. Jeder Skill stoppt nach Erreichen des Zielergebnisses; autorisierte Workflows laufen nahtlos durch
+Du entscheidest, wie Skills kombiniert werden. Jeder Skill stoppt nach Erreichen des Zielergebnisses; autorisierte Workflows laufen nahtlos durch.
 
 **Typische Workflows:**
 
-- **Neues Feature**: `/think` Plan prüfen → Implementieren → `/check` Mergen
-- **Bugfix**: `/hunt` Ursache finden → Beheben → `/check` Verifizieren und Releasen
-- **Recherche**: `/read` Material holen → `/learn` Strukturieren → `/write` Ausformulieren
-- **Fehlersuche**: `/hunt` Ursache finden → Fixen → `/check` Diffs prüfen
+- **Neues Feature**: `/think` prüft den Plan, nach Freigabe implementieren, dann mit `/check` prüfen und mergen
+- **Bugfix**: `/hunt` findet die Ursache, dann beheben, dann mit `/check` verifizieren und releasen
+- **Recherche**: `/read` holt das Material, `/learn` strukturiert es, `/write` formuliert aus
+- **Fehlersuche**: `/hunt` findet die Ursache, dann fixen, dann mit `/check` die Diffs prüfen
 
 ## Projekt-Kontext
 
-Waza liefert universelle Entwicklergewohnheiten. `/check` liest zur Laufzeit nur öffentliche Projektdateien (README, Paketdefinitionen, Makefile, CI-Workflows) und deine Vorgaben, niemals private Pfade oder Tokens
+Waza liefert universelle Entwicklergewohnheiten. `/check` liest zur Laufzeit nur öffentliche Projektdateien (README, Paketdefinitionen, Makefile, CI-Workflows) und deine Vorgaben, niemals private Pfade, Zugangsdaten oder Tokens. Die Vorlage für den Review-Kontext findest du in [`skills/check/references/project-context.md`](skills/check/references/project-context.md).
 
 ## Extras
 
 ### Statusleiste
 
-Minimale Statusleiste für Claude Code: Kontext-Window, 5-Stunden- und 7-Tage-Kontingente farbcodiert ohne Ablenkung
+Minimale Statusleiste für Claude Code: Kontext-Window, 5-Stunden- und 7-Tage-Kontingente farbcodiert ohne Ablenkung.
 
 <div align="center">
   <img src="https://gw.alipayobjects.com/zos/k/y9/RUgevg.png" width="1000" />
@@ -93,6 +93,7 @@ Minimale Statusleiste für Claude Code: Kontext-Window, 5-Stunden- und 7-Tage-Ko
   WAZA_STATUSLINE_SCRIPT="$(mktemp -t waza-statusline.XXXXXX)"
   trap 'rm -f "$WAZA_STATUSLINE_SCRIPT"' EXIT
   curl -fL https://github.com/tw93/Waza/releases/latest/download/setup-statusline.sh -o "$WAZA_STATUSLINE_SCRIPT"
+  # vorher prüfen: less "$WAZA_STATUSLINE_SCRIPT"
   bash "$WAZA_STATUSLINE_SCRIPT"
 )
 ```
@@ -105,9 +106,11 @@ status_line = ["model-with-reasoning", "current-dir", "context-used", "five-hour
 status_line_use_colors = true
 ```
 
+Codex zeigt das verbleibende Kontingent, die Claude-Code-Statusleiste oben den verbrauchten Anteil (upstream gibt es `five-hour-used` / `weekly-used` noch nicht).
+
 ### Optionale Regeln
 
-Regeln für die dauerhafte Arbeitsweise deiner Agenten:
+Optionale Regeln wirken auch außerhalb von Skill-Aufrufen, sobald sie in den dauerhaften Anweisungen deines Agenten installiert sind. Die Installation der Waza-Skills allein aktiviert sie nicht. Kopiere die gewünschten Befehle (bei Codex oder Antigravity ersetzt du `claude-code` durch `codex` bzw. `antigravity-cli`):
 
 ```bash
 (
@@ -115,6 +118,7 @@ Regeln für die dauerhafte Arbeitsweise deiner Agenten:
   WAZA_RULE_SCRIPT="$(mktemp -t waza-rule.XXXXXX)"
   trap 'rm -f "$WAZA_RULE_SCRIPT"' EXIT
   curl -fL https://github.com/tw93/Waza/releases/latest/download/setup-rule.sh -o "$WAZA_RULE_SCRIPT"
+  # vorher prüfen: less "$WAZA_RULE_SCRIPT"
 
   # Englisch-Coaching: Kurze Korrekturhinweise bei Formulierungsfehlern
   bash "$WAZA_RULE_SCRIPT" english claude-code
@@ -126,21 +130,28 @@ Regeln für die dauerhafte Arbeitsweise deiner Agenten:
   bash "$WAZA_RULE_SCRIPT" waza-routing claude-code
 
   # Klare Antworten: Verständliche Kommunikation basierend auf ASD-STE100
+  # Clarity ist auf main verfügbar, aber noch nicht im aktuellen Release
   WAZA_REF=main bash "$WAZA_RULE_SCRIPT" clarity claude-code
 )
 ```
+
+[Clarity](rules/clarity.md) übernimmt Prinzipien für klares Schreiben aus ASD-STE100, ohne die Grammatik von kontrolliertem Englisch vorzuschreiben oder deinen Stil zu ändern. Führe den Befehl erneut aus, um die installierte Regel zu aktualisieren, und starte danach eine neue Sitzung. Codex installiert einen markierten Block in `~/.codex/AGENTS.md`; Claude Code und Antigravity installieren eine Regeldatei. Bei anderen Tools kopierst du die Regel in deren dauerhafte benutzerdefinierte Anweisungen.
 
 <div align="center">
   <img src="https://gw.alipayobjects.com/zos/k/24/vfkGOi.png" width="1000" />
 </div>
 
+Die curl-URLs verwenden das neueste GitHub-Release-Asset. Für die neuesten Skripte von main setzt du `WAZA_REF=main` vor den Befehl.
+
 ## Warum Waza
 
 Waza (技, わざ) bezeichnet in den Kampfkünsten eine Technik, die durch ständiges Üben zur instinktiven Gewohnheit wird.
 
-Gute Entwickler schreiben nicht nur Code. Sie hinterfragen Annahmen, suchen nach Ursachen und prüfen ihre eigenen Diffs. KI bringt enorme Rechenleistung mit, liefert ohne klare Grenzen jedoch oft beliebiges Mittelmaß. Waza setzt präzise Ziele und Leitplanken, überlässt den optimalen Lösungsweg aber dem Modell.
+Gute Entwickler schreiben nicht nur Code. Sie hinterfragen Anforderungen, debuggen bis zur Ursache, prüfen ihre eigenen Diffs und lesen Primärquellen. KI kann all das leisten, driftet ohne Struktur aber ins Beliebige und Ungenaue ab. Jeder Waza-Skill legt das Ziel, die roten Linien und die Art der Überprüfung fest und überlässt den Lösungsweg dem Modell. Je besser die Modelle werden, desto mehr zahlt sich diese Zurückhaltung aus.
 
-Statt überladener Frameworks konzentriert sich Waza auf 8 essenzielle Gewohnheiten. Entstanden aus über 300 Praxissitzungen. Teil einer Trilogie: [Kaku](https://github.com/tw93/Kaku) schreibt Code, [Waza](https://github.com/tw93/Waza) trainiert Gewohnheiten, [Kami](https://github.com/tw93/Kami) gestaltet Dokumente
+Tools wie Superpowers und gstack sind mächtig, aber schwer: zu viele Skills, zu viel Konfiguration. Waza bleibt klein, acht Skills für die Gewohnheiten, die wirklich zählen, jeder mit einer Aufgabe und einem klaren Auslöser. Waza ist aus echten Projekten entstanden und in über 300 Sitzungen über 7 Projekte hinweg verfeinert worden, jeder Fallstrick geht auf einen echten Fehlschlag zurück. Der `/health`-Skill ist aus dem sechsschichtigen Claude-Code-Framework aus [diesem Beitrag](https://tw93.fun/en/2026-03-12/claude.html) entstanden.
+
+Teil einer Trilogie: [Kaku](https://github.com/tw93/Kaku) (書く) schreibt Code, [Waza](https://github.com/tw93/Waza) (技) trainiert Gewohnheiten, [Kami](https://github.com/tw93/Kami) (紙) liefert Dokumente. Als Familie gedacht ist Kaku der Vater, Waza die große Schwester und Kami die kleine Schwester.
 
 ## Deinstallation
 
@@ -153,14 +164,16 @@ rm -f ~/.claude/rules/waza-routing.md
 rm -f ~/.claude/rules/clarity.md
 ```
 
+In Claude Desktop löschst du Waza unter Customize > Skills. Bei Codex-Regelinstallationen entfernst du die markierten Waza-Blöcke aus `~/.codex/AGENTS.md`. Bei Antigravity entfernst du die gewählte Regeldatei aus `~/.gemini/antigravity-cli/rules/`. In anderen Tools entfernst du kopierte Regeln aus den benutzerdefinierten Anweisungen. Starte nach dem Entfernen einer Regel eine neue Sitzung.
+
 ## Unterstützung
 
-- Die direkteste Unterstützung ist der Kauf meiner Mac-Bereinigungs-App [Mole for Mac](https://mole.fit)
-- Wenn dir Waza hilft, freuen wir uns über einen Stern auf GitHub oder eine Weiterempfehlung
-- Du kannst auch meinen beiden Katzen TangYuan und Coke eine <a href="https://cats.tw93.fun?name=Waza" target="_blank">Dose Futter 🥩</a> spendieren
+- Die direkteste Unterstützung ist der Kauf meiner Mac-Bereinigungs-App [Mole for Mac](https://mole.fit).
+- Wenn dir Waza hilft, freue ich mich über einen Stern, eine [Weiterempfehlung](https://twitter.com/intent/tweet?url=https://github.com/tw93/Waza&text=Waza%20-%20AI%20coding%20skills%20for%20the%20complete%20engineer.) oder ein Issue bzw. einen PR.
+- Du kannst auch meinen beiden Katzen TangYuan und Coke eine <a href="https://cats.tw93.fun?name=Waza" target="_blank">Dose Futter 🥩</a> spendieren.
 
 <details>
-<summary>Unsere Unterstützer 🐱</summary>
+<summary>Diese lieben Menschen haben es schon getan 🐱</summary>
 <br/>
 <div align="center">
   <a href="https://cats.tw93.fun?name=Waza"><img src="https://cdn.jsdelivr.net/gh/tw93/sponsors@main/assets/sponsors.svg" width="1000" loading="lazy" /></a>
