@@ -181,7 +181,7 @@ If found, either apply the doc update as `safe_auto` (when the invariant is clea
 
 ## Specialist Review (Standard and Deep only)
 
-Load `references/persona-catalog.md` for activation, parallel or sequential review, finding verification, and the completion ledger.
+Load `references/persona-catalog.md` for activation, parallel or sequential review, and finding verification.
 
 Before a whole-scope verdict, reconcile a completion ledger for every delegated review: assigned scope, returned status, and uncovered remainder. Wait for every active reviewer, or name its scope as unreviewed. Never say "all read", "full audit complete", or "no issues" while any reviewer or required verification is still pending.
 

@@ -21,13 +21,13 @@ Activate when the user asks to commit, tag, release, publish, push, reply on an 
 
 Treat an explicitly authorized chain such as review, fix, verify, commit, push, and public follow-through as one delivery ledger. Do not return control between its internal stages while safe authorized work remains. A local commit is not completion when push was included, and a no-op push is not completion when intended local changes remain uncommitted. Do not create an empty commit when the intended scope is already clean; prove the clean/up-to-date state instead.
 
-This mode extends review; it does not skip review. Select the delivery surface before running gates:
+This mode extends review; it does not skip review. Select every delivery surface the authorized request covers before running gates, and apply the union of their steps:
 
-- **Commit/push only:** inspect the intended diff, run its required checks, synchronize tracked generated outputs, and follow steps 4-5. Verify the remote SHA and relevant CI after push. Do not require a tag, release notes, registry publication, or uploaded assets unless the change or project rules make them part of this task.
-- **Release readiness, packaging, or publication:** apply steps 1-3 and the Release Gate matrix, then the authorized delivery steps.
+- **Commit/push:** inspect the intended diff, run its required checks, synchronize tracked generated outputs, and follow steps 4-5. Verify the remote SHA and relevant CI after push. Do not require a tag, release notes, registry publication, or uploaded assets unless the change or project rules make them part of this task.
+- **Release readiness, packaging, or publication:** apply steps 1-3, then the authorized delivery steps.
 - **Public replies, issue closure, or reactions:** apply the matching steps 6-7 against the actual delivery channel. Commit/push authorization alone does not authorize these actions.
 
-Apply only the steps selected above; step 8 applies whenever a network or API operation fails:
+Apply only the steps of the selected surfaces; step 8 applies whenever a network or API operation fails:
 
 1. Extract release rules from public project context: README, manifests, CI workflows, release notes, package scripts, changelogs, and explicit user instructions in the current thread.
 2. Fill the Release Gate 2.0 matrix from `references/project-context.md`. Seed the deterministic rows with `python3 <skill-base-dir>/scripts/release_gate.py --root <project>` (worktree state, remote sync, tag baseline, version field sync, changelog mention) and paste its status lines as evidence; the remaining rows (generated artifacts, package/archive contents, release assets, registry/appcast/CI, public issue/PR state) stay judgment calls with their own evidence.
