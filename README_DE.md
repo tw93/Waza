@@ -25,9 +25,9 @@ Jede Entwicklergewohnheit entspricht einem eigenständigen Skill. In Claude Code
 | [`/think`](skills/think/SKILL.md) | Vor neuem Code | Hinterfragt Anforderungen und erstellt direkt umsetzbare, entscheidungsreife Pläne. |
 | [`/ui`](skills/ui/SKILL.md) | Frontend-UIs bauen | Entwickelt unverwechselbare UIs mit klarer gestalterischer Richtung statt Standard-Vorlagen, auf Wunsch auch mit Iteration anhand von Screenshots. |
 | [`/check`](skills/check/SKILL.md) | Nach einer Aufgabe, vor Merge oder Release | Prüft Diffs gegen Projektvorgaben, verifiziert Ergebnisse und übernimmt freigegebene Release- und Maintainer-Aufgaben. |
-| [`/hunt`](skills/hunt/SKILL.md) | Bugs und Regressionen | Systematisches Debugging: Ursache klären, bevor Code geändert wird. |
+| [`/hunt`](skills/hunt/SKILL.md) | Bugs und Regressionen | Systematisches Debugging: Ursache klären, bevor Code geändert wird, besonders wenn etwas vorher funktioniert hat. |
 | [`/write`](skills/write/SKILL.md) | Texte schreiben oder feilen | Formuliert chinesische und englische Texte natürlich um, entfernt hölzernen KI-Ton. |
-| [`/learn`](skills/learn/SKILL.md) | Unbekannte Themen erforschen | Strukturierte 6-Phasen-Recherche: recherchieren, verdichten und publizieren. |
+| [`/learn`](skills/learn/SKILL.md) | Unbekannte Themen erforschen | Recherche in sechs Phasen: sammeln, verdichten, gliedern, ausarbeiten, überarbeiten, dann selbst prüfen und veröffentlichen. |
 | [`/read`](skills/read/SKILL.md) | Webseiten oder PDFs lesen | Erstellt prägnante Zusammenfassungen oder sauberes Markdown für Zitate und Notizen. |
 | [`/health`](skills/health/SKILL.md) | Agenten-Konfiguration prüfen | Prüft Agenten-Konfiguration und Anweisungs-Drift, zuerst als ressourcenschonende Übersicht, dann im Detail. |
 

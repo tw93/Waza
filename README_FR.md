@@ -25,9 +25,9 @@ Chaque réflexe d'ingénierie correspond à une compétence dédiée. Dans Claud
 | [`/think`](skills/think/SKILL.md) | Avant d'écrire du code | Remet en question le problème et produit un plan d'action prêt à l'emploi. |
 | [`/ui`](skills/ui/SKILL.md) | Création d'interfaces frontend | Conçoit des interfaces avec une direction visuelle affirmée plutôt que des templates par défaut, y compris par itérations sur captures d'écran. |
 | [`/check`](skills/check/SKILL.md) | Avant merge ou release | Passe en revue les diffs selon les règles du projet, valide les résultats et gère les actions de release et de maintenance approuvées. |
-| [`/hunt`](skills/hunt/SKILL.md) | Bogues et régressions | Débogage méthodique pour identifier la cause racine avant d'appliquer un correctif. |
+| [`/hunt`](skills/hunt/SKILL.md) | Bogues et régressions | Débogage méthodique pour identifier la cause racine avant d'appliquer un correctif, surtout quand quelque chose fonctionnait avant. |
 | [`/write`](skills/write/SKILL.md) | Rédaction et révision | Réécrit les textes chinois et anglais pour un rendu naturel et supprime le ton robotique des IA. |
-| [`/learn`](skills/learn/SKILL.md) | Explorer un nouveau sujet | Recherche approfondie en 6 étapes pour maîtriser un sujet complexe. |
+| [`/learn`](skills/learn/SKILL.md) | Explorer un nouveau sujet | Recherche en six étapes : collecter, digérer, structurer, rédiger, affiner, puis relire et publier. |
 | [`/read`](skills/read/SKILL.md) | Lire des URL ou des PDF | Extrait un résumé concis ou du Markdown propre pour référence ou sauvegarde. |
 | [`/health`](skills/health/SKILL.md) | Audit des agents IA | Audite la configuration des agents et les dérives d'instructions. |
 

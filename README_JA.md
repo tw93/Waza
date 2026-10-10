@@ -25,7 +25,7 @@
 | [`/think`](skills/think/SKILL.md) | 新しいコードを書く前 | 要件と設計を検証し、そのまま実装可能な意思決定済みの計画を作成 |
 | [`/ui`](skills/ui/SKILL.md) | フロントエンドUI構築時 | デフォルトのテンプレートに頼らず明確なデザインの方向性でUIを作り、スクリーンショットを使ったビジュアルの反復にも対応 |
 | [`/check`](skills/check/SKILL.md) | 実装完了後・マージやリリース前 | プロジェクト規約に基づいて差分をレビューして結果を検証し、承認されたリリースやメンテナー作業を実行 |
-| [`/hunt`](skills/hunt/SKILL.md) | バグやデグレの発生時 | 修正前に根本原因を特定し、以前は動いていた不具合では特に徹底 |
+| [`/hunt`](skills/hunt/SKILL.md) | バグやデグレの発生時 | 修正前に根本原因を特定し、以前は動いていた機能が壊れた場合は特に徹底 |
 | [`/write`](skills/write/SKILL.md) | 文章の執筆や推敲時 | 中国語・英語の文章を自然にリライトし、機械的なAI感を排除 |
 | [`/learn`](skills/learn/SKILL.md) | 未知の分野の調査時 | 収集・要約・構成・執筆・推敲・レビューの6段階で体系的にリサーチ |
 | [`/read`](skills/read/SKILL.md) | WebリンクやPDFの閲覧時 | 要点を簡潔にまとめるか、引用や保存に適したクリーンなMarkdownを出力 |
@@ -151,7 +151,7 @@ Waza（技、わざ）は武道の用語で、本能になるまで繰り返し�
 
 Superpowers や gstack のようなツールは強力ですが重く、スキルも設定も多すぎます。Waza は小さく保ち、本当に大事な習慣に絞った 8 つのスキルだけを置いています。どれも役割は一つで、呼び出すタイミングもはっきりしています。7 つのプロジェクトと 300 以上のセッションで磨いてきたもので、どの回避策も実際の失敗に由来します。`/health` スキルは[この記事](https://tw93.fun/en/2026-03-12/claude.html)で紹介した Claude Code の 6 層フレームワークから生まれました。
 
-[Kaku](https://github.com/tw93/Kaku)（書く）はコードを書き、[Waza](https://github.com/tw93/Waza)（技）は習慣を鍛え、[Kami](https://github.com/tw93/Kami)（紙）はドキュメントを仕上げる三部作です。家族にたとえると、Kaku は父、Waza は姉、Kami は妹です。
+[Kaku](https://github.com/tw93/Kaku)（書く）がコードを書き、[Waza](https://github.com/tw93/Waza)（技）が習慣を鍛え、[Kami](https://github.com/tw93/Kami)（紙）がドキュメントを仕上げる、という三部作です。家族にたとえると、Kaku は父、Waza は姉、Kami は妹です。
 
 ## アンインストール
 
