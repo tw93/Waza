@@ -121,6 +121,7 @@ It enforces character-level punctuation by locale and skips code, URLs, and link
 | What happened | Rule |
 |---|---|
 | User flagged one word as "not my voice"; only that instance was fixed | A flagged word marks a smell class, not a typo. Sweep the whole text for the same class (same register, same template shape) before returning |
+| A copy-fix batch passed its checks but shipped new defects: a line now wider than its fixed-width slot, a boundary that lost its subject, a noun that reads two ways | Re-review the fix diff itself, starting with paragraphs that were rewritten or re-translated whole. Restored text carries its old defects too; flag them instead of silently re-editing the restoration |
 
 ## Output
 
