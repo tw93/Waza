@@ -23,7 +23,7 @@ Use the rows that explain a real misreading. These are semantic checks, not word
 
 STE-inspired clarity is useful here; a universal controlled-English grammar is not. Keep natural tenses, phrasal verbs such as `sign in`, domain vocabulary, and sentence rhythm when they carry the correct meaning. There are no fixed sentence, paragraph, or noun-count caps. English word limits do not transfer to Chinese. Existing project punctuation conventions still apply.
 
-Terminology consistency is scoped to the document and its product model, not a global one-word-one-meaning dictionary. Define an unfamiliar term only when the audience needs it and the source establishes its meaning; do not append a glossary to every output. Prefer the real interface term over an easier synonym that users cannot find on screen. When chaining interface navigation paths, use spaced single chevrons ` › ` (U+203A, e.g. `Settings › General › Storage` or `设置 › 通用 › 存储空间`) rather than ASCII `>` (which collides with shell redirection, markdown quotes, or comparison operators) or arrows (`->` / `→`).
+Terminology consistency is scoped to the document and its product model, not a global one-word-one-meaning dictionary. Define an unfamiliar term only when the audience needs it and the source establishes its meaning; do not append a glossary to every output. Prefer the real interface term over an easier synonym that users cannot find on screen. For UI navigation paths, follow the breadcrumb rule in [write-product-localization.md](write-product-localization.md).
 
 ## Meaning Check
 
