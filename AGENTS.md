@@ -8,7 +8,7 @@ Waza is a skill collection for engineering workflows. The repository contains ei
 
 ## Repository Map
 
-- `VERSION` - single source of truth for the lock-step version. Marketplace entries, README install URLs, and installer `WAZA_REF` defaults must agree with this file (codegen-enforced). Per-skill frontmatter carries no version field; the verifier rejects a stale `metadata.version`.
+- `VERSION` - single source of truth for the lock-step version. Marketplace entries and installer `WAZA_REF` defaults must agree with this file (codegen-enforced). Per-skill frontmatter carries no version field; the verifier rejects a stale `metadata.version`.
 - `skills/RESOLVER.md` - trigger and routing table for the skill set.
 - `skills/*/SKILL.md` - individual skill entrypoints.
 - `skills/*/agents/` - specialist reviewer or inspector prompts.
@@ -52,7 +52,7 @@ make verify-generated # drift check used by CI; non-zero if regenerate would cha
 make package          # build dist/waza.zip from packaging.allowlist
 ```
 
-Run `make test` before meaningful changes to skill behavior, packaging, scripts, marketplace metadata, or anything generated. If you edited only frontmatter or VERSION, also run `make regenerate` and commit the resulting `.claude-plugin/marketplace.json` / `README.md` / installer changes together with your source edits.
+Run `make test` before meaningful changes to skill behavior, packaging, scripts, marketplace metadata, or anything generated. If you edited only frontmatter or VERSION, also run `make regenerate` and commit the resulting `.claude-plugin/marketplace.json` / `package.json` / installer changes together with your source edits.
 
 ## Skill Design Rules
 

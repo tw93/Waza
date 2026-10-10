@@ -12,7 +12,7 @@ Generated files:
   - plugins/waza/skills/               Codex plugin skill mirror
   - plugins/waza/rules/                Codex plugin rule mirror
   - .agents/plugins/marketplace.json   Codex repo marketplace
-  - README.md                          install URLs pinned to VERSION
+  - README.md                          installer URLs on latest release assets
   - package.json                       npm/Pi package metadata pinned to VERSION
   - skills/*/references/durable-context.md
                                         direct-install copies of the shared

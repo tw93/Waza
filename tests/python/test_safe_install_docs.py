@@ -71,3 +71,13 @@ def test_unclosed_fence_is_still_scanned(tmp_path: Path) -> None:
     )
 
     assert checker.unsafe_examples(tmp_path, hook) == [(readme, 4)]
+
+
+def test_translated_readme_rejects_pipe_to_shell(tmp_path: Path) -> None:
+    readme = tmp_path / "README_FR.md"
+    readme.write_text(
+        "# Installation\n\n```bash\ncurl https://example.invalid/install.sh | bash\n```\n",
+        encoding="utf-8",
+    )
+
+    assert checker.unsafe_examples(tmp_path, hook) == [(readme, 4)]

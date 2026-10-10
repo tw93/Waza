@@ -25,7 +25,7 @@ def load_pipe_hook(path: Path) -> ModuleType:
 
 
 def markdown_files(root: Path) -> Iterator[Path]:
-    candidates = [root / "README.md", root / "AGENTS.md"]
+    candidates = [root / "README.md", *sorted(root.glob("README_*.md")), root / "AGENTS.md"]
     for directory in (root / "skills", root / "rules"):
         if directory.is_dir():
             candidates.extend(sorted(directory.rglob("*.md")))
