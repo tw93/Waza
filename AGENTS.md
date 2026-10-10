@@ -8,7 +8,7 @@ Waza is a skill collection for engineering workflows. The repository contains ei
 
 ## Repository Map
 
-- `VERSION` - single source of truth for the lock-step version. Marketplace entries and installer `WAZA_REF` defaults must agree with this file (codegen-enforced). Per-skill frontmatter carries no version field; the verifier rejects a stale `metadata.version`.
+- `VERSION` - single source of truth for the lock-step version. Marketplace entries, `package.json`, and installer `WAZA_REF` defaults must agree with this file (codegen-enforced). Per-skill frontmatter carries no version field; the verifier rejects a stale `metadata.version`.
 - `skills/RESOLVER.md` - trigger and routing table for the skill set.
 - `skills/*/SKILL.md` - individual skill entrypoints.
 - `skills/*/agents/` - specialist reviewer or inspector prompts.

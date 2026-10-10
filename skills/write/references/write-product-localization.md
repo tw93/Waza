@@ -12,7 +12,7 @@ Use this when reviewing product pages, release notes, app strings, runtime notif
 
 ## High-Signal Failure Patterns
 
-- **Chinese**: Literal possessives such as "你的 Mac" or "你的设备" when plain "Mac" or "本机" is enough; modifier order that lets a noun read two ways; mixed punctuation; English words with stable Chinese equivalents. Machine-output verbs, platform UI names, and literally translated developer primitives are covered in [write-zh.md](write-zh.md); load it as well when Chinese copy is present. Character-level half/full-width punctuation and CJK/Latin spacing are checked by `check-punctuation.sh`; this list keeps the locale-voice judgment calls.
+- **Chinese**: Literal possessives such as "你的 Mac" or "你的设备" when plain "Mac" or "本机" is enough; modifier order that lets a noun read two ways (`原生 Mac 笔记本` reads as MacBook hardware; write `Mac 原生的 Markdown 笔记本`); mixed punctuation; English words with stable Chinese equivalents. Machine-output verbs, platform UI names, and literally translated developer primitives are covered in [write-zh.md](write-zh.md); load it as well when Chinese copy is present. Character-level half/full-width punctuation and CJK/Latin spacing are checked by `check-punctuation.sh`; this list keeps the locale-voice judgment calls.
 - **Traditional Chinese**: Mainland phrasing copied into Traditional copy; stale locale URLs; words that feel mainland-specific or overly colloquial for the target audience.
 - **Japanese**: English noun compounds translated too tightly; missing spaces around product terms when the project style uses them; UI strings that sound like a manual instead of a Mac app.
 - **Korean**: Inconsistent platform terms, especially menu bar / menu item wording; overly literal second-person sentences.
