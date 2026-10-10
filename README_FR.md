@@ -18,7 +18,7 @@
 
 ## Compétences (Skills)
 
-Chaque réflexe d'ingénierie correspond à une compétence dédiée. Dans Claude Code, lancez la commande slash ; dans Codex, appelez la compétence directement par son nom.
+Chaque réflexe d'ingénierie correspond à une compétence dédiée, un dossier autonome contenant documentation, scripts et retours d'expérience du terrain. Dans Claude Code, lancez la commande slash ; dans Codex, appelez la compétence directement par son nom.
 
 | Compétence | Quand l'utiliser | Ce qu'elle fait |
 | :--- | :--- | :--- |
@@ -31,8 +31,6 @@ Chaque réflexe d'ingénierie correspond à une compétence dédiée. Dans Claud
 | [`/read`](skills/read/SKILL.md) | Lire des URL ou des PDF | Extrait un résumé concis ou du Markdown propre pour référence ou sauvegarde. |
 | [`/health`](skills/health/SKILL.md) | Audit des agents IA | Audite la configuration des agents et les dérives d'instructions. |
 
-Chaque compétence est un dossier autonome contenant documentation, scripts et retours d'expérience du terrain.
-
 ## Installation
 
 **Claude Code, Codex, Cursor et autres agents**
@@ -41,10 +39,8 @@ Chaque compétence est un dossier autonome contenant documentation, scripts et r
 npx skills add tw93/Waza -a claude-code codex cursor -g -y
 ```
 
-Vous pouvez aussi demander directement à votre agent de l'installer :
+Les compétences sont installées dans `~/.agents/skills`. Claude Code y accède via un lien symbolique ; Codex, Cursor, Gemini CLI, Copilot, Amp, Kimi Code CLI et tout autre agent lisant ce dossier chargent automatiquement les 8 compétences. Les agents dotés d'un dossier de compétences privé prennent leur identifiant après `-a` (par exemple `antigravity-cli` ou `qwen-code`). Mise à jour via `npx skills update -g -y`. Vous pouvez aussi demander directement à votre agent de l'installer :
 > Lis https://github.com/tw93/Waza/blob/main/llms.txt et installe Waza pour moi
-
-Les compétences sont installées dans `~/.agents/skills`. Claude Code y accède via un lien symbolique ; Codex, Cursor, Gemini CLI, Copilot, Amp, Kimi Code CLI et tout autre agent lisant ce dossier chargent automatiquement les 8 compétences. Les agents dotés d'un dossier de compétences privé prennent leur identifiant après `-a` (par exemple `antigravity-cli` ou `qwen-code`). Mise à jour via `npx skills update -g -y`.
 
 **En tant que plugin hôte** (les compétences sont préfixées, ex. `/waza:check`) :
 
@@ -69,9 +65,8 @@ Vous décidez comment combiner les compétences. Chaque compétence s'arrête un
 **Flux courants :**
 
 - **Nouvelle fonctionnalité** : `/think` pour cadrer, puis implémentation, puis `/check` pour valider et fusionner
-- **Correction de bogue** : `/hunt` pour trouver la cause, puis correction, puis `/check` pour vérifier et publier
+- **Correction de bogue** : `/hunt` pour trouver la cause, puis correction, puis `/check` pour revoir les diffs et publier si besoin
 - **Recherche et rédaction** : `/read` pour collecter, `/learn` pour structurer, `/write` pour polir
-- **Débogage et validation** : `/hunt` pour cibler la cause, puis correction, puis `/check` pour revoir les diffs
 
 ## Contexte du projet
 
@@ -79,9 +74,11 @@ Waza n'embarque que des méthodes d'ingénierie universelles. `/check` lit au mo
 
 ## Outils additionnels
 
+Les URL curl utilisent le dernier asset de release GitHub. Ajoutez `WAZA_REF=main` avant la commande pour utiliser les scripts les plus récents de main.
+
 ### Barre d'état (Statusline)
 
-Une barre d'état minimale pour Claude Code : fenêtre de contexte, quotas 5 heures et 7 jours avec code couleur sans encombrement.
+Une barre d'état minimale pour Claude Code : fenêtre de contexte, quotas 5 heures et 7 jours avec code couleur, sans barre de progression ni encombrement.
 
 <div align="center">
   <img src="https://raw.githubusercontent.com/tw93/Waza/main/assets/statusline.png" width="1000" />
@@ -141,13 +138,9 @@ Les règles optionnelles s'appliquent au-delà des appels de compétences une fo
   <img src="https://raw.githubusercontent.com/tw93/Waza/main/assets/clarity.png" width="1000" />
 </div>
 
-Les URL curl utilisent le dernier asset de release GitHub. Ajoutez `WAZA_REF=main` avant la commande pour utiliser les scripts les plus récents de main.
-
 ## Pourquoi Waza
 
-Waza (技, わざ) désigne dans les arts martiaux une technique répétée jusqu'à devenir un réflexe.
-
-Un bon ingénieur fait bien plus qu'écrire du code : il challenge les besoins, remonte jusqu'à la cause racine, relit ses propres diffs et lit les sources primaires. L'IA peut produire tout cela, mais sans structure, le résultat dérive vers un travail générique et imprécis. Chaque compétence Waza fixe le résultat attendu, les lignes rouges et la façon de vérifier, puis laisse le modèle choisir le chemin. À mesure que les modèles progressent, cette retenue rapporte des intérêts composés.
+Waza (技, わざ) désigne dans les arts martiaux une technique répétée jusqu'à devenir un réflexe. Un bon ingénieur fait bien plus qu'écrire du code : il challenge les besoins, remonte jusqu'à la cause racine, relit ses propres diffs et lit les sources primaires. L'IA peut produire tout cela, mais sans structure, le résultat dérive vers un travail générique et imprécis. Chaque compétence Waza fixe le résultat attendu, les lignes rouges et la façon de vérifier, puis laisse le modèle choisir le chemin. À mesure que les modèles progressent, cette retenue rapporte des intérêts composés.
 
 Des outils comme Superpowers et gstack sont puissants mais lourds : trop de compétences, trop de configuration. Waza reste sobre, huit compétences pour les réflexes qui comptent vraiment, chacune avec une seule mission et un déclencheur clair. Elles sont issues de vrais projets et affinées sur plus de 300 sessions dans 7 projets, et chaque mise en garde vient d'un échec réel. La compétence `/health` est née du cadre Claude Code en six couches présenté dans [cet article](https://tw93.fun/en/2026-03-12/claude.html).
 
@@ -164,13 +157,13 @@ rm -f ~/.claude/rules/waza-routing.md
 rm -f ~/.claude/rules/clarity.md
 ```
 
-Pour Claude Desktop, supprimez Waza dans Customize > Skills. Pour les règles installées sur Codex, retirez les blocs Waza balisés de `~/.codex/AGENTS.md`. Pour Antigravity, supprimez le fichier de règle choisi dans `~/.gemini/antigravity-cli/rules/`. Retirez les règles copiées des instructions personnalisées des autres outils. Ouvrez une nouvelle session après avoir retiré une règle.
+Pour la barre d'état, supprimez aussi l'entrée `statusLine` de `~/.claude/settings.json`. Pour Claude Desktop, supprimez Waza dans Customize > Skills. Pour les règles installées sur Codex, retirez les blocs Waza balisés de `~/.codex/AGENTS.md`. Pour Antigravity, supprimez le fichier de règle choisi dans `~/.gemini/antigravity-cli/rules/`. Retirez les règles copiées des instructions personnalisées des autres outils. Ouvrez une nouvelle session après avoir retiré une règle.
 
 ## Soutenir le projet
 
-- Le moyen le plus direct est d'acheter [Mole for Mac](https://mole.fit), mon application de nettoyage pour Mac.
-- Si Waza vous est utile, donnez-lui une étoile, [partagez-le](https://twitter.com/intent/tweet?url=https://github.com/tw93/Waza&text=Waza%20-%20AI%20coding%20skills%20for%20the%20complete%20engineer.) ou ouvrez une issue ou une PR.
-- Vous pouvez aussi offrir une <a href="https://cats.tw93.fun?name=Waza" target="_blank">boîte de pâtée 🥩</a> à mes deux chats, TangYuan et Coke.
+- Le moyen le plus direct est d'acheter [Mole for Mac](https://mole.fit), mon application de nettoyage pour Mac
+- Si Waza vous est utile, donnez-lui une étoile, [partagez-le](https://twitter.com/intent/tweet?url=https://github.com/tw93/Waza&text=Waza%20-%20AI%20coding%20skills%20for%20the%20complete%20engineer.) ou ouvrez une issue ou une PR
+- Vous pouvez aussi offrir une <a href="https://cats.tw93.fun?name=Waza" target="_blank">boîte de pâtée 🥩</a> à mes deux chats, TangYuan et Coke
 
 <details>
 <summary>Remerciements aux sponsors 🐱</summary>

@@ -18,7 +18,7 @@
 
 ## スキル一覧
 
-それぞれのエンジニアリング習慣が独立したスキルとして用意されています。Claude Code ではスラッシュコマンドを入力し、Codex ではスキル名を指定して呼び出します。
+それぞれのエンジニアリング習慣が独立したスキルとして用意されており、各スキルはリファレンスドキュメント、補助スクリプト、実運用で得た回避策を同梱したディレクトリです。Claude Code ではスラッシュコマンドを入力し、Codex ではスキル名を指定して呼び出します。
 
 | スキル | トリガーのタイミング | 役割 |
 | :--- | :--- | :--- |
@@ -31,8 +31,6 @@
 | [`/read`](skills/read/SKILL.md) | WebリンクやPDFの閲覧時 | 要点を簡潔にまとめるか、引用や保存に適したクリーンなMarkdownを出力 |
 | [`/health`](skills/health/SKILL.md) | エージェント設定の監査時 | エージェント設定や指示の乖離を診断し、トークン消費を抑えながら検査 |
 
-各スキルは独立したディレクトリになっており、リファレンスドキュメント、補助スクリプト、実運用で得た回避策が同梱されています。
-
 ## インストール
 
 **Claude Code、Codex、Cursor、その他のエージェント**
@@ -41,10 +39,8 @@
 npx skills add tw93/Waza -a claude-code codex cursor -g -y
 ```
 
-AIエージェントに直接インストールを依頼することも可能です：
+スキルは共通の `~/.agents/skills` ディレクトリに保存されます。Claude Code はシンボリックリンク経由で連携し、Codex、Cursor、Gemini CLI、Copilot、Amp、Kimi Code CLI など、このディレクトリを読み込む各エージェントで自動的に利用可能になります。専用ディレクトリを持つエージェントは `-a` の後にID（例：`antigravity-cli`、`qwen-code`）を指定してください。更新は `npx skills update -g -y` で行います。AIエージェントに直接インストールを依頼することも可能です：
 > https://github.com/tw93/Waza/blob/main/llms.txt を読んで Waza をインストールして
-
-スキルは共通の `~/.agents/skills` ディレクトリに保存されます。Claude Code はシンボリックリンク経由で連携し、Codex、Cursor、Gemini CLI、Copilot、Amp、Kimi Code CLI など、このディレクトリを読み込む各エージェントで自動的に利用可能になります。専用ディレクトリを持つエージェントは `-a` の後にID（例：`antigravity-cli`、`qwen-code`）を指定してください。更新は `npx skills update -g -y` で行います。
 
 **ホストのプラグイン機能を利用する場合**（スキル名に名前空間が付きます：`/waza:check`）：
 
@@ -69,9 +65,8 @@ codex plugin add waza@waza
 **一般的なワークフロー：**
 
 - **新機能の開発**：`/think` で設計を固め、承認後に実装し、`/check` でレビューしてマージ
-- **不具合の修正**：`/hunt` で原因を特定し、修正してから `/check` で検証してリリース
+- **不具合の修正**：`/hunt` で原因を特定し、修正してから `/check` で変更差分をレビューし、必要に応じてリリース
 - **調査と執筆**：`/read` で資料を集め、`/learn` で体系化し、`/write` で文章を磨く
-- **デバッグと検証**：`/hunt` で根本原因を特定し、修正してから `/check` で変更差分をレビュー
 
 ## プロジェクトコンテキスト
 
@@ -79,9 +74,11 @@ Waza は汎用的なエンジニアリングの型のみを提供します。`/c
 
 ## 追加ツールとルール
 
+curl の URL は最新の GitHub リリースアセットを使います。main の最新スクリプトを使いたい場合は、コマンドの前に `WAZA_REF=main` を指定してください。
+
 ### ステータスライン
 
-Claude Code 向けのミニマルなステータスライン：コンテキストウィンドウ、5時間制限、7日間制限の使用率を色分け表示し、余計なノイズを排除します。
+Claude Code 向けのミニマルなステータスライン：コンテキストウィンドウ、5時間制限、7日間制限の使用率を色分け表示し、プログレスバーや余計なノイズはありません。
 
 <div align="center">
   <img src="https://raw.githubusercontent.com/tw93/Waza/main/assets/statusline.png" width="1000" />
@@ -141,13 +138,9 @@ Codex は残りの枠を、上の Claude Code ステータスラインは使用�
   <img src="https://raw.githubusercontent.com/tw93/Waza/main/assets/clarity.png" width="1000" />
 </div>
 
-curl の URL は最新の GitHub リリースアセットを使います。main の最新スクリプトを使いたい場合は、コマンドの前に `WAZA_REF=main` を指定してください。
-
 ## 開発の背景
 
-Waza（技、わざ）は武道の用語で、本能になるまで繰り返し練習した技を指します。
-
-優れたエンジニアはコードを書くだけではありません。要件を突き詰めて検証し、根本原因までデバッグし、自分の差分をレビューし、一次情報を読みます。AI はこれらすべてをこなせますが、構造がなければ出力は汎用的で不正確なものに流れていきます。Waza の各スキルは、目指す成果、越えてはいけない一線、結果の検証方法だけを示し、進め方はモデルに任せます。モデルが賢くなるほど、この抑制が効いてきます。
+Waza（技、わざ）は武道の用語で、本能になるまで繰り返し練習した技を指します。優れたエンジニアはコードを書くだけではありません。要件を突き詰めて検証し、根本原因までデバッグし、自分の差分をレビューし、一次情報を読みます。AI はこれらすべてをこなせますが、構造がなければ出力は汎用的で不正確なものに流れていきます。Waza の各スキルは、目指す成果、越えてはいけない一線、結果の検証方法だけを示し、進め方はモデルに任せます。モデルが賢くなるほど、この抑制が効いてきます。
 
 Superpowers や gstack のようなツールは強力ですが重く、スキルも設定も多すぎます。Waza は小さく保ち、本当に大事な習慣に絞った 8 つのスキルだけを置いています。どれも役割は一つで、呼び出すタイミングもはっきりしています。7 つのプロジェクトと 300 以上のセッションで磨いてきたもので、どの回避策も実際の失敗に由来します。`/health` スキルは[この記事](https://tw93.fun/en/2026-03-12/claude.html)で紹介した Claude Code の 6 層フレームワークから生まれました。
 
@@ -164,13 +157,13 @@ rm -f ~/.claude/rules/waza-routing.md
 rm -f ~/.claude/rules/clarity.md
 ```
 
-Claude Desktop では Customize > Skills から Waza を削除してください。Codex にルールをインストールした場合は、`~/.codex/AGENTS.md` から Waza のマーク付きブロックを削除してください。Antigravity では `~/.gemini/antigravity-cli/rules/` から該当するルールファイルを削除してください。ほかのツールにコピーしたルールは、各ツールのカスタム指示から削除してください。ルールを削除したら新しいセッションを開始してください。
+ステータスラインを導入していた場合は、`~/.claude/settings.json` から `statusLine` エントリも削除してください。Claude Desktop では Customize > Skills から Waza を削除してください。Codex にルールをインストールした場合は、`~/.codex/AGENTS.md` から Waza のマーク付きブロックを削除してください。Antigravity では `~/.gemini/antigravity-cli/rules/` から該当するルールファイルを削除してください。ほかのツールにコピーしたルールは、各ツールのカスタム指示から削除してください。ルールを削除したら新しいセッションを開始してください。
 
 ## サポート
 
-- 最も直接的な支援方法は、Mac クリーナーアプリ [Mole for Mac](https://mole.fit) の購入です。
-- Waza が役に立った場合は、Star を付けたり、[共有](https://twitter.com/intent/tweet?url=https://github.com/tw93/Waza&text=Waza%20-%20AI%20coding%20skills%20for%20the%20complete%20engineer.)したり、Issue や PR を送ったりしていただけるとうれしいです。
-- 飼い猫の「湯円（TangYuan）」と「コーラ（Coke）」に <a href="https://cats.tw93.fun?name=Waza" target="_blank">おやつ 🥩</a> をご馳走することもできます。
+- 最も直接的な支援方法は、Mac クリーナーアプリ [Mole for Mac](https://mole.fit) の購入です
+- Waza が役に立った場合は、Star を付けたり、[共有](https://twitter.com/intent/tweet?url=https://github.com/tw93/Waza&text=Waza%20-%20AI%20coding%20skills%20for%20the%20complete%20engineer.)したり、Issue や PR を送ったりしていただけるとうれしいです
+- 飼い猫の「湯円（TangYuan）」と「コーラ（Coke）」に <a href="https://cats.tw93.fun?name=Waza" target="_blank">おやつ 🥩</a> をご馳走することもできます
 
 <details>
 <summary>スポンサー一覧 🐱</summary>

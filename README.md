@@ -18,7 +18,7 @@
 
 ## Skills
 
-Each engineering habit gets an installed skill. In Claude Code, type the slash command. In Codex, invoke the installed skill by name and follow the same playbook.
+Each engineering habit gets an installed skill, a folder with reference docs, helper scripts, and gotchas from real failures. In Claude Code, type the slash command. In Codex, invoke the installed skill by name and follow the same playbook.
 
 | Skill | When | What it does |
 | :--- | :--- | :--- |
@@ -29,9 +29,7 @@ Each engineering habit gets an installed skill. In Claude Code, type the slash c
 | [`/write`](skills/write/SKILL.md) | Writing or editing prose | Rewrites prose to sound natural in Chinese and English. Cuts stiff, formulaic phrasing. |
 | [`/learn`](skills/learn/SKILL.md) | Diving into an unfamiliar domain | Six-phase research workflow: collect, digest, outline, fill in, refine, then self-review and publish. |
 | [`/read`](skills/read/SKILL.md) | Any URL or PDF | Returns a concise summary, or clean Markdown for conversion, quotes, citations, saving, or further research. |
-| [`/health`](skills/health/SKILL.md) | Auditing Agent Health | Checks Codex, Claude Code, project instructions, verifier output, and AI maintainability with a budget-aware summary pass before deep inspection. |
-
-Each skill is a folder with reference docs, helper scripts, and gotchas from real failures.
+| [`/health`](skills/health/SKILL.md) | Auditing agent setup | Checks Codex, Claude Code, project instructions, verifier output, and AI maintainability with a budget-aware summary pass before deep inspection. |
 
 ## Install
 
@@ -41,10 +39,8 @@ Each skill is a folder with reference docs, helper scripts, and gotchas from rea
 npx skills add tw93/Waza -a claude-code codex cursor -g -y
 ```
 
-Or tell your agent to install:
+One copy lands in `~/.agents/skills`, the shared skills directory. Claude Code is symlinked in; Codex, Cursor, Gemini CLI, Copilot, Amp, Kimi Code CLI, and every other agent that reads that directory picks the eight skills up as `/check`, `/think`, and so on. Agents with a private skills directory take their id after `-a` (for example `antigravity-cli` or `qwen-code`). Update with `npx skills update -g -y`. You can also tell your agent to install it:
 > Install Waza for me by reading https://github.com/tw93/Waza/blob/main/llms.txt
-
-One copy lands in `~/.agents/skills`, the shared skills directory. Claude Code is symlinked in; Codex, Cursor, Gemini CLI, Copilot, Amp, Kimi Code CLI, and every other agent that reads that directory picks the eight skills up as `/check`, `/think`, and so on. Agents with a private skills directory take their id after `-a` (for example `antigravity-cli` or `qwen-code`). Update with `npx skills update -g -y`.
 
 **Host plugin**, if you prefer the host's own update command (skills are namespaced, `/waza:check`)
 
@@ -68,16 +64,17 @@ You decide how skills chain together. Each skill stops at the requested outcome;
 
 **Common workflows:**
 
-- **Plan a feature**: `/think` → approve → say "implement X" → `/check` → merge
-- **Ship a fix**: `/hunt` → fix → `/check` → release/publish/push/issue follow-through
-- **Research and write**: `/read` (fetch sources) → `/learn` (synthesize) → `/write` (polish)
-- **Debug and verify**: `/hunt` (find root cause) → fix → `/check` (review changes)
+- **Plan a feature**: `/think` to settle the plan, implement after approval, then `/check` before merging
+- **Ship a fix**: `/hunt` to find the root cause, fix it, then `/check` to review the changes and, when needed, handle release, publish, push, and issue follow-through
+- **Research and write**: `/read` to fetch sources, `/learn` to synthesize, `/write` to polish
 
 ## Project Context
 
 Waza ships only generic engineering habits. `/check` becomes project-aware at runtime by reading the target repository's public context (READMEs, package manifests, Makefiles, CI workflows) and your task constraints, never private paths, credentials, or tokens. See [`skills/check/references/project-context.md`](skills/check/references/project-context.md) for the review context template.
 
 ## Extras
+
+Curl URLs use the latest GitHub release asset. Set `WAZA_REF=main` before the command if you want bleeding-edge scripts.
 
 ### Statusline
 
@@ -141,13 +138,9 @@ Optional rules apply beyond skill invocations when installed into your agent's p
   <img src="https://raw.githubusercontent.com/tw93/Waza/main/assets/clarity.png" width="1000" />
 </div>
 
-Curl URLs use the latest GitHub release asset. Set `WAZA_REF=main` before the command if you want bleeding-edge scripts.
-
 ## Why
 
-Waza (技, わざ) is a Japanese martial arts term for technique: a move practiced until it becomes instinct.
-
-A good engineer does more than write code. They pressure-test requirements, debug to root cause, review their own diffs, and read primary sources. AI has the raw output for all of it, but without structure that output drifts into generic, imprecise work. Each Waza skill states the outcome, the red lines, and how the result gets verified, then steps back and lets the model choose the path. As models improve, that restraint pays compound interest.
+Waza (技, わざ) is a Japanese martial arts term for technique: a move practiced until it becomes instinct. A good engineer does more than write code. They pressure-test requirements, debug to root cause, review their own diffs, and read primary sources. AI has the raw output for all of it, but without structure that output drifts into generic, imprecise work. Each Waza skill states the outcome, the red lines, and how the result gets verified, then steps back and lets the model choose the path. As models improve, that restraint pays compound interest.
 
 Tools like Superpowers and gstack are powerful but heavy: too many skills, too much configuration. Waza stays small, eight skills for the habits that actually matter, each with one job and a clear trigger. Built from real projects and refined through 300+ sessions across 7 projects, every gotcha traces to a real failure. The `/health` skill grew from the six-layer Claude Code framework in [this post](https://tw93.fun/en/2026-03-12/claude.html).
 
@@ -164,14 +157,13 @@ rm -f ~/.claude/rules/waza-routing.md
 rm -f ~/.claude/rules/clarity.md
 ```
 
-For Claude Desktop, delete Waza from Customize > Skills. For Codex rule installs, remove the marked Waza blocks from `~/.codex/AGENTS.md`.
-For Antigravity, remove the selected rule file from `~/.gemini/antigravity-cli/rules/`. Remove copied rules from other tools' custom instructions. Start a new session after removing a rule.
+For the statusline, also remove the `statusLine` entry from `~/.claude/settings.json`. For Claude Desktop, delete Waza from Customize > Skills. For Codex rule installs, remove the marked Waza blocks from `~/.codex/AGENTS.md`. For Antigravity, remove the selected rule file from `~/.gemini/antigravity-cli/rules/`. Remove copied rules from other tools' custom instructions. Start a new session after removing a rule.
 
 ## Support
 
-- The most direct way to support me is getting [Mole for Mac](https://mole.fit), my paid Mac cleanup app.
-- If Waza helped you, give it a star, [share it](https://twitter.com/intent/tweet?url=https://github.com/tw93/Waza&text=Waza%20-%20AI%20coding%20skills%20for%20the%20complete%20engineer.), or open an issue or PR.
-- I have two cats, TangYuan and Coke. If Waza has been helpful to you, you can feed them <a href="https://cats.tw93.fun?name=Waza" target="_blank">canned food 🥩</a>.
+- The most direct way to support me is getting [Mole for Mac](https://mole.fit), my paid Mac cleanup app
+- If Waza helped you, give it a star, [share it](https://twitter.com/intent/tweet?url=https://github.com/tw93/Waza&text=Waza%20-%20AI%20coding%20skills%20for%20the%20complete%20engineer.), or open an issue or PR
+- I have two cats, TangYuan and Coke, and if Waza has been helpful to you, you can feed them <a href="https://cats.tw93.fun?name=Waza" target="_blank">canned food 🥩</a>
 
 <details>
 <summary>These lovely people already did 🐱</summary>

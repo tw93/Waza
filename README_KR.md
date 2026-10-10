@@ -18,7 +18,7 @@
 
 ## 스킬 목록
 
-각각의 엔지니어링 습관이 독립된 스킬로 구성되어 있습니다. Claude Code에서는 슬래시 명령어로 실행하며, Codex에서는 스킬 이름으로 직접 호출합니다.
+각각의 엔지니어링 습관이 독립된 스킬로 구성되어 있으며, 각 스킬은 참조 문서, 헬퍼 스크립트, 실제 실패 사례에서 얻은 노하우가 담긴 독립된 디렉터리입니다. Claude Code에서는 슬래시 명령어로 실행하며, Codex에서는 스킬 이름으로 직접 호출합니다.
 
 | 스킬 | 실행 타이밍 | 역할 |
 | :--- | :--- | :--- |
@@ -31,8 +31,6 @@
 | [`/read`](skills/read/SKILL.md) | 웹 링크나 PDF 문서를 읽을 때 | 핵심을 명확히 요약하거나 인용 및 저장에 적합한 깔끔한 Markdown 추출 |
 | [`/health`](skills/health/SKILL.md) | 에이전트 설정 점검 시 | 에이전트 설정과 지침 드리프트를 진단하고, 먼저 가볍게 훑은 뒤 깊이 점검 |
 
-각 스킬은 참조 문서, 헬퍼 스크립트, 실제 실패 사례에서 얻은 노하우가 담긴 독립된 디렉터리입니다.
-
 ## 설치 방법
 
 **Claude Code, Codex, Cursor 및 기타 에이전트**
@@ -41,10 +39,8 @@
 npx skills add tw93/Waza -a claude-code codex cursor -g -y
 ```
 
-AI 에이전트에게 직접 설치를 요청할 수도 있습니다:
+스킬은 공유 디렉터리인 `~/.agents/skills`에 저장됩니다. Claude Code는 심볼릭 링크로 연결되며, Codex, Cursor, Gemini CLI, Copilot, Amp, Kimi Code CLI 등 해당 디렉터리를 읽는 에이전트에서 자동으로 활성화됩니다. 독립 디렉터리를 사용하는 에이전트는 `-a` 뒤에 ID(예: `antigravity-cli`, `qwen-code`)를 지정하세요. 업데이트는 `npx skills update -g -y`로 실행합니다. AI 에이전트에게 직접 설치를 요청할 수도 있습니다:
 > 다음 문서를 읽고 Waza를 설치해 줘: https://github.com/tw93/Waza/blob/main/llms.txt
-
-스킬은 공유 디렉터리인 `~/.agents/skills`에 저장됩니다. Claude Code는 심볼릭 링크로 연결되며, Codex, Cursor, Gemini CLI, Copilot, Amp, Kimi Code CLI 등 해당 디렉터리를 읽는 에이전트에서 자동으로 활성화됩니다. 독립 디렉터리를 사용하는 에이전트는 `-a` 뒤에 ID(예: `antigravity-cli`, `qwen-code`)를 지정하세요. 업데이트는 `npx skills update -g -y`로 실행합니다.
 
 **호스트 플러그인 방식** (네임스페이스 포함: `/waza:check`):
 
@@ -69,9 +65,8 @@ codex plugin add waza@waza
 **자주 쓰이는 워크플로우:**
 
 - **새 기능 구현**: `/think`로 설계를 검증하고, 승인 후 구현한 뒤 `/check`로 최종 검토하고 머지
-- **버그 해결**: `/hunt`로 원인을 규명하고, 수정한 뒤 `/check`로 검증하고 배포
+- **버그 해결**: `/hunt`로 원인을 규명하고, 수정한 뒤 `/check`로 변경 사항을 검토하고 필요하면 배포
 - **리서치 및 작성**: `/read`로 자료를 모으고, `/learn`으로 체계화한 뒤 `/write`로 문장 다듬기
-- **디버깅 및 검증**: `/hunt`로 근본 원인을 파악하고, 수정한 뒤 `/check`로 변경 사항 검토
 
 ## 프로젝트 컨텍스트
 
@@ -79,9 +74,11 @@ Waza는 범용적인 엔지니어링 습관만을 제공합니다. `/check`는 �
 
 ## 추가 도구 및 규칙
 
+curl URL은 최신 GitHub 릴리스 자산을 사용합니다. main의 최신 스크립트를 쓰려면 명령 앞에 `WAZA_REF=main`을 지정하세요.
+
 ### 상태 표시줄
 
-Claude Code용 미니멀 상태 표시줄: 컨텍스트 윈도우, 5시간 한도, 7일 한도 사용률을 색상으로 직관적으로 표시합니다.
+Claude Code용 미니멀 상태 표시줄: 컨텍스트 윈도우, 5시간 한도, 7일 한도를 사용량에 따라 색으로 표시하며, 진행 막대나 군더더기는 없습니다.
 
 <div align="center">
   <img src="https://raw.githubusercontent.com/tw93/Waza/main/assets/statusline.png" width="1000" />
@@ -141,13 +138,9 @@ Codex는 남은 한도를, 위의 Claude Code 상태 표시줄은 사용한 비�
   <img src="https://raw.githubusercontent.com/tw93/Waza/main/assets/clarity.png" width="1000" />
 </div>
 
-curl URL은 최신 GitHub 릴리스 자산을 사용합니다. main의 최신 스크립트를 쓰려면 명령 앞에 `WAZA_REF=main`을 지정하세요.
-
 ## Waza를 만든 이유
 
-Waza(技, わざ)는 무술에서 끊임없이 연마하여 본능이 된 기술을 뜻합니다.
-
-좋은 엔지니어는 코드만 쓰지 않습니다. 요구 사항을 따져 묻고, 근본 원인까지 디버깅하고, 자신의 변경 사항을 검토하고, 1차 자료를 읽습니다. AI는 이 모든 일을 해낼 수 있지만, 구조가 없으면 결과물이 평범하고 부정확한 쪽으로 흘러갑니다. Waza의 각 스킬은 목표 결과, 넘지 말아야 할 선, 결과 검증 방법만 정하고, 구체적인 경로는 모델이 고르게 둡니다. 모델이 좋아질수록 이 절제의 가치는 커집니다.
+Waza(技, わざ)는 무술에서 끊임없이 연마하여 본능이 된 기술을 뜻합니다. 좋은 엔지니어는 코드만 쓰지 않습니다. 요구 사항을 따져 묻고, 근본 원인까지 디버깅하고, 자신의 변경 사항을 검토하고, 1차 자료를 읽습니다. AI는 이 모든 일을 해낼 수 있지만, 구조가 없으면 결과물이 평범하고 부정확한 쪽으로 흘러갑니다. Waza의 각 스킬은 목표 결과, 넘지 말아야 할 선, 결과 검증 방법만 정하고, 구체적인 경로는 모델이 고르게 둡니다. 모델이 좋아질수록 이 절제의 가치는 커집니다.
 
 Superpowers나 gstack 같은 도구는 강력하지만 무겁고, 스킬도 설정도 너무 많습니다. Waza는 규모를 작게 유지합니다. 정말 중요한 습관만 담은 8개 스킬이 각자 한 가지 일과 분명한 실행 조건을 가집니다. 7개 프로젝트에서 300회 이상의 세션을 거치며 다듬었고, 모든 노하우는 실제 실패에서 나왔습니다. `/health` 스킬은 [이 글](https://tw93.fun/en/2026-03-12/claude.html)에서 소개한 Claude Code 6계층 프레임워크에서 출발했습니다.
 
@@ -164,13 +157,13 @@ rm -f ~/.claude/rules/waza-routing.md
 rm -f ~/.claude/rules/clarity.md
 ```
 
-Claude Desktop에서는 Customize > Skills에서 Waza를 삭제하세요. Codex에 규칙을 설치했다면 `~/.codex/AGENTS.md`에서 Waza 표시 블록을 제거하세요. Antigravity에서는 `~/.gemini/antigravity-cli/rules/`에서 선택한 규칙 파일을 삭제하세요. 다른 도구에 복사한 규칙은 해당 도구의 사용자 지정 지침에서 제거하세요. 규칙을 제거한 뒤에는 새 세션을 시작하세요.
+상태 표시줄을 설치했다면 `~/.claude/settings.json`에서 `statusLine` 항목도 삭제하세요. Claude Desktop에서는 Customize > Skills에서 Waza를 삭제하세요. Codex에 규칙을 설치했다면 `~/.codex/AGENTS.md`에서 Waza 표시 블록을 제거하세요. Antigravity에서는 `~/.gemini/antigravity-cli/rules/`에서 선택한 규칙 파일을 삭제하세요. 다른 도구에 복사한 규칙은 해당 도구의 사용자 지정 지침에서 제거하세요. 규칙을 제거한 뒤에는 새 세션을 시작하세요.
 
 ## 후원 안내
 
-- 가장 직접적인 응원은 유료 Mac 클리너 앱 [Mole for Mac](https://mole.fit)을 이용해 주시는 것입니다.
-- Waza가 도움이 되었다면 Star를 눌러 주시거나, [공유](https://twitter.com/intent/tweet?url=https://github.com/tw93/Waza&text=Waza%20-%20AI%20coding%20skills%20for%20the%20complete%20engineer.)해 주시거나, Issue나 PR을 남겨 주세요.
-- 고양이 탕위안(TangYuan)과 콜라(Coke)에게 <a href="https://cats.tw93.fun?name=Waza" target="_blank">간식 🥩</a>을 선물할 수도 있습니다.
+- 가장 직접적인 응원은 유료 Mac 클리너 앱 [Mole for Mac](https://mole.fit)을 이용해 주시는 것입니다
+- Waza가 도움이 되었다면 Star를 눌러 주시거나, [공유](https://twitter.com/intent/tweet?url=https://github.com/tw93/Waza&text=Waza%20-%20AI%20coding%20skills%20for%20the%20complete%20engineer.)해 주시거나, Issue나 PR을 남겨 주세요
+- 고양이 탕위안(TangYuan)과 콜라(Coke)에게 <a href="https://cats.tw93.fun?name=Waza" target="_blank">간식 🥩</a>을 선물할 수도 있습니다
 
 <details>
 <summary>후원해 주신 분들 🐱</summary>

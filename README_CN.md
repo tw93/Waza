@@ -18,20 +18,18 @@
 
 ## 技能
 
-每个工程习惯对应一个独立技能，Claude Code 输入斜杠命令即可触发，Codex 则直接按技能名调用
+每个工程习惯对应一个独立技能，技能目录里内置参考文档、辅助脚本以及真实踩坑沉淀的避坑指南，Claude Code 输入斜杠命令即可触发，Codex 则直接按技能名调用
 
 | 技能 | 触发时机 | 它做什么 |
 | :--- | :--- | :--- |
 | [`/think`](skills/think/SKILL.md) | 动手写新代码前 | 深入推敲方案并压测设计，产出决策完备且能直接落地的执行计划 |
 | [`/ui`](skills/ui/SKILL.md) | 构建前端界面 | 产出有明确设计方向的界面，不套默认模板，也能拿截图反复迭代视觉 |
 | [`/check`](skills/check/SKILL.md) | 任务完成后，合并或发布前 | 结合项目规范审查改动、验证结果，并在你授权后处理发布和维护动作 |
-| [`/hunt`](skills/hunt/SKILL.md) | 遇到 Bug 或异常行为 | 动手修之前彻底查清根本原因，尤其是面对以前正常运行的功能 |
-| [`/write`](skills/write/SKILL.md) | 撰写或修改文案 | 改写中英文本使其自然流畅，剔除生硬公式化的套话与机器感 |
-| [`/learn`](skills/learn/SKILL.md) | 探索完全陌生的领域 | 按六阶段完整调研流程，把陌生领域系统消化并沉淀成文 |
-| [`/read`](skills/read/SKILL.md) | 阅读网页链接或 PDF | 快速提取精炼摘要，或转成方便引用归档的干净 Markdown |
+| [`/hunt`](skills/hunt/SKILL.md) | 遇到 Bug 或异常行为 | 动手修之前先查清根本原因，尤其是面对以前正常运行的功能 |
+| [`/write`](skills/write/SKILL.md) | 撰写或修改文案 | 改写中英文本使其自然流畅，去掉生硬的套话与机器感 |
+| [`/learn`](skills/learn/SKILL.md) | 探索完全陌生的领域 | 按收集、消化、列提纲、补全、打磨、自审发布六个阶段调研，把陌生领域整理成文 |
+| [`/read`](skills/read/SKILL.md) | 阅读网页链接或 PDF | 提取精炼摘要，或转成方便引用归档的干净 Markdown |
 | [`/health`](skills/health/SKILL.md) | 审计 Agent 配置 | 排查 Agent 配置与指令漂移，先轻量概览再深入诊断 |
-
-每个技能都是一个独立目录，内置参考文档、辅助脚本以及真实踩坑沉淀的避坑指南
 
 ## 安装
 
@@ -41,10 +39,8 @@
 npx skills add tw93/Waza -a claude-code codex cursor -g -y
 ```
 
-也可以直接告诉你的 Agent 帮你安装：
+技能统一存放在 `~/.agents/skills` 共享目录，Claude Code 通过软链接接入，Codex、Cursor、Gemini CLI、Copilot、Amp、Kimi Code CLI 以及其他能读取该目录的 Agent 都会自动加载这 8 个技能。拥有独立技能目录的 Agent 可在 `-a` 后指定其 ID，比如 `antigravity-cli` 或 `qwen-code`，后续通过 `npx skills update -g -y` 保持更新。也可以直接告诉你的 Agent 帮你安装：
 > 阅读 https://github.com/tw93/Waza/blob/main/llms.txt 帮我安装 Waza
-
-技能统一存放在 `~/.agents/skills` 共享目录，Claude Code 通过软链接接入，Codex、Cursor、Gemini CLI、Copilot、Amp、Kimi Code CLI 以及其他能读取该目录的 Agent 都会自动加载这 8 个技能。拥有独立技能目录的 Agent 可在 `-a` 后指定其 ID，比如 `antigravity-cli` 或 `qwen-code`，后续通过 `npx skills update -g -y` 保持更新
 
 **宿主插件方式**，如果你更习惯使用宿主自有的更新命令（技能带有命名空间前缀，如 `/waza:check`）：
 
@@ -69,15 +65,16 @@ codex plugin add waza@waza
 **常见工作流：**
 
 - **做新功能**：`/think` 想透方案，确认后动手实现，再用 `/check` 把关合并
-- **排查修复**：`/hunt` 查清根因，动手修复，再用 `/check` 验证并发布
+- **排查修复**：`/hunt` 查清根因，动手修复，再用 `/check` 审查改动，需要时一并发布
 - **调研成文**：`/read` 读取素材，`/learn` 消化梳理，`/write` 润色文字
-- **排查验证**：`/hunt` 定位根因，动手改完，再用 `/check` 审查改动
 
 ## 项目上下文
 
-Waza 只沉淀通用的工程习惯，`/check` 运行时只从目标仓库公开的项目文件与你的任务要求提炼约束，比如 README、包清单、Makefile 和 CI 配置，绝不读取私有路径、凭证或 Token，具体上下文模板可参考 [`skills/check/references/project-context.md`](skills/check/references/project-context.md)
+Waza 只沉淀通用的工程习惯，`/check` 运行时从目标仓库公开的 README、包清单、Makefile、CI 配置和你的任务要求里提炼约束，绝不读取私有路径、凭证或 Token，具体上下文模板可参考 [`skills/check/references/project-context.md`](skills/check/references/project-context.md)
 
 ## 附加工具与规则
+
+下载脚本默认使用最新的 GitHub Release 资源，想用 main 上最新的脚本，可以在命令前加 `WAZA_REF=main`
 
 ### 状态栏
 
@@ -135,13 +132,11 @@ Codex 显示剩余额度，上方 Claude Code 状态栏显示已用百分比（�
 )
 ```
 
-[Clarity](rules/clarity.md) 借鉴了 ASD-STE100 的清晰写作原则，不会强加受控英文语法，也不会改变你的个人表达风格。重新运行命令即可更新，开一个新会话后生效。Codex 会在 `~/.codex/AGENTS.md` 写入标记块，Claude Code 与 Antigravity 则安装为规则文件，其他工具把规则复制进各自的自定义指令即可
+[Clarity](rules/clarity.md) 借鉴了 ASD-STE100 的清晰写作原则，不会强加受控英文语法，也不会改变你的个人表达风格，重新运行命令即可更新，开一个新会话后生效。Codex 会在 `~/.codex/AGENTS.md` 写入标记块，Claude Code 与 Antigravity 则安装为规则文件，其他工具把规则复制进各自的自定义指令即可
 
 <div align="center">
   <img src="https://raw.githubusercontent.com/tw93/Waza/main/assets/clarity.png" width="1000" />
 </div>
-
-下载脚本默认使用最新的 GitHub Release 资源，想用 main 上最新的脚本，可以在命令前加 `WAZA_REF=main`
 
 ## 为什么做 Waza
 
@@ -162,13 +157,13 @@ rm -f ~/.claude/rules/waza-routing.md
 rm -f ~/.claude/rules/clarity.md
 ```
 
-Claude Desktop 直接在 Customize > Skills 中删除 Waza，Codex 规则安装从 `~/.codex/AGENTS.md` 中移除对应的 Waza 标记块，Antigravity 从 `~/.gemini/antigravity-cli/rules/` 删除对应规则文件，其他工具从自定义指令中移除即可，移除后开启新会话生效
+状态栏还需从 `~/.claude/settings.json` 删掉 `statusLine` 条目，Claude Desktop 直接在 Customize > Skills 中删除 Waza，Codex 规则安装从 `~/.codex/AGENTS.md` 中移除对应的 Waza 标记块，Antigravity 从 `~/.gemini/antigravity-cli/rules/` 删除对应规则文件，其他工具从自定义指令中移除即可，移除后开启新会话生效
 
 ## 支持
 
 - 最直接的支持方式是购买 [Mole for Mac](https://mole.fit)，这是我开发的 Mac 清理应用
 - 如果 Waza 对你有帮助，欢迎点个 Star，[分享给朋友](https://twitter.com/intent/tweet?url=https://github.com/tw93/Waza&text=Waza%20-%20AI%20coding%20skills%20for%20the%20complete%20engineer.)，或者提交 Issue 与 PR
-- 我养了两只猫，汤圆和可乐，如果 Waza 帮到了你，可以给它们加个 <a href="https://cats.tw93.fun?name=Waza" target="_blank">罐头 🥩</a>
+- 我养了两只猫，汤圆和可乐，如果 Waza 帮到了你，可以给她们加个 <a href="https://cats.tw93.fun?name=Waza" target="_blank">罐头 🥩</a>
 
 <details>
 <summary>已经赞助过的可爱朋友们 🐱</summary>

@@ -18,7 +18,7 @@
 
 ## Skills
 
-Jede Entwicklergewohnheit entspricht einem eigenständigen Skill. In Claude Code rufst du ihn per Slash-Befehl auf, in Codex direkt über den Skill-Namen.
+Jede Entwicklergewohnheit entspricht einem eigenständigen Skill, einem Ordner mit Referenzdokumenten, Skripten und Fallstricken aus echten Fehlschlägen. In Claude Code rufst du ihn per Slash-Befehl auf, in Codex direkt über den Skill-Namen.
 
 | Skill | Wann nutzen | Was er tut |
 | :--- | :--- | :--- |
@@ -31,8 +31,6 @@ Jede Entwicklergewohnheit entspricht einem eigenständigen Skill. In Claude Code
 | [`/read`](skills/read/SKILL.md) | Webseiten oder PDFs lesen | Erstellt prägnante Zusammenfassungen oder sauberes Markdown für Zitate und Notizen. |
 | [`/health`](skills/health/SKILL.md) | Agenten-Konfiguration prüfen | Prüft Agenten-Konfiguration und Anweisungs-Drift, zuerst als ressourcenschonende Übersicht, dann im Detail. |
 
-Jeder Skill ist ein eigenständiger Ordner mit Referenzdokumenten, Skripten und Fallstricken aus echten Fehlschlägen.
-
 ## Installation
 
 **Claude Code, Codex, Cursor und andere Agenten**
@@ -41,10 +39,8 @@ Jeder Skill ist ein eigenständiger Ordner mit Referenzdokumenten, Skripten und 
 npx skills add tw93/Waza -a claude-code codex cursor -g -y
 ```
 
-Oder beauftrage deinen Agenten direkt mit der Installation:
+Skills landen zentral in `~/.agents/skills`. Claude Code bindet sie per Symlink ein; Codex, Cursor, Gemini CLI, Copilot, Amp, Kimi Code CLI und alle Agenten, die dieses Verzeichnis nutzen, laden die 8 Skills automatisch. Agenten mit eigenem Skill-Verzeichnis gibst du nach `-a` mit ihrer ID an (zum Beispiel `antigravity-cli` oder `qwen-code`). Aktualisierung über `npx skills update -g -y`. Du kannst deinen Agenten auch direkt mit der Installation beauftragen:
 > Lies https://github.com/tw93/Waza/blob/main/llms.txt und installiere Waza für mich
-
-Skills landen zentral in `~/.agents/skills`. Claude Code bindet sie per Symlink ein; Codex, Cursor, Gemini CLI, Copilot, Amp, Kimi Code CLI und alle Agenten, die dieses Verzeichnis nutzen, laden die 8 Skills automatisch. Agenten mit eigenem Skill-Verzeichnis gibst du nach `-a` mit ihrer ID an (zum Beispiel `antigravity-cli` oder `qwen-code`). Aktualisierung über `npx skills update -g -y`.
 
 **Host-Plugin-Methode** (Skills erhalten einen Namespace-Präfix, z. B. `/waza:check`):
 
@@ -69,9 +65,8 @@ Du entscheidest, wie Skills kombiniert werden. Jeder Skill stoppt nach Erreichen
 **Typische Workflows:**
 
 - **Neues Feature**: `/think` prüft den Plan, nach Freigabe implementieren, dann mit `/check` prüfen und mergen
-- **Bugfix**: `/hunt` findet die Ursache, dann beheben, dann mit `/check` verifizieren und releasen
+- **Bugfix**: `/hunt` findet die Ursache, dann beheben, dann mit `/check` die Diffs prüfen und bei Bedarf releasen
 - **Recherche**: `/read` holt das Material, `/learn` strukturiert es, `/write` formuliert aus
-- **Fehlersuche**: `/hunt` findet die Ursache, dann fixen, dann mit `/check` die Diffs prüfen
 
 ## Projekt-Kontext
 
@@ -79,9 +74,11 @@ Waza liefert universelle Entwicklergewohnheiten. `/check` liest zur Laufzeit nur
 
 ## Extras
 
+Die curl-URLs verwenden das neueste GitHub-Release-Asset. Für die neuesten Skripte von main setzt du `WAZA_REF=main` vor den Befehl.
+
 ### Statusleiste
 
-Minimale Statusleiste für Claude Code: Kontext-Window, 5-Stunden- und 7-Tage-Kontingente farbcodiert ohne Ablenkung.
+Minimale Statusleiste für Claude Code: Kontext-Window, 5-Stunden- und 7-Tage-Kontingente farbcodiert, ohne Fortschrittsbalken und ohne Ablenkung.
 
 <div align="center">
   <img src="https://raw.githubusercontent.com/tw93/Waza/main/assets/statusline.png" width="1000" />
@@ -141,13 +138,9 @@ Optionale Regeln wirken auch außerhalb von Skill-Aufrufen, sobald sie in den da
   <img src="https://raw.githubusercontent.com/tw93/Waza/main/assets/clarity.png" width="1000" />
 </div>
 
-Die curl-URLs verwenden das neueste GitHub-Release-Asset. Für die neuesten Skripte von main setzt du `WAZA_REF=main` vor den Befehl.
-
 ## Warum Waza
 
-Waza (技, わざ) bezeichnet in den Kampfkünsten eine Technik, die durch ständiges Üben zur instinktiven Gewohnheit wird.
-
-Gute Entwickler schreiben nicht nur Code. Sie hinterfragen Anforderungen, debuggen bis zur Ursache, prüfen ihre eigenen Diffs und lesen Primärquellen. KI kann all das leisten, driftet ohne Struktur aber ins Beliebige und Ungenaue ab. Jeder Waza-Skill legt das Ziel, die roten Linien und die Art der Überprüfung fest und überlässt den Lösungsweg dem Modell. Je besser die Modelle werden, desto mehr zahlt sich diese Zurückhaltung aus.
+Waza (技, わざ) bezeichnet in den Kampfkünsten eine Technik, die durch ständiges Üben zur instinktiven Gewohnheit wird. Gute Entwickler schreiben nicht nur Code. Sie hinterfragen Anforderungen, debuggen bis zur Ursache, prüfen ihre eigenen Diffs und lesen Primärquellen. KI kann all das leisten, driftet ohne Struktur aber ins Beliebige und Ungenaue ab. Jeder Waza-Skill legt das Ziel, die roten Linien und die Art der Überprüfung fest und überlässt den Lösungsweg dem Modell. Je besser die Modelle werden, desto mehr zahlt sich diese Zurückhaltung aus.
 
 Tools wie Superpowers und gstack sind mächtig, aber schwer: zu viele Skills, zu viel Konfiguration. Waza bleibt klein, acht Skills für die Gewohnheiten, die wirklich zählen, jeder mit einer Aufgabe und einem klaren Auslöser. Waza ist aus echten Projekten entstanden und in über 300 Sitzungen über 7 Projekte hinweg verfeinert worden, jeder Fallstrick geht auf einen echten Fehlschlag zurück. Der `/health`-Skill ist aus dem sechsschichtigen Claude-Code-Framework aus [diesem Beitrag](https://tw93.fun/en/2026-03-12/claude.html) entstanden.
 
@@ -164,13 +157,13 @@ rm -f ~/.claude/rules/waza-routing.md
 rm -f ~/.claude/rules/clarity.md
 ```
 
-In Claude Desktop löschst du Waza unter Customize > Skills. Bei Codex-Regelinstallationen entfernst du die markierten Waza-Blöcke aus `~/.codex/AGENTS.md`. Bei Antigravity entfernst du die gewählte Regeldatei aus `~/.gemini/antigravity-cli/rules/`. In anderen Tools entfernst du kopierte Regeln aus den benutzerdefinierten Anweisungen. Starte nach dem Entfernen einer Regel eine neue Sitzung.
+Für die Statusleiste entfernst du außerdem den Eintrag `statusLine` aus `~/.claude/settings.json`. In Claude Desktop löschst du Waza unter Customize > Skills. Bei Codex-Regelinstallationen entfernst du die markierten Waza-Blöcke aus `~/.codex/AGENTS.md`. Bei Antigravity entfernst du die gewählte Regeldatei aus `~/.gemini/antigravity-cli/rules/`. In anderen Tools entfernst du kopierte Regeln aus den benutzerdefinierten Anweisungen. Starte nach dem Entfernen einer Regel eine neue Sitzung.
 
 ## Unterstützung
 
-- Die direkteste Unterstützung ist der Kauf meiner Mac-Bereinigungs-App [Mole for Mac](https://mole.fit).
-- Wenn dir Waza hilft, freue ich mich über einen Stern, eine [Weiterempfehlung](https://twitter.com/intent/tweet?url=https://github.com/tw93/Waza&text=Waza%20-%20AI%20coding%20skills%20for%20the%20complete%20engineer.) oder ein Issue bzw. einen PR.
-- Du kannst auch meinen beiden Katzen TangYuan und Coke eine <a href="https://cats.tw93.fun?name=Waza" target="_blank">Dose Futter 🥩</a> spendieren.
+- Die direkteste Unterstützung ist der Kauf meiner Mac-Bereinigungs-App [Mole for Mac](https://mole.fit)
+- Wenn dir Waza hilft, freue ich mich über einen Stern, eine [Weiterempfehlung](https://twitter.com/intent/tweet?url=https://github.com/tw93/Waza&text=Waza%20-%20AI%20coding%20skills%20for%20the%20complete%20engineer.) oder ein Issue bzw. einen PR
+- Du kannst auch meinen beiden Katzen TangYuan und Coke eine <a href="https://cats.tw93.fun?name=Waza" target="_blank">Dose Futter 🥩</a> spendieren
 
 <details>
 <summary>Diese lieben Menschen haben es schon getan 🐱</summary>
