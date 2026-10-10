@@ -22,14 +22,14 @@ Chaque réflexe d'ingénierie correspond à une compétence dédiée, un dossier
 
 | Compétence | Quand l'utiliser | Ce qu'elle fait |
 | :--- | :--- | :--- |
-| [`/think`](skills/think/SKILL.md) | Avant d'écrire du code | Remet en question le problème et produit un plan d'action prêt à l'emploi. |
+| [`/think`](skills/think/SKILL.md) | Avant d'écrire du code | Remet en question le problème et produit un plan d'action complet, sans décision laissée en suspens, qu'un autre agent peut exécuter. |
 | [`/ui`](skills/ui/SKILL.md) | Création d'interfaces frontend | Conçoit des interfaces avec une direction visuelle affirmée plutôt que des templates par défaut, y compris par itérations sur captures d'écran. |
-| [`/check`](skills/check/SKILL.md) | Avant merge ou release | Passe en revue les diffs selon les règles du projet, valide les résultats et gère les actions de release et de maintenance approuvées. |
+| [`/check`](skills/check/SKILL.md) | Après une tâche, avant merge ou release | Passe en revue les diffs selon les règles du projet, valide les résultats et gère les actions de release et de maintenance approuvées. |
 | [`/hunt`](skills/hunt/SKILL.md) | Bogues et régressions | Débogage méthodique pour identifier la cause racine avant d'appliquer un correctif, surtout quand quelque chose fonctionnait avant. |
 | [`/write`](skills/write/SKILL.md) | Rédaction et révision | Réécrit les textes chinois et anglais pour un rendu naturel et supprime le ton robotique des IA. |
 | [`/learn`](skills/learn/SKILL.md) | Explorer un nouveau sujet | Recherche en six étapes : collecter, digérer, structurer, rédiger, affiner, puis relire et publier. |
 | [`/read`](skills/read/SKILL.md) | Lire des URL ou des PDF | Extrait un résumé concis ou du Markdown propre pour référence ou sauvegarde. |
-| [`/health`](skills/health/SKILL.md) | Audit des agents IA | Audite la configuration des agents et les dérives d'instructions. |
+| [`/health`](skills/health/SKILL.md) | Audit des agents IA | Audite la configuration des agents et les dérives d'instructions, avec un premier passage synthétique et économe en tokens avant l'inspection approfondie. |
 
 ## Installation
 
@@ -60,7 +60,7 @@ codex plugin add waza@waza
 
 ## Enchaîner les compétences
 
-Vous décidez comment combiner les compétences. Chaque compétence s'arrête une fois l'objectif atteint ; les flux autorisés s'enchaînent naturellement.
+Vous décidez comment combiner les compétences. Chaque compétence s'arrête une fois l'objectif atteint ; un flux explicitement autorisé continue sans vous demander de valider chaque transition.
 
 **Flux courants :**
 
@@ -95,7 +95,7 @@ Une barre d'état minimale pour Claude Code : fenêtre de contexte, quotas 5 heu
 )
 ```
 
-**Codex** intègre nativement ces indicateurs dans `~/.codex/config.toml` :
+**Codex** propose nativement ces indicateurs de barre d'état. Ajoutez-les à `~/.codex/config.toml` :
 
 ```toml
 [tui]
@@ -117,26 +117,26 @@ Les règles optionnelles s'appliquent au-delà des appels de compétences une fo
   curl -fL https://github.com/tw93/Waza/releases/latest/download/setup-rule.sh -o "$WAZA_RULE_SCRIPT"
   # à vérifier d'abord : less "$WAZA_RULE_SCRIPT"
 
-  # Coaching d'anglais : suggestions brèves en cas d'erreur de formulation
+  # Coaching d'anglais : ajoute une courte correction 😇 quand votre prompt contient une faute d'anglais
   bash "$WAZA_RULE_SCRIPT" english claude-code
 
-  # Anti-patterns : garde-fous contre les modifications hâtives ou résumés superflus
+  # Anti-patterns : garde-fous permanents communs à toutes les compétences (lire avant d'agir, ne pas élargir le périmètre, pas de résumé non demandé)
   bash "$WAZA_RULE_SCRIPT" anti-patterns claude-code
 
-  # Routage Waza : incite l'agent à préférer les compétences Waza
+  # Indice de routage : indique aux hôtes autres que Claude de préférer les compétences Waza quand une requête correspond à leurs déclencheurs
   bash "$WAZA_RULE_SCRIPT" waza-routing claude-code
 
-  # Clarté d'expression : réponses directes et non ambiguës basées sur ASD-STE100
+  # Réponses claires au quotidien : termes cohérents, conditions explicites, incertitude préservée
   # Clarity est disponible sur main, mais pas encore dans la version publiée
   WAZA_REF=main bash "$WAZA_RULE_SCRIPT" clarity claude-code
 )
 ```
 
-[Clarity](rules/clarity.md) reprend les principes d'écriture claire d'ASD-STE100 sans imposer la grammaire de l'anglais contrôlé ni changer votre style. Relancez sa commande pour mettre à jour la règle installée, puis ouvrez une nouvelle session. Codex installe un bloc balisé dans `~/.codex/AGENTS.md` ; Claude Code et Antigravity installent un fichier de règle. Pour les autres outils, copiez la règle dans leurs instructions personnalisées persistantes.
-
 <div align="center">
-  <img src="https://raw.githubusercontent.com/tw93/Waza/main/assets/clarity.png" width="1000" />
+  <img src="https://raw.githubusercontent.com/tw93/Waza/main/assets/english-coaching.png" width="1000" />
 </div>
+
+[Clarity](rules/clarity.md) reprend les principes d'écriture claire d'ASD-STE100 sans imposer la grammaire de l'anglais contrôlé ni changer votre style. Relancez sa commande pour mettre à jour la règle installée, puis ouvrez une nouvelle session. Codex installe un bloc balisé dans `~/.codex/AGENTS.md` ; Claude Code et Antigravity installent un fichier de règle. Pour les autres outils, copiez la règle dans leurs instructions personnalisées persistantes.
 
 ## Pourquoi Waza
 

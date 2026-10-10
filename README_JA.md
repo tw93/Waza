@@ -117,26 +117,26 @@ Codex は残りの枠を、上の Claude Code ステータスラインは使用�
   curl -fL https://github.com/tw93/Waza/releases/latest/download/setup-rule.sh -o "$WAZA_RULE_SCRIPT"
   # 実行前に内容を確認：less "$WAZA_RULE_SCRIPT"
 
-  # 英語コーチング：プロンプトに英語の誤りがある場合、末尾に短いアドバイスを追加
+  # 英語コーチング：プロンプトに英語の誤りがあると、末尾に短い 😇 の訂正を追加
   bash "$WAZA_RULE_SCRIPT" english claude-code
 
-  # アンチパターン防御：勝手なコード変更や不要な要約の出力を防止
+  # アンチパターン：スキル横断で常に効くガードレール（読んでから動く、範囲を広げない、頼まれていない要約をしない）
   bash "$WAZA_RULE_SCRIPT" anti-patterns claude-code
 
-  # スキルルーティング：該当する場面で Waza スキルを優先的に呼び出すよう指示
+  # ルーティングヒント：Claude 以外のホストに、トリガーに合うリクエストでは Waza スキルを優先させる
   bash "$WAZA_RULE_SCRIPT" waza-routing claude-code
 
-  # 明確な回答ルール：ASD-STE100 の原則に基づくわかりやすい日常対話
+  # 明快な日常回答：用語の統一、条件の明示、不確かさの保持
   # Clarity は main ブランチで利用でき、現行リリースにはまだ含まれていません
   WAZA_REF=main bash "$WAZA_RULE_SCRIPT" clarity claude-code
 )
 ```
 
-[Clarity](rules/clarity.md) は ASD-STE100 のわかりやすい文章の原則を取り入れていますが、制限英語の文法を押し付けたり、あなたの文体を変えたりはしません。更新するにはコマンドを再実行し、新しいセッションを開始してください。Codex は `~/.codex/AGENTS.md` にマーク付きブロックを追加し、Claude Code と Antigravity はルールファイルをインストールします。ほかのツールでは、ルールを各ツールの永続的なカスタム指示にコピーしてください。
-
 <div align="center">
-  <img src="https://raw.githubusercontent.com/tw93/Waza/main/assets/clarity.png" width="1000" />
+  <img src="https://raw.githubusercontent.com/tw93/Waza/main/assets/english-coaching.png" width="1000" />
 </div>
+
+[Clarity](rules/clarity.md) は ASD-STE100 のわかりやすい文章の原則を取り入れていますが、制限英語の文法を押し付けたり、あなたの文体を変えたりはしません。更新するにはコマンドを再実行し、新しいセッションを開始してください。Codex は `~/.codex/AGENTS.md` にマーク付きブロックを追加し、Claude Code と Antigravity はルールファイルをインストールします。ほかのツールでは、ルールを各ツールの永続的なカスタム指示にコピーしてください。
 
 ## 開発の背景
 

@@ -60,7 +60,7 @@ codex plugin add waza@waza
 
 ## Skill-Kombinationen
 
-Du entscheidest, wie Skills kombiniert werden. Jeder Skill stoppt nach Erreichen des Zielergebnisses; autorisierte Workflows laufen nahtlos durch.
+Du entscheidest, wie Skills kombiniert werden. Jeder Skill stoppt nach Erreichen des Zielergebnisses; ausdrücklich freigegebene Workflows laufen weiter, ohne dass du jeden Übergang einzeln bestätigen musst.
 
 **Typische Workflows:**
 
@@ -117,26 +117,26 @@ Optionale Regeln wirken auch außerhalb von Skill-Aufrufen, sobald sie in den da
   curl -fL https://github.com/tw93/Waza/releases/latest/download/setup-rule.sh -o "$WAZA_RULE_SCRIPT"
   # vorher prüfen: less "$WAZA_RULE_SCRIPT"
 
-  # Englisch-Coaching: Kurze Korrekturhinweise bei Formulierungsfehlern
+  # Englisch-Coaching: hängt eine kurze 😇-Korrektur an, wenn dein Prompt einen Englischfehler enthält
   bash "$WAZA_RULE_SCRIPT" english claude-code
 
-  # Anti-Patterns: Verhindert voreilige Änderungen und überflüssige Zusammenfassungen
+  # Anti-Patterns: stets aktive, skillübergreifende Leitplanken (erst lesen, dann handeln; kein Scope Creep; keine ungefragten Zusammenfassungen)
   bash "$WAZA_RULE_SCRIPT" anti-patterns claude-code
 
-  # Skill-Routing: Bevorzugt Waza-Skills bei passenden Anfragen
+  # Routing-Hinweis: weist Nicht-Claude-Hosts an, Waza-Skills zu bevorzugen, wenn eine Anfrage zu ihren Triggern passt
   bash "$WAZA_RULE_SCRIPT" waza-routing claude-code
 
-  # Klare Antworten: Verständliche Kommunikation basierend auf ASD-STE100
+  # Klare Alltagsantworten: einheitliche Begriffe, explizite Bedingungen, Unsicherheit bleibt erhalten
   # Clarity ist auf main verfügbar, aber noch nicht im aktuellen Release
   WAZA_REF=main bash "$WAZA_RULE_SCRIPT" clarity claude-code
 )
 ```
 
-[Clarity](rules/clarity.md) übernimmt Prinzipien für klares Schreiben aus ASD-STE100, ohne die Grammatik von kontrolliertem Englisch vorzuschreiben oder deinen Stil zu ändern. Führe den Befehl erneut aus, um die installierte Regel zu aktualisieren, und starte danach eine neue Sitzung. Codex installiert einen markierten Block in `~/.codex/AGENTS.md`; Claude Code und Antigravity installieren eine Regeldatei. Bei anderen Tools kopierst du die Regel in deren dauerhafte benutzerdefinierte Anweisungen.
-
 <div align="center">
-  <img src="https://raw.githubusercontent.com/tw93/Waza/main/assets/clarity.png" width="1000" />
+  <img src="https://raw.githubusercontent.com/tw93/Waza/main/assets/english-coaching.png" width="1000" />
 </div>
+
+[Clarity](rules/clarity.md) übernimmt Prinzipien für klares Schreiben aus ASD-STE100, ohne die Grammatik von kontrolliertem Englisch vorzuschreiben oder deinen Stil zu ändern. Führe den Befehl erneut aus, um die installierte Regel zu aktualisieren, und starte danach eine neue Sitzung. Codex installiert einen markierten Block in `~/.codex/AGENTS.md`; Claude Code und Antigravity installieren eine Regeldatei. Bei anderen Tools kopierst du die Regel in deren dauerhafte benutzerdefinierte Anweisungen.
 
 ## Warum Waza
 

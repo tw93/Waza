@@ -132,11 +132,11 @@ Codex 顯示剩餘額度，上方 Claude Code 狀態列顯示已用百分比（�
 )
 ```
 
-[Clarity](rules/clarity.md) 借鑑了 ASD-STE100 的清晰寫作原則，不會強加受控英文語法，也不會改變你的個人表達風格，重新執行指令即可更新，開一個新會話後生效。Codex 會在 `~/.codex/AGENTS.md` 寫入標記塊，Claude Code 與 Antigravity 則安裝為規則檔案，其他工具把規則複製進各自的自訂指令即可
-
 <div align="center">
-  <img src="https://raw.githubusercontent.com/tw93/Waza/main/assets/clarity.png" width="1000" />
+  <img src="https://raw.githubusercontent.com/tw93/Waza/main/assets/english-coaching.png" width="1000" />
 </div>
+
+[Clarity](rules/clarity.md) 借鑑了 ASD-STE100 的清晰寫作原則，不會強加受控英文語法，也不會改變你的個人表達風格，重新執行指令即可更新，開一個新會話後生效。Codex 會在 `~/.codex/AGENTS.md` 寫入標記塊，Claude Code 與 Antigravity 則安裝為規則檔案，其他工具把規則複製進各自的自訂指令即可
 
 ## 為什麼做 Waza
 
