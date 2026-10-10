@@ -182,4 +182,4 @@ In Claude Desktop löschst du Waza unter Customize > Skills. Bei Codex-Regelinst
 
 ## Lizenz
 
-MIT License
+MIT License. Nutze Waza frei und trag gern etwas bei.

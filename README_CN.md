@@ -180,4 +180,4 @@ Claude Desktop 直接在 Customize > Skills 中删除 Waza，Codex 规则安装�
 
 ## 许可证
 
-MIT License
+MIT License，欢迎自由使用 Waza，也欢迎参与贡献。

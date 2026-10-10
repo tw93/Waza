@@ -182,4 +182,4 @@ Claude Desktop에서는 Customize > Skills에서 Waza를 삭제하세요. Codex�
 
 ## 라이선스
 
-MIT License
+MIT License. Waza를 자유롭게 사용하고 기여해 주세요.

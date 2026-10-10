@@ -182,4 +182,4 @@ Pour Claude Desktop, supprimez Waza dans Customize > Skills. Pour les règles in
 
 ## Licence
 
-MIT License
+MIT License. Utilisez Waza librement et n'hésitez pas à contribuer.
