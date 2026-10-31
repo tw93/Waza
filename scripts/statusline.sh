@@ -20,7 +20,16 @@ input=$(cat)
 
 tab=$(printf '\t')
 
-jq_full='[
+# Newer Claude Code sends resets_at as ISO-8601; normalize it to epoch seconds.
+jq_epoch_def='
+def to_epoch:
+  if type == "number" then floor
+  elif type == "string" and test("^[0-9]+$") then tonumber
+  elif type == "string" then
+    (sub("\\.[0-9]+"; "") | sub("\\+00:00$"; "Z") | try fromdateiso8601 catch null)
+  else null end;'
+
+jq_full="$jq_epoch_def"'[
   ((.context_window.current_usage.input_tokens // 0)
    + (.context_window.current_usage.cache_creation_input_tokens // 0)
    + (.context_window.current_usage.cache_read_input_tokens // 0) | tostring),
@@ -29,16 +38,16 @@ jq_full='[
   (.cost.total_api_duration_ms // 0 | tonumber? // 0 | floor | tostring),
   (.context_window.total_output_tokens // 0 | tonumber? // 0 | floor | tostring),
   (.rate_limits.five_hour.used_percentage // null | if . then (. | round | tostring) else "null" end),
-  (.rate_limits.five_hour.resets_at // "null" | tostring),
+  (.rate_limits.five_hour.resets_at | to_epoch // "null" | tostring),
   (.rate_limits.seven_day.used_percentage // null | if . then (. | round | tostring) else "null" end),
-  (.rate_limits.seven_day.resets_at // "null" | tostring)
+  (.rate_limits.seven_day.resets_at | to_epoch // "null" | tostring)
 ] | @tsv'
 
-jq_rl='[
+jq_rl="$jq_epoch_def"'[
   (.rate_limits.five_hour.used_percentage // null | if . then (. | round | tostring) else "null" end),
-  (.rate_limits.five_hour.resets_at // "null" | tostring),
+  (.rate_limits.five_hour.resets_at | to_epoch // "null" | tostring),
   (.rate_limits.seven_day.used_percentage // null | if . then (. | round | tostring) else "null" end),
-  (.rate_limits.seven_day.resets_at // "null" | tostring)
+  (.rate_limits.seven_day.resets_at | to_epoch // "null" | tostring)
 ] | @tsv'
 
 jq_hw='[
@@ -352,8 +361,8 @@ format_reset() {
   local ts="$1"
   [ -z "$ts" ] && return
   local epoch now diff
-  epoch=$(printf '%s' "$ts" | tr -dc '0-9')
-  [ -z "$epoch" ] && return
+  is_uint "$ts" || return
+  epoch="$ts"
   now=$(date +%s)
   diff=$((epoch - now))
   [ "$diff" -le 0 ] && return
