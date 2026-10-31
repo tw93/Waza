@@ -116,4 +116,18 @@ if grep -q '2000003600%' "$tmpdir7/out"; then
   exit 1
 fi
 
+# ISO-8601 resets_at (newer Claude Code) must render the same countdown as
+# epoch seconds and persist as epoch in highwater.json.
+tmpdir8=$(make_tmpdir)
+json_iso='{"context_window":{"current_usage":{"input_tokens":5},"context_window_size":100},"rate_limits":{"five_hour":{"used_percentage":12,"resets_at":"2033-05-18T03:33:20.500Z"},"seven_day":{"used_percentage":34,"resets_at":"2033-05-18T04:33:20+00:00"}}}'
+printf '%s' "$json_iso" | HOME="$tmpdir8" bash "$ROOT/scripts/statusline.sh" >"$tmpdir8/out"
+grep -q '12%' "$tmpdir8/out"
+grep -q '34%' "$tmpdir8/out"
+if grep -Eq '\([0-9]{5,}d' "$tmpdir8/out"; then
+  echo "ISO resets_at rendered as a bogus countdown" >&2
+  exit 1
+fi
+grep -q '"five_hour": {"used_percentage": 12, "resets_at": 2000000000}' "$tmpdir8/.cache/waza-statusline/highwater.json"
+grep -q '"seven_day": {"used_percentage": 34, "resets_at": 2000003600}' "$tmpdir8/.cache/waza-statusline/highwater.json"
+
 echo "statusline smoke: ok"
