@@ -7,7 +7,7 @@
   <a href="https://github.com/tw93/Waza/stargazers"><img src="https://img.shields.io/github/stars/tw93/Waza?style=flat-square" alt="Stars"></a>
   <a href="https://github.com/tw93/Waza/releases"><img src="https://img.shields.io/github/v/tag/tw93/Waza?label=version&style=flat-square" alt="Version"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square" alt="License"></a>
-  <a href="https://twitter.com/HiTw93"><img src="https://img.shields.io/badge/follow-Tw93-red?style=flat-square&logo=Twitter" alt="Twitter"></a>
+  <a href="https://x.com/HiTw93"><img src="https://img.shields.io/badge/follow-Tw93-red?style=flat-square&logo=Twitter" alt="Twitter"></a>
 </div>
 
 <br/>
@@ -163,7 +163,7 @@ For the statusline, also remove the `statusLine` entry from `~/.claude/settings.
 ## Support
 
 - The most direct way to support me is getting [Mole for Mac](https://mole.fit), my paid Mac cleanup app
-- If Waza helped you, give it a star, [share it](https://twitter.com/intent/tweet?url=https://github.com/tw93/Waza&text=Waza%20-%20Tw93%27s%20engineering%20habits%2C%20turned%20into%20your%20skills.), or open an issue or PR after reading [SCOPE.md](https://github.com/tw93/Waza/blob/main/SCOPE.md)
+- If Waza helped you, give it a star, [share it](https://x.com/intent/tweet?url=https://github.com/tw93/Waza&text=Waza%20-%20Tw93%27s%20engineering%20habits%2C%20turned%20into%20your%20skills.), or open an issue or PR after reading [SCOPE.md](https://github.com/tw93/Waza/blob/main/SCOPE.md)
 - I have two cats, TangYuan and Coke, and if Waza has been helpful to you, you can feed them <a href="https://cats.tw93.fun?name=Waza" target="_blank">canned food 🥩</a>
 
 These lovely people already did 🐱

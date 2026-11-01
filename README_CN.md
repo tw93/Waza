@@ -7,7 +7,7 @@
   <a href="https://github.com/tw93/Waza/stargazers"><img src="https://img.shields.io/github/stars/tw93/Waza?style=flat-square" alt="Stars"></a>
   <a href="https://github.com/tw93/Waza/releases"><img src="https://img.shields.io/github/v/tag/tw93/Waza?label=version&style=flat-square" alt="Version"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square" alt="License"></a>
-  <a href="https://twitter.com/HiTw93"><img src="https://img.shields.io/badge/follow-Tw93-red?style=flat-square&logo=Twitter" alt="Twitter"></a>
+  <a href="https://x.com/HiTw93"><img src="https://img.shields.io/badge/follow-Tw93-red?style=flat-square&logo=Twitter" alt="Twitter"></a>
 </div>
 
 <br/>
@@ -163,7 +163,7 @@ rm -f ~/.claude/rules/clarity.md
 ## 支持
 
 - 最直接的支持方式是购买 [Mole for Mac](https://mole.fit)，这是我开发的 Mac 清理应用
-- 如果 Waza 对你有帮助，欢迎点个 Star，[分享给朋友](https://twitter.com/intent/tweet?url=https://github.com/tw93/Waza&text=Waza%20-%20Tw93%27s%20engineering%20habits%2C%20turned%20into%20your%20skills.)，或者在读过 [SCOPE.md](https://github.com/tw93/Waza/blob/main/SCOPE.md) 后提交 Issue 与 PR
+- 如果 Waza 对你有帮助，欢迎点个 Star，[分享给朋友](https://x.com/intent/tweet?url=https://github.com/tw93/Waza&text=Waza%20-%20Tw93%27s%20engineering%20habits%2C%20turned%20into%20your%20skills.)，或者在读过 [SCOPE.md](https://github.com/tw93/Waza/blob/main/SCOPE.md) 后提交 Issue 与 PR
 - 我养了两只猫，汤圆和可乐，如果 Waza 帮到了你，可以给她们加个 <a href="https://cats.tw93.fun?name=Waza" target="_blank">罐头 🥩</a>
 
 已经赞助过的可爱朋友们 🐱
