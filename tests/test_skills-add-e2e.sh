@@ -26,16 +26,39 @@ test_home="$tmpdir/home"
 mkdir -p "$test_home"
 
 # Install all 8 skills into an isolated HOME against the local repo copy.
-# One retry absorbs transient npm-registry hiccups without hiding real breakage.
-if ! HOME="$test_home" npx --yes skills add "$tmpdir/repo" -a claude-code -g -y \
-  >"$tmpdir/install.out" 2>&1; then
-  sleep 5
-  if ! HOME="$test_home" npx --yes skills add "$tmpdir/repo" -a claude-code -g -y \
-    >"$tmpdir/install.out" 2>&1; then
-    echo "skills add e2e smoke: install failed after retry"
-    cat "$tmpdir/install.out" >&2
-    exit 1
+# The isolated HOME keeps the real npm cache, so a run does not refetch every
+# package cold, and each attempt is bounded: npm's own fetch timeout is five
+# minutes per request with retries, and a stalled registry once held this smoke
+# for over half an hour. One retry absorbs transient registry hiccups. Locally a
+# registry that never answers skips the smoke as an environment problem; in CI
+# it still fails, so a real packaging regression cannot hide behind it.
+npm_cache="${npm_config_cache:-$HOME/.npm}"
+attempt_seconds="${WAZA_SKILLS_ADD_TIMEOUT:-240}"
+timeout_bin=$(command -v timeout || command -v gtimeout || true)
+install_skills() {
+  if [ -n "$timeout_bin" ]; then
+    HOME="$test_home" npm_config_cache="$npm_cache" "$timeout_bin" "$attempt_seconds" \
+      npx --yes skills add "$tmpdir/repo" -a claude-code -g -y >"$tmpdir/install.out" 2>&1
+  else
+    HOME="$test_home" npm_config_cache="$npm_cache" \
+      npx --yes skills add "$tmpdir/repo" -a claude-code -g -y >"$tmpdir/install.out" 2>&1
   fi
+}
+install_status=0
+install_skills || install_status=$?
+if [ "$install_status" -ne 0 ]; then
+  sleep 5
+  install_status=0
+  install_skills || install_status=$?
+fi
+if [ "$install_status" -eq 124 ] && [ -z "${CI:-}" ]; then
+  echo "skills add e2e smoke: skipped (npx did not finish within ${attempt_seconds}s twice; registry unreachable?)"
+  exit 0
+fi
+if [ "$install_status" -ne 0 ]; then
+  echo "skills add e2e smoke: install failed after retry (exit $install_status)"
+  cat "$tmpdir/install.out" >&2
+  exit 1
 fi
 
 # All 8 SKILL.md files landed under ~/.claude/skills/.
