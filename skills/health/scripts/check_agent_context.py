@@ -6,6 +6,8 @@ parses Codex config.toml for project trust + plugin/feature state (with sensitiv
 values redacted), and flags drift between Claude and Codex surfaces.
 
 Run as: python3 check_agent_context.py [ROOT] [summary|deep]
+
+Owns effective instruction, permission, hook, path-context, and active-skill routing evidence. It must not treat plugin caches as active installs or follow escaped symlinks.
 """
 
 from __future__ import annotations

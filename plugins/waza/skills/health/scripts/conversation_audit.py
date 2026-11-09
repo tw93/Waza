@@ -7,6 +7,8 @@ modified inside the live window is excluded so parallel active sessions cannot
 become evidence. Codex sessions are included when their session metadata resolves
 inside the target project root. This is a project-scoped audit unless the caller
 explicitly enables all-project mode.
+
+Owns project-scoped, redacted conversation signals and coverage receipts. Structured runtime events define interruptions; cloned history must not multiply corrections.
 """
 
 from __future__ import annotations

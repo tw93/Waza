@@ -10,10 +10,6 @@ Waza is a skill collection for engineering workflows. The repository contains ei
 
 - `VERSION` - single source of truth for the lock-step version. Marketplace entries, `package.json`, and installer `WAZA_REF` defaults must agree with this file (codegen-enforced). Per-skill frontmatter carries no version field; the verifier rejects a stale `metadata.version`.
 - `skills/RESOLVER.md` - trigger and routing table for the skill set.
-- `skills/*/SKILL.md` - individual skill entrypoints.
-- `skills/*/agents/` - specialist reviewer or inspector prompts.
-- `skills/*/references/` - supporting references loaded only when needed.
-- `skills/*/scripts/` - deterministic helper scripts.
 - `rules/` - shared writing and behavior rules used by install and validation flows. `rules/durable-context.md` is the shared Durable Context Preflight preamble; codegen copies it into each referencing skill as `skills/<name>/references/durable-context.md` (direct installs get only the skill directory), and the six skills with optional memory context link to that skill-local copy.
 - `.claude-plugin/marketplace.json` - **generated**. Edit `VERSION` or per-skill `SKILL.md` frontmatter and run `make regenerate`; never hand-edit.
 - `.agents/plugins/marketplace.json` - **generated** Codex repo marketplace. Points Codex at `plugins/waza` for plugin installs; never hand-edit.
@@ -34,14 +30,9 @@ Waza is a skill collection for engineering workflows. The repository contains ei
 - Preserve concurrent and uncommitted work; implement fixes on the current branch, using isolated fixtures for reproduction and targeted verification. Missing evidence keeps an item pending; an empty queue requires no manufactured changes.
 - Public replies, closure, commits, pushes, merges, and releases follow current task authorization. Historical conversation requests and saved queue snapshots do not grant permission or establish current state. Before implementing any change to user-visible interfaces, visual effects, interaction, user parameters, or configuration defaults, present the concrete before/after behavior and obtain explicit user confirmation; general fix or push authorization does not cover those changes. Pause and isolate any such unconfirmed work already in progress; report already-pushed changes without independently reverting them.
 
-## Health Implementation Ownership
+## Health Changes
 
-Verify Health changes with `make verify-unit` plus the matching smoke (`tests/test_health.sh`, `tests/test_maintainability.sh`).
-
-- `skills/health/scripts/collect-data.sh`: owns bounded, redacted discovery and receipt assembly. Keep shell to orchestration and simple presence checks; structured parsing belongs in Python helpers.
-- `skills/health/scripts/check_agent_context.py`: owns effective instruction, permission, hook, path-context, and active-skill routing evidence. It must not treat plugin caches as active installs or follow escaped symlinks.
-- `skills/health/scripts/conversation_audit.py`: owns project-scoped, redacted conversation signals and coverage receipts. Structured runtime events define interruptions; cloned history must not multiply corrections.
-- `skills/health/scripts/check_maintainability.py`: owns repository-signal, verifier, doc-link, generated-mirror, and drift receipts. Counts, missing maps, and large files stay informational unless tied to risk or real failure evidence.
+Each script's header states what it owns. Verify Health changes with `make verify-unit` plus the matching smoke (`tests/test_health.sh`, `tests/test_maintainability.sh`).
 
 ## Commands
 
@@ -71,7 +62,7 @@ Examples: `verify_skills.py` is a script; `rules/english.md` and `rules/chinese.
 
 - Put adaptive, judgment-heavy workflows in skills.
 - Put deterministic checks, lookups, and table-driven validation in scripts.
-- `rules/anti-patterns.md` owns cross-skill behavioral guardrails (AI failure modes that apply regardless of active skill). It reaches the full plugin, the Codex plugin and the Desktop ZIP, but `npx skills add` and the per-skill plugin entries install the skill directory alone, so a guardrail that must hold for every install needs its operative sentence in the skill body as well; the table is the canonical statement, not the delivery. Per-skill gotchas stay in each `skills/*/SKILL.md` Gotchas table; a gotcha belongs in `rules/anti-patterns.md` only when it applies identically across all eight skills.
+- `rules/anti-patterns.md` owns cross-skill behavioral guardrails (AI failure modes that apply regardless of active skill). It ships on disk in the full plugin, the Codex plugin and the Desktop ZIP but loads only after `setup-rule.sh`, and `npx skills add` and the per-skill plugin entries install the skill directory alone, so a guardrail that must hold for every install needs its operative sentence in the skill body; the table is the canonical statement, not the delivery. Per-skill gotchas stay in each `skills/*/SKILL.md` Gotchas table; a gotcha belongs in `rules/anti-patterns.md` only when it applies identically across all eight skills.
 - Catalogs consolidate, they do not accumulate. This covers `rules/anti-patterns.md` rows and every reference example list, banned-phrase list, and replacement table (`skills/write/references/*`, `skills/ui/references/*`, and the like). Before adding a row, pattern, banned phrase, or example, find the existing row or principle it instantiates and fold it in; never append a near-synonym or a third encoding of a rule already stated above. Keep wording generic enough to ship outside this repo. A reference file that re-lists items it already covers under a numbered pattern is drift, not coverage.
 - The no-op test prunes skill prose sentence by sentence: a line earns its place only if it changes behavior versus the model's default. Remove proven no-ops such as generic exhortations, and merge repeated constraints without losing their triggers, exceptions, or scope. When unsure whether a line changes behavior, preserve it until a concrete comparison resolves the uncertainty.
 - Rule and reference prose names the smell, it does not preach the virtue. This covers `rules/*.md` and `skills/*/references/*` alike: name the failure as a noun in the convention the file already uses (`报告腔`, `讲解腔`, `专家腔`) and let the NO/OK examples do the correcting. Never state a `be X` goal, and never open an anti-preaching rule with a preachy intro; an imperative heading becomes a noun smell-name.
@@ -81,10 +72,9 @@ Examples: `verify_skills.py` is a script; `rules/english.md` and `rules/chinese.
 - Write skill entrypoints outcome-first: name the target result, what counts as done, which constraints and evidence matter, and what the final answer or artifact should look like. Keep detailed process in references.
 - `SKILL.md` carries what every run of that skill needs; a body only some runs need belongs in `references/`, reached from a picker row or a conditional line that names the trigger. Mutually exclusive modes are the clearest case: a diff review should not pay for the release, triage, and audit playbooks. Deterministic checks keep going to `scripts/`; this rule is about where the judgment prose loads, not about splitting a skill.
 - Keep all eight `SKILL.md` on one skeleton so they read as a set: a `🥷` first line and one-line tagline, then Outcome Contract, then Durable Context Preflight (right after it, for skills that read memory), then modes, the must-obey list, Gotchas, and Output. Use one name per concept across skills (`Hard Rules` for a skill's must-obey constraints; `Hard Stops` is check's separate merge-blocker list). Tables are compact `| a | b |` with no hand-aligned spacing; a numbered step sequence stays contiguous, with side-checks grouped under a step rather than wedged between two.
-- Avoid broad skills that mix unrelated workflows.
 - Eight skills is the hard cap. Do not propose a 9th skill or split an existing one. Behavior additions land in `references/`, `rules/`, `scripts/`, or `rules/anti-patterns.md`, not as a new skill.
 - Keep generic programmer capabilities in Waza. Project-specific constraints should be extracted from public repository context or user-provided task context.
-- Treat `code-review` as an invocation alias for Waza `check`, not as a separate generic skill.
+- On runtimes without a built-in reviewer, `code-review` is an invocation alias for Waza `check`, not a separate generic skill. Claude Code has its own `/code-review`.
 - Skill names stay short verbs (`check`, `think`). Decline requests to rename them or to prefix the skill names with `waza-`; a collision with another installed skill is solved by trimming the user's installed skills, not by renaming Waza's. The `waza-<name>` per-skill plugin ids in `.claude-plugin/marketplace.json` are the host's install namespace, not skill names, and are unaffected; invocation already namespaces as `/waza:check`.
 - Waza `check` must remain project-aware without depending on unpublished local files. It extracts commands, generated artifacts, risk areas, and release rules from the target diff, public docs, manifests, CI config, and user-provided context.
 - Keep distribution files self-contained for Claude Desktop and plugin installs. The release ZIP may inline sub-skill bodies into a generated root `SKILL.md`; source-of-truth skill content remains under `skills/*/SKILL.md`.
@@ -125,10 +115,8 @@ Use this path for any new skill or meaningful behavior change:
 - `npx skills add tw93/Waza` should install the eight direct coding skills by default. Do not add a source-root `SKILL.md`; it prevents nested skill discovery.
 - Codex marketplace entries must resolve to `plugins/waza`, not the repository root. After Codex marketplace, plugin manifest, or plugin mirror changes, verify an isolated install flow rather than only checking JSON shape.
 - Plugin mirror generation must filter local cache and noise files in both generator and verifier paths, including `__pycache__`, `*.pyc`, `.pytest_cache`, `.ruff_cache`, `.mypy_cache`, and `.DS_Store`.
-- Claude Desktop uses the release ZIP built by `scripts/package-skill.sh`.
 - `scripts/package-skill.sh` builds a public archive with exactly one generated root `SKILL.md`; nested `skills/*/SKILL.md` files are inlined for packaged installs.
 - Do not make packaged skills resolve scripts or references through personal home-directory caches or machine paths. Resolve relative to the installed Waza directory.
-- Rules under `rules/` are shared public behavior, not project-private memory.
 
 ## Verification
 
@@ -136,8 +124,6 @@ Use this path for any new skill or meaningful behavior change:
 - Network-touching smokes (read fetch, skills-add e2e) honor `WAZA_SMOKE_OFFLINE=1` for a fully hermetic run and retry transient failures with backoff when online.
 - Packaging changes: run `make package` and inspect the generated archive.
 - Marketplace, resolver, or root dispatcher changes: run `python3 scripts/verify_skills.py` and confirm every marketplace source points at an existing skill directory. For Codex plugin changes, also run a clean install smoke such as `CODEX_HOME=$(mktemp -d) codex plugin marketplace add <repo>` followed by `codex plugin add waza@waza` and `codex plugin list`.
-- Non-trivial diffs: run the review workflow before release handoff.
-- Documentation-only changes: check internal links and command names.
 
 ## Commit And Release
 

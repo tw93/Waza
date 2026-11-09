@@ -3,6 +3,8 @@
 decision artifacts, drift markers, generated mirrors, and markdown links.
 
 Run as: python3 check_maintainability.py [ROOT] [summary|deep]
+
+Owns repository-signal, verifier, doc-link, generated-mirror, and drift receipts. Counts, missing maps, and large files stay informational unless tied to risk or real failure evidence.
 """
 
 from __future__ import annotations

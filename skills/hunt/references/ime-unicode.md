@@ -47,12 +47,3 @@ Recurring patterns in webview-hosted and native macOS apps. Check these before f
 **Symptom**: Undo (`Cmd+Z`) reverts individual IME preedit characters instead of committed words, or system text shortcuts (Cmd+Shift+Left for word selection) behave differently inside vs outside the webview.
 
 **Cause**: WKWebView has its own text system that partially overlaps with NSTextView conventions. The webview host's key-handling config can suppress system shortcuts (Tauri's `preventDefaultFor` in `tauri.conf.json` or `app.json`, or the equivalent in other hosts); check it for `preventDefault` rules that are too broad.
-
-## Quick Checklist
-
-- [ ] `isComposing` checked before acting on keyboard events?
-- [ ] No DOM mutation while `isComposing` is true?
-- [ ] Offset units match the receiving API, with grapheme boundaries for visible-character operations?
-- [ ] ZWJ sequences verified with `Intl.Segmenter`?
-- [ ] Confirmation-key guard tested against both event orderings and a subsequent deliberate action?
-- [ ] `tauri.conf.json` `preventDefaultFor` not too broad?

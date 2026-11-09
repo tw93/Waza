@@ -161,7 +161,7 @@ When the interface mixes Chinese, Japanese, or Korean with Latin, Latin-only typ
 - **Latin face first, system CJK face after** in the stack, so each script renders with correct glyphs: `font-family: -apple-system, "SF Pro Text", "PingFang SC", "Noto Sans SC", sans-serif;`. Latin runs use the Latin face; Han characters fall through to the CJK face.
 - **Give CJK body text more line-height than Latin**: roughly 1.7–1.8 for reading. Dense Hanzi needs more vertical room than the 1.4–1.5 that suits Latin body copy.
 - **Tag runs with `lang="zh"` / `lang="ja"` / `lang="en"`** so the browser picks the right font and line-breaking. Mixed-language paragraphs break badly without it.
-- **Serif reading modes need an explicit CJK serif fallback.** Most Latin "reading serif" webfonts carry no CJK glyphs, so a serif toggle silently drops Chinese back to a sans and looks broken. Pair them: `"Newsreader", "Songti SC", "Noto Serif SC", serif`.
+- **Serif reading modes need an explicit CJK serif fallback.** Most Latin "reading serif" webfonts carry no CJK glyphs, so a serif toggle silently drops Chinese back to a sans and looks broken. Pair them: `"<reading serif>", "Songti SC", "Noto Serif SC", serif`.
 - **Do not apply negative letter-spacing to CJK runs.** The display-type tracking rule above is Latin-only; tightening tracking on Hanzi cramps the glyphs and reads as a rendering bug. Scope tracking to `lang="en"` runs.
 
 ## Color System: OKLCH Rules

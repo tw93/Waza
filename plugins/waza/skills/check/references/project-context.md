@@ -2,36 +2,16 @@
 
 Use this template to compress repository context before running Waza `/check`. The context must come from public project files, the diff, CI configuration, or explicit user instructions. Do not depend on private machine paths or unpublished project instructions.
 
-## What Belongs In Waza `/check`
-
-- Diff depth classification.
-- Scope drift detection.
-- Hard stops such as destructive automation, missing release artifacts, generated artifact drift, version skew, unknown identifiers, injection risks, credential leakage, and dependency surprises.
-- Release Gate 2.0 matrix for release readiness.
-- Safety sink review for destructive operations, command construction, path boundaries, signing/appcast, sandbox/approval, and auth prompts.
-- Security and architecture specialist routing.
-- Autofix policy.
-- Sign-off format.
-- Verification expectations.
-
 ## What Belongs In Project Context
 
-- Verification commands discovered from public docs, manifests, Makefiles, scripts, or CI workflows.
+The template below names most of it. Also capture:
+
 - Protected files and directories.
-- Generated or bundled artifacts that must stay in sync with source changes.
 - Packaging source of truth: whether archives are built from `git ls-files`, explicit allowlists, generated manifests, or source directories.
 - Delivery surfaces: whether generated outputs are tracked, ignored, external release assets, registry uploads, appcasts, installer metadata, checksums, or site/download copy; how they are regenerated, inspected, staged, or uploaded.
-- Distribution lanes: preview, beta, nightly, stable, App Store, or registry channels, and which generated artifacts belong to each lane.
-- CLI command surfaces: entrypoints, subcommands, flags, help/version behavior, exit codes, stdout/stderr contract, TTY and non-interactive paths, config/env precedence, and installed-runtime checks.
 - Runtime dependencies introduced by the diff: Python packages, CLIs, network services, package managers, or platform tools that are not already declared in CI/docs.
-- Skill, plugin, marketplace, or package install surfaces: installer default ref, marketplace source path, generated mirror, package allowlist, archive root, executable bits, and the installed-runtime smoke command.
 - Domain-specific safety rules.
-- Release artifacts that must exist.
-- GitHub release reactions or other public release follow-through expected by the project.
-- Release-asset verification method: download, archive entry comparison, checksum manifest, package metadata readback, appcast readback, or registry query.
-- Public issue or PR reply conventions.
 - Known CI or test flakes documented by the project and how to distinguish them from real failures.
-- Release, publish, push, or issue-closure prerequisites documented by the project.
 
 ## What Does Not Belong In Public Context
 

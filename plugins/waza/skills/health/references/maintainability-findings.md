@@ -39,27 +39,11 @@ On Linux and macOS:
 BASH_ENV= ENV= /bin/bash -p "${HEALTH_SCRIPT%/*}/check-maintainability.sh" . summary
 ```
 
-For deep audits:
-
-```powershell
-& "$POWERSHELL" -NoLogo -NoProfile -ExecutionPolicy Bypass -File "$HEALTH_LAUNCHER" maintainability . deep
-```
-
-On Linux and macOS:
-
-```bash
-BASH_ENV= ENV= /bin/bash -p "${HEALTH_SCRIPT%/*}/check-maintainability.sh" . deep
-```
+For deep audits, run the same command with `deep` in place of `summary`.
 
 Keep actions concrete and non-invasive: add or fix the smallest useful routed instruction surface, add one executable validation command at the real failure layer, repair a generated-mirror check, or repair the broken reference. Split only when the boundary is already clear. Do not propose broad rewrites from the script output alone.
 
-**Broken doc references.** Scan `AGENTS.md`, `CLAUDE.md`, `.claude/rules/*.md`, and every `.claude/skills/*/SKILL.md` for references shaped like `@<path>`, `~/.claude/rules/<name>.md`, `~/.claude/skills/<name>/`, `docs/<name>.md`, or `references/<name>.md`. For each match, check that the target exists on disk. Report every "referenced but missing" pointer with the source file and line.
-
-Common offenders:
-- A project-level rule references a global rule file that was never created (e.g. `~/.claude/rules/swift.md`).
-- A `CLAUDE.md` uses an `@AGENTS.md` placeholder but the actual `AGENTS.md` is missing or empty.
-- A skill body references `references/<name>.md` but only `references/<name>-v2.md` exists.
-- A rule file references a deleted skill path.
+**Broken doc references.** Run the checker below; it resolves `@...`, `docs/...`, `~` and skill-relative `references/...`, and each MISSING is a finding with its source file and line.
 
 Quick check from the project root, reusing `$HEALTH_SCRIPT` resolved in Step 1:
 
@@ -72,8 +56,6 @@ On Linux and macOS:
 ```bash
 BASH_ENV= ENV= /bin/bash -p "${HEALTH_SCRIPT%/*}/check-doc-refs.sh" .
 ```
-
-The checker resolves `@...` and `docs/...` from the project root, expands `~`, resolves `references/...` from each `.claude/skills/<name>/SKILL.md` directory, checks every reference on a line, skips fenced code examples, and exits non-zero when any target is missing.
 
 Report missing references as Structural findings, not Critical, unless the missing file is named as a hard dependency (e.g. `release.md` for the project's release skill).
 

@@ -9,7 +9,7 @@ Hooks checks:
 - If hooks exist, verify schema:
   - Each event group needs a `hooks` array; validate `matcher` only for events that support filtering.
   - Validate handlers by runtime and type: command hooks need `command`; MCP-tool hooks need `server` and `tool`. Prompt, agent, HTTP, and unfamiliar types need the matching runtime contract, not a command-only rejection.
-  - File path may be available via `$CLAUDE_TOOL_INPUT_FILE_PATH`
+  - Command hooks read the tool input, including any file path, as JSON on stdin
   - Interpret `matcher` by event; lifecycle hooks such as Stop do not require a tool matcher.
 - Flag full test suites on every edit, prefer fast checks for immediate feedback.
 - Flag commands without output truncation, unbounded output floods context.
@@ -71,7 +71,6 @@ This section owns repeated corrections, missing patterns, and observable rule vi
 6. Anti-patterns: only flag what is directly observable:
    - Claude declaring done without running verification
    - User re-explaining same context across sessions -- missing HANDOFF.md or memory
-   - Long sessions over 20 turns without /compact or /clear
 
 Return bullet points under two sections:
 [CONTROL LAYER: hooks issues | allowedTools to remove | cache hygiene | three-layer gaps | verification gaps | subagents issues]

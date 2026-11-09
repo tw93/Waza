@@ -9,7 +9,7 @@ dispatch_intent: "Code review, before merge, release gates, generated artifacts,
 
 Prefix your first line with 🥷 inline, not as its own paragraph.
 
-> Note: `/review` is a built-in Anthropic plugin command for PR review. Waza uses `/check` (or the alias `code-review`) instead. Do not re-trigger `/review` from within this skill.
+> Note: on Claude Code `/review` and `/code-review` are the built-in reviewer. Do not call them from inside this skill.
 
 Read the diff and find the problems. Review, audit, triage, and readiness requests are report-only; apply fixes only under explicit repair authorization still in force for the same task. Done means the requested review surface is covered and every verification claim comes from this session.
 
@@ -186,7 +186,7 @@ Any fix made during review invalidates the pre-fix verdict. Re-freeze the baseli
 
 ## Adversarial Pass (Deep only)
 
-Run the four attack angles in `references/persona-catalog.md`. Convergence from independent angles raises confidence; singleton findings face the same per-finding skeptic verification as specialist claims. Suppress findings below 0.60 confidence.
+Run the four attack angles in `references/persona-catalog.md`. Convergence from independent angles raises confidence; singleton findings face the same per-finding skeptic verification as specialist claims. Findings that fail the Finding Quality Gate are dropped.
 
 ## Platform Operations
 

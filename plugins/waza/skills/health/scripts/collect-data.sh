@@ -2,6 +2,8 @@
 # Collect agent configuration data for health audit.
 # Outputs labeled sections for each data source.
 # Run from any directory; uses pwd as the project root.
+# Owns bounded, redacted discovery and receipt assembly. Keep shell to orchestration and simple
+# presence checks; structured parsing belongs in Python helpers.
 #
 # Known failure modes (for interpreting (unavailable) output):
 #   trusted Python missing  -> conversation, MCP/hooks/allowedTools, and skill-security sections print "(unavailable)"

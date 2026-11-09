@@ -123,7 +123,7 @@ Before the handoff summary, a new page or visual system also runs the Aesthetic 
 
 If any check fails, fix first. Render the product's supported viewport or window range yourself: web breakpoints on both sides, and native minimum width, minimum height, their combination, and normal size. Test samples do not require new layout branches. Only when the host cannot render, say so and hand the user the exact view to check.
 
-End with:
+For a new page or visual system, end with (other paths use their mode's closing):
 - Aesthetic direction, named and justified in 2-3 sentences
 - Non-obvious choices explained: typeface, color decisions, layout logic
 - Instructions for replacing placeholder content with real content

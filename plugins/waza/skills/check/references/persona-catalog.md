@@ -10,10 +10,6 @@ Merge findings: when two specialists flag the same code location, keep the highe
 
 Every specialist finding is a claim to verify, not a fact to act on. For HIGH and CRITICAL claims, when the agent facility allows it, spawn one independent skeptic per finding whose only brief is to refute it against the actual code; a finding the skeptic refutes on direct read is dropped or downgraded regardless of which persona raised it. Without the facility, run the skeptic pass yourself: re-read the cited code this turn and confirm the claim is real and live, not already handled elsewhere, not consistent-by-design, not a latent-only risk labeled as a live bug. Parallel reviewers over-report from name-based inference and partial context; drop what dissolves on direct read, and cite the verification path before routing anything to Autofix or sign-off.
 
-## Always-On (no condition required)
-
-The base /check skill runs as always-on. Specialist reviewers are additive.
-
 ## Conditional Specialists
 
 ### Security Reviewer
@@ -48,4 +44,4 @@ Four attack angles:
 3. **Cascade construction** -- What sequence of valid operations leads to an invalid state?
 4. **Abuse cases** -- What happens on the 1000th request, during a deployment, with two users editing the same resource simultaneously?
 
-Report adversarial findings with confidence score; the suppression threshold lives in SKILL.md's Adversarial Pass section.
+Report adversarial findings with the evidence that supports them; SKILL.md's Finding Quality Gate decides what survives.

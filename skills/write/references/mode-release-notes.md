@@ -10,7 +10,7 @@ Format: target-project style by default. If no project style is available, use n
 
 Before drafting, gather style references:
 
-1. Read the target project's `CLAUDE.md` for its Release Convention / Release Flow section.
+1. Read the target project's `AGENTS.md` or `CLAUDE.md` for its Release Convention / Release Flow section.
 2. Read the target project's existing release source as a format, tone, sentence-length, and density reference: changelog, release notes, registry page, update feed, or platform release page.
 3. For GitHub projects, `gh release view --json body -R <owner>/<repo>` is the preferred way to read the most recent release when `gh` is available. If the project is not on GitHub, use the release source named by the project docs or user request.
 4. If the user mentions comparing with a sibling project's release style, ask for the target identifier or release URL before fetching it.

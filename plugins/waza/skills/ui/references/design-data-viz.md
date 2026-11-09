@@ -20,12 +20,8 @@ Dashboards are utility surfaces: orient the user, show status, enable action. No
 | Distribution | Histogram or box plot; never pie chart |
 | Correlation | Scatter plot; do not use line chart |
 
-Pie charts with more than 4 segments communicate nothing. Use a treemap or ranked list instead.
-
 ## Number-dense interfaces
 
-- `font-variant-numeric: tabular-nums` on every number column so digits align vertically.
-- Right-align all numbers; left-align all text labels. Mixed alignment in the same column is always wrong.
 - Subtle row separators: `1px` line at `rgba(0,0,0,0.06)` (light) or `rgba(255,255,255,0.05)` (dark). Alternating row backgrounds only if the table is very wide (12+ columns).
 - Column spacing: at least `16px` between adjacent columns; more between logically distinct groups.
 
