@@ -130,6 +130,9 @@ Codex 顯示剩餘額度，上方 Claude Code 狀態列顯示已用百分比（�
 
   # 日常清晰表達：術語統一、條件明確、保留不確定性
   bash "$WAZA_RULE_SCRIPT" clarity claude-code
+
+  # 中文寫作：中文回覆和文字都按這份習慣來
+  bash "$WAZA_RULE_SCRIPT" chinese claude-code
 )
 ```
 

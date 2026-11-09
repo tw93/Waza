@@ -130,6 +130,9 @@ Optionale Regeln wirken auch außerhalb von Skill-Aufrufen, sobald sie in den da
 
   # Klare Alltagsantworten: einheitliche Begriffe, explizite Bedingungen, Unsicherheit bleibt erhalten
   bash "$WAZA_RULE_SCRIPT" clarity claude-code
+
+  # Chinesisch schreiben: wendet diese Gewohnheiten auf chinesische Antworten und Texte an
+  bash "$WAZA_RULE_SCRIPT" chinese claude-code
 )
 ```
 

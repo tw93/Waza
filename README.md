@@ -130,6 +130,9 @@ Optional rules apply beyond skill invocations when installed into your agent's p
 
   # Clear everyday replies: consistent terms, explicit conditions, preserved uncertainty
   bash "$WAZA_RULE_SCRIPT" clarity claude-code
+
+  # Chinese writing: applies these habits to Chinese replies and prose
+  bash "$WAZA_RULE_SCRIPT" chinese claude-code
 )
 ```
 

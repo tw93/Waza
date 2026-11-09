@@ -130,6 +130,9 @@ Codex는 남은 한도를, 위의 Claude Code 상태 표시줄은 사용한 비�
 
   # 명확한 일상 답변: 일관된 용어, 명시적인 조건, 불확실성 유지
   bash "$WAZA_RULE_SCRIPT" clarity claude-code
+
+  # 중국어 글쓰기: 중국어 답변과 글에 이 습관을 적용합니다
+  bash "$WAZA_RULE_SCRIPT" chinese claude-code
 )
 ```
 

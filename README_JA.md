@@ -130,6 +130,9 @@ Codex は残りの枠を、上の Claude Code ステータスラインは使用�
 
   # 明快な日常回答：用語の統一、条件の明示、不確かさの保持
   bash "$WAZA_RULE_SCRIPT" clarity claude-code
+
+  # 中国語の文章: 中国語の返信と文章にこの書き方を適用します
+  bash "$WAZA_RULE_SCRIPT" chinese claude-code
 )
 ```
 

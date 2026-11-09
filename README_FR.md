@@ -130,6 +130,9 @@ Les règles optionnelles s'appliquent au-delà des appels de compétences une fo
 
   # Réponses claires au quotidien : termes cohérents, conditions explicites, incertitude préservée
   bash "$WAZA_RULE_SCRIPT" clarity claude-code
+
+  # Écriture en chinois : applique ces habitudes aux réponses et textes en chinois
+  bash "$WAZA_RULE_SCRIPT" chinese claude-code
 )
 ```
 
