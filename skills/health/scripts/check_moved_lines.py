@@ -8,7 +8,10 @@ whole-line move into a path rule, a nested guide or a skill reference passes. He
 bare markup are not counted. Every line
 reported missing must be an approved delete or edit in the prune ledger.
 
-Run as: python3 check_moved_lines.py BASE [ROOT] [--include GLOB ...]
+Run as: python3 check_moved_lines.py BASE [ROOT] [--head REV] [--include GLOB ...]
+
+With --head, the comparison is BASE against the committed tree at REV instead of the
+working tree, so a prune that was already committed can still be audited for lost lines.
 
 Owns the line-conservation receipt for prune repairs. Read-only: it runs `git ls-tree`,
 `git show` and `git ls-files` and never writes. Exit 0 when nothing is missing, 1 when
@@ -69,7 +72,7 @@ def git(root: Path, *args: str) -> bytes:
     return result.stdout
 
 
-def base_files(root: Path, base: str, extra: list[str]) -> dict[str, list[str]]:
+def tree_files(root: Path, base: str, extra: list[str]) -> dict[str, list[str]]:
     names = git(root, "ls-tree", "-r", "-z", "--name-only", base).split(b"\0")
     files: dict[str, list[str]] = {}
     for raw in names:
@@ -106,6 +109,11 @@ def main() -> int:
     parser.add_argument("base", help="git revision before the prune, e.g. HEAD or a commit")
     parser.add_argument("root", nargs="?", default=".", help="repo root (default: cwd)")
     parser.add_argument(
+        "--head",
+        metavar="REV",
+        help="compare against this committed revision instead of the working tree",
+    )
+    parser.add_argument(
         "--include",
         action="append",
         default=[],
@@ -118,8 +126,8 @@ def main() -> int:
         print("moved_lines_status: ERROR\nmoved_lines_error: git not found", file=sys.stderr)
         return 2
     try:
-        before = base_files(root, args.base, args.include)
-        after = current_files(root, args.include)
+        before = tree_files(root, args.base, args.include)
+        after = tree_files(root, args.head, args.include) if args.head else current_files(root, args.include)
     except RuntimeError as error:
         print(f"moved_lines_status: ERROR\nmoved_lines_error: {error}", file=sys.stderr)
         return 2
@@ -143,6 +151,7 @@ def main() -> int:
     print("=== MOVED LINES ===")
     print(f"moved_lines_status: {'WARN' if missing else 'PASS'}")
     print(f"moved_lines_base: {args.base}")
+    print(f"moved_lines_head: {args.head or 'working tree'}")
     print(f"moved_lines_base_files: {len(before)}")
     print(f"moved_lines_current_files: {len(after)}")
     print(f"moved_lines_base_lines: {base_count}")

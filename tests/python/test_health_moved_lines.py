@@ -101,3 +101,26 @@ def test_bad_revision_is_an_error_not_a_pass(tmp_path: Path):
 
     assert result.returncode == 2
     assert "moved_lines_status: ERROR" in result.stderr
+
+
+def test_head_compares_two_commits_regardless_of_the_working_tree(tmp_path: Path):
+    repo = make_repo(tmp_path)
+    (repo / "AGENTS.md").write_text(
+        "- Release notes follow the last published release.\n", encoding="utf-8"
+    )
+    git(repo, "commit", "-q", "-am", "prune")
+    (repo / "AGENTS.md").write_text(GUIDE, encoding="utf-8")
+
+    working_tree = run(repo)
+    committed = subprocess.run(
+        [sys.executable, "-I", str(SCRIPT), "HEAD~1", str(repo), "--head", "HEAD"],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    assert working_tree.returncode == 0, working_tree.stdout
+    assert committed.returncode == 1
+    assert "moved_lines_head: HEAD" in committed.stdout
+    assert "moved_lines_missing: 2" in committed.stdout
+    assert "Never delete files under data/ without a backup." in committed.stdout
