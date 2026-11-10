@@ -1204,3 +1204,30 @@ def test_valid_skill_link_is_not_reported_broken(tmp_path: Path):
     output = run_context(project, home)
     assert "broken_skill_links: 0" in output
     assert "skill_files_scanned: 1" in output
+
+
+def test_project_path_rule_matching_no_file_is_reported(tmp_path: Path):
+    project, home = tmp_path / "project", tmp_path / "home"
+    (project / "Sources").mkdir(parents=True)
+    (project / "Sources" / "App.swift").write_text("let x = 1\n", encoding="utf-8")
+    project_rules = project / ".claude" / "rules"
+    project_rules.mkdir(parents=True)
+    (project_rules / "live.md").write_text(
+        '---\npaths:\n  - "Sources/**"\n---\nlive rule\n', encoding="utf-8"
+    )
+    (project_rules / "dead.md").write_text(
+        '---\npaths:\n  - "site/**"\n---\ndead rule\n', encoding="utf-8"
+    )
+    global_rules = home / ".claude" / "rules"
+    global_rules.mkdir(parents=True)
+    (global_rules / "other-project.md").write_text(
+        '---\npaths:\n  - "elsewhere/**"\n---\nglobal rule\n', encoding="utf-8"
+    )
+
+    output = run_context(project, home)
+
+    assert "path_rules_matching_nothing: 1" in output
+    assert "path rules match no project file and never load: project:dead.md" in output
+    assert "project:live.md" not in output.split("never load:", 1)[1].splitlines()[0]
+    assert "global:other-project.md" not in output.split("never load:", 1)[1].splitlines()[0]
+    assert "path_context_status: WARN" in output
