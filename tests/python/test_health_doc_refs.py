@@ -37,3 +37,29 @@ def test_external_global_instruction_symlink_is_unverifiable_not_missing(tmp_pat
     assert "UNVERIFIED_EXTERNAL: AGENTS.md:1 -> ~/.claude/CLAUDE.md" in result.stdout
     assert "MISSING:" not in result.stdout
     assert "PRIVATE_EXTERNAL_CONTENT" not in result.stdout
+
+
+def test_root_guide_reference_resolves_inside_a_skill_directory(tmp_path: Path):
+    project = tmp_path / "project"
+    references = project / "skills" / "kami" / "references"
+    references.mkdir(parents=True)
+    (project / "skills" / "kami" / "SKILL.md").write_text("---\nname: kami\n---\n", encoding="utf-8")
+    (references / "design.md").write_text("design\n", encoding="utf-8")
+    (project / "AGENTS.md").write_text(
+        "Paths below are relative to `skills/kami/`.\n"
+        "See `references/design.md` and `references/missing.md`.\n",
+        encoding="utf-8",
+    )
+
+    result = subprocess.run(
+        [sys.executable, "-I", str(SCRIPT), str(project)],
+        env={**os.environ, "HOME": str(tmp_path / "home")},
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        check=False,
+    )
+
+    assert result.returncode == 1
+    assert "references/design.md" not in result.stdout
+    assert "MISSING: AGENTS.md:2 -> references/missing.md" in result.stdout

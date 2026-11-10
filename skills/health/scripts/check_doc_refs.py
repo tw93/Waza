@@ -160,6 +160,19 @@ def collect_scan_files(root: Path) -> list[Path]:
     return scan_files
 
 
+SKILL_ROOT_GLOBS = ("skills/*/SKILL.md", ".claude/skills/*/SKILL.md", ".agents/skills/*/SKILL.md")
+
+
+def skill_roots(root: Path) -> list[Path]:
+    """Skill directories in the repo; a root guide often cites their references/ files."""
+    return [
+        path.parent
+        for pattern in SKILL_ROOT_GLOBS
+        for path in sorted(root.glob(pattern))
+        if is_repo_file(path, root)
+    ]
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("root", nargs="?", default=".", help="Project root (default: cwd)")
@@ -168,6 +181,7 @@ def main() -> int:
     home = Path(os.environ.get("HOME", "")).expanduser()
 
     scan_files = collect_scan_files(root)
+    roots = skill_roots(root)
 
     missing: list[str] = []
     unverifiable: list[str] = []
@@ -193,6 +207,14 @@ def main() -> int:
 
                 target = resolve_ref(path, raw, root, home)
                 status = target_status(target, raw, root, home)
+                # A root guide that says "paths below are relative to skills/<name>/"
+                # cites `references/x.md` that only exists inside a skill directory.
+                if status == "missing" and raw.startswith("references/"):
+                    for skill_root in roots:
+                        candidate = Path(os.path.abspath(skill_root / raw))
+                        if target_status(candidate, raw, root, home) == "exists":
+                            status = "exists"
+                            break
                 source = path.relative_to(root)
                 if status == "missing":
                     missing.append(
