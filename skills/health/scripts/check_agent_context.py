@@ -475,6 +475,7 @@ def summarize_rule_context(
     always_files = 0
     always_words = 0
     always_units = 0
+    always_by_scope: Counter[str] = Counter()
     rule_files: list[tuple[str, Path]] = []
     seen_rules: set[Path] = set()
     for scope, rule_root in rule_roots:
@@ -513,6 +514,7 @@ def summarize_rule_context(
             always_files += 1
             always_words += words
             always_units += units
+            always_by_scope[scope] += 1
     ranked = sorted(
         path_counts,
         key=lambda selector: (path_units[selector], path_counts[selector], selector),
@@ -622,6 +624,8 @@ def summarize_rule_context(
         f"always_loaded_rule_files: {always_files}",
         f"always_loaded_rule_words: {always_words}",
         f"always_loaded_rule_context_units: {always_units}",
+        "always_loaded_rule_scope: "
+        + " ".join(f"{scope}={always_by_scope[scope]}" for scope, _ in rule_roots),
         "largest_path_triggers:",
     ]
     if not ranked:

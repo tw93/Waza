@@ -1223,10 +1223,12 @@ def test_project_path_rule_matching_no_file_is_reported(tmp_path: Path):
     (global_rules / "other-project.md").write_text(
         '---\npaths:\n  - "elsewhere/**"\n---\nglobal rule\n', encoding="utf-8"
     )
+    (global_rules / "always.md").write_text("always on\n", encoding="utf-8")
 
     output = run_context(project, home)
 
     assert "path_rules_matching_nothing: 1" in output
+    assert "always_loaded_rule_scope: project=0 global=1" in output
     assert "path rules match no project file and never load: project:dead.md" in output
     assert "project:live.md" not in output.split("never load:", 1)[1].splitlines()[0]
     assert "global:other-project.md" not in output.split("never load:", 1)[1].splitlines()[0]
