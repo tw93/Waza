@@ -29,7 +29,7 @@
     },
     {
       "name": "waza-health",
-      "description": "Audits agent config, instruction drift, hooks or MCP, and AI maintainability. Use when Claude, Codex, or Pi setup looks wrong. Not for application bugs or PR review.",
+      "description": "Audits or prunes agent config, instruction drift, hooks or MCP, and AI maintainability. Use when Claude, Codex, or Pi setup looks wrong or guidance needs slimming. Not for application bugs or PR review.",
       "version": "3.41.0",
       "category": "development",
       "source": "./skills/health",

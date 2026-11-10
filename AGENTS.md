@@ -47,7 +47,7 @@ Run `make test` before meaningful changes to skill behavior, packaging, scripts,
 
 ## Skill Design Rules
 
-The doctrine behind every rule below: give the model the target, not the path. A skill that spells out the route buys compliance and loses the judgment that makes the model worth calling; state what "done" looks like and let it route.
+The doctrine behind every rule below: give the model the target, not the path. A skill that spells out the route buys compliance and loses the judgment that makes the model worth calling; state what "done" looks like and let it route. A step is route when removing it lets the model reach the same result another way; it stays only when the order is the constraint (verify before publish, confirm before delete). Health's prune mode (`skills/health/references/prune.md`) applies these rules to a user's own guidance.
 
 Before adding a capability, decide the layer deliberately:
 

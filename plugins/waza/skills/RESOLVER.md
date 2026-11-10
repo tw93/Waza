@@ -31,7 +31,7 @@
 | 触发 | 技能 |
 |------|------|
 | 报错 / 崩溃 / 测试失败 / 行为异常 / "为什么不工作" / 以前是好的 / 回归 / 截图回归 / 反复修不好 / stale cache / 队列或生成物边界 | `skills/hunt/SKILL.md` |
-| Claude/Codex/Pi 忽略指令 / hook 失灵 / MCP 异常 / Codex 或 Pi 配置 / agent instructions / 配置审计 / AI coding 腐化 | `skills/health/SKILL.md` |
+| Claude/Codex/Pi 忽略指令 / hook 失灵 / MCP 异常 / Codex 或 Pi 配置 / agent instructions / 配置审计 / AI coding 腐化 / 精简规则 / 精简 skills / 规则瘦身 | `skills/health/SKILL.md` |
 
 ### Content（内容进出）
 
