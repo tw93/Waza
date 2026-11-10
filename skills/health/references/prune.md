@@ -5,7 +5,7 @@ Load when the user asks to slim, prune, or trim agent guidance: global rules, us
 ## Outcome
 
 - A ledger with one row per passage or group of lines: `file:line`, action (`fix`, `delete`, `move`, `edit`, `keep`), destination for a move, and the reason. Unverifiable usage, untestable behavior, and out-of-scope surfaces go in a separate gaps list.
-- Always-loaded size before, and the estimate after, from the collector's `PATH-SCOPED CONTEXT` and instruction-surface sections plus skill descriptions and the memory index.
+- Always-loaded size before, and the estimate after, from the collector's `STARTUP CONTEXT ESTIMATE` (`local_agents_*`, `local_claude_*`, `rules_*`, `skill_desc_*`) and `PATH-SCOPED CONTEXT`, plus the memory index. In a project prune, `global:` rules and machine-wide skills are reported once as out of scope, not as ledger rows.
 - Report-only until the user confirms the ledger. The repair phase applies only confirmed rows and ends with the checks under Moving and verifying.
 
 ## Inventory
@@ -16,7 +16,7 @@ Load when the user asks to slim, prune, or trim agent guidance: global rules, us
 ## Decide each passage
 
 - `fix` comes first and carries the least risk: a reference to a file, command, or option that no longer exists, two passages that contradict, a line that calls itself obsolete, a tool usage the vendor has changed. Check against current code and official docs, not memory.
-- `delete` when removing it would not change behavior: defaults a capable model follows anyway (read before editing, run the tests, handle edge cases). When unsure, keep it, or compare a clean session without the guidance. A one-step quiz proves knowledge, not retention over a long session, and a probe the task never triggers is no evidence.
+- `delete` when removing it would not change behavior: defaults a capable model follows anyway (read before editing, run the tests, handle edge cases). A descriptive line often carries a constraint inside it ("never writes into `~/.config`", "uploads no user content", "stays silent on failure", "only when the placeholder is still there"); the description can go, the clause stays, because the code shows what it does, not what it must never do. When unsure, keep it, or compare a clean session without the guidance. A one-step quiz proves knowledge, not retention over a long session, and a probe the task never triggers is no evidence.
 - `keep` what the model cannot guess: user preferences, rejected approaches and why, product tradeoffs, machine and environment facts, and silent traps (exit 0 with an empty or wrong result). A loud trap with a clear error needs no always-on rule; at most a fix hint where the error surfaces.
 - One-way doors are never compressed: deleting or moving user data, money, publishing, privilege, rewriting pushed history. Move them whole with the wording untouched, or keep them.
 - Keep the cause, drop the story. "Because this loses data" stays; incident narrative, dates, and the size of the source artifact go. A one-off report, scorecard, or diagnostic snapshot is evidence: extract the stable rule, then drop the report.
@@ -30,7 +30,8 @@ Load when the user asks to slim, prune, or trim agent guidance: global rules, us
 | Project commands, paths, release steps | project guide |
 | Same input, same output: lookup, status, validation | script or hook |
 
-- A lower layer restating a higher one is a `delete`. One fact stored in several files is generated from one source or kept once.
+- A lower layer restating a higher one is a `delete` only for the runtimes that load that higher layer; a project rule that repeats a global one stays when Cursor or another runtime that never reads the global file works in the project. One fact stored in several files is generated from one source or kept once.
+- A sentence that also appears on a published surface (a site page, README, package listing, generated copy of the skill) is user-facing copy, not guidance: grep the whole tree, generated mirrors included, and leave its wording to the user.
 - Keep one project guide. On Claude Code a root `CLAUDE.md` switches the project off `AGENTS.md`, nested guides included; when Claude-only lines are needed, a `CLAUDE.md` that starts with `@AGENTS.md`. This is version-dependent: confirm with the load probe below.
 - The root keeps what a conversation can trigger without reading any file (commit, publish, reply, delete), because a path rule loads only when a matching file is read. For a release, the red lines and the entry point stay at the root and the parameters travel with the scripts.
 - `.claude/rules` with `paths:` reach Claude Code only. When Codex, Cursor, or another runtime that reads `AGENTS.md` is in use, a must-follow rule stays in the root `AGENTS.md` or a nested `AGENTS.md`, and a nested guide inside a deployed or packaged folder ships with it.
