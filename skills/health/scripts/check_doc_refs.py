@@ -20,7 +20,8 @@ from pathlib import Path
 
 REF_RE = re.compile(
     r"(?<![\w/.-])("
-    r"@[A-Za-z0-9_~/.-]+(?:\.md|/)|"
+    # `@scope/pkg` and `@scope/<pkg>` are npm package names, not directory references.
+    r"@[A-Za-z0-9_~/.-]+(?:\.md|/(?![\w<-]))|"
     r"~/\.claude/[A-Za-z0-9_/.-]+(?:\.md|/)|"
     r"(?:docs|references)/[A-Za-z0-9_/.-]+\.md"
     r")"

@@ -63,3 +63,25 @@ def test_root_guide_reference_resolves_inside_a_skill_directory(tmp_path: Path):
     assert result.returncode == 1
     assert "references/design.md" not in result.stdout
     assert "MISSING: AGENTS.md:2 -> references/missing.md" in result.stdout
+
+
+def test_npm_scopes_are_not_directory_references(tmp_path: Path):
+    project = tmp_path / "project"
+    project.mkdir()
+    (project / "AGENTS.md").write_text(
+        "Run `npx @redocly/cli lint`, test `@vela/<pkg>`, see `@missing/`.\n",
+        encoding="utf-8",
+    )
+
+    result = subprocess.run(
+        [sys.executable, "-I", str(SCRIPT), str(project)],
+        env={**os.environ, "HOME": str(tmp_path / "home")},
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        check=False,
+    )
+
+    assert "@redocly" not in result.stdout
+    assert "@vela" not in result.stdout
+    assert "MISSING: AGENTS.md:1 -> @missing/" in result.stdout
