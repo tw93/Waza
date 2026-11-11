@@ -13,7 +13,7 @@ set -euo pipefail
 
 RULE="${1:-}"
 TARGET="${2:-claude-code}"
-WAZA_REF="${WAZA_REF:-v3.41.0}"
+WAZA_REF="${WAZA_REF:-v3.42.0}"
 
 if [ -z "$RULE" ]; then
   echo "Usage: setup-rule.sh <rule-name> [claude-code|codex|antigravity-cli]" >&2

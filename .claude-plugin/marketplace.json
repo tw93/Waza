@@ -10,7 +10,7 @@
     {
       "name": "waza",
       "description": "Installs the full Waza toolkit. Registers all eight skills under the waza namespace, callable as /waza:think, /waza:check, /waza:hunt, /waza:ui, /waza:read, /waza:write, /waza:learn, and /waza:health. For one skill on Claude Code v2.1.143 or newer, use /plugin install waza-<name>@waza.",
-      "version": "3.41.0",
+      "version": "3.42.0",
       "category": "development",
       "source": "./",
       "homepage": "https://github.com/tw93/Waza"
@@ -18,7 +18,7 @@
     {
       "name": "waza-check",
       "description": "Reviews diffs, PRs, release readiness, and publishing follow-through. Use when asked to review, triage issues or PRs, or ship. Not for debugging root causes or prose.",
-      "version": "3.41.0",
+      "version": "3.42.0",
       "category": "development",
       "source": "./skills/check",
       "homepage": "https://github.com/tw93/Waza",
@@ -30,7 +30,7 @@
     {
       "name": "waza-health",
       "description": "Audits or prunes agent config, instruction drift, hooks or MCP, and AI maintainability. Use when Claude, Codex, or Pi setup looks wrong or guidance needs slimming. Not for application bugs or PR review.",
-      "version": "3.41.0",
+      "version": "3.42.0",
       "category": "development",
       "source": "./skills/health",
       "homepage": "https://github.com/tw93/Waza",
@@ -42,7 +42,7 @@
     {
       "name": "waza-hunt",
       "description": "Finds root cause before any fix. Use when something errors, crashes, regresses, or used to work. Not for code review or new features.",
-      "version": "3.41.0",
+      "version": "3.42.0",
       "category": "development",
       "source": "./skills/hunt",
       "homepage": "https://github.com/tw93/Waza",
@@ -54,7 +54,7 @@
     {
       "name": "waza-learn",
       "description": "Runs a six-phase research workflow from source bundle to publish-ready output. Use when researching an unfamiliar domain or compiling materials into one reference. Not for quick lookups or single-file reads.",
-      "version": "3.41.0",
+      "version": "3.42.0",
       "category": "development",
       "source": "./skills/learn",
       "homepage": "https://github.com/tw93/Waza",
@@ -66,7 +66,7 @@
     {
       "name": "waza-read",
       "description": "Fetches URLs and PDFs, then summarizes or returns clean Markdown; can also search the web through DeepSeek when built-in search is thin. Use when asked to read, fetch, quote, cite, convert, or save a URL or PDF. Not for local text files already in the repo.",
-      "version": "3.41.0",
+      "version": "3.42.0",
       "category": "development",
       "source": "./skills/read",
       "homepage": "https://github.com/tw93/Waza",
@@ -78,7 +78,7 @@
     {
       "name": "waza-think",
       "description": "Turns rough ideas into approved, decision-complete plans before coding. Use when planning architecture, judging whether to build, or writing a handoff. Not for bug fixes or small edits.",
-      "version": "3.41.0",
+      "version": "3.42.0",
       "category": "development",
       "source": "./skills/think",
       "homepage": "https://github.com/tw93/Waza",
@@ -90,7 +90,7 @@
     {
       "name": "waza-ui",
       "description": "Produces distinctive production UI and screenshot-grounded visual polish. Use when building or restyling pages, components, or typography. Not for backend logic or data pipelines.",
-      "version": "3.41.0",
+      "version": "3.42.0",
       "category": "development",
       "source": "./skills/ui",
       "homepage": "https://github.com/tw93/Waza",
@@ -102,7 +102,7 @@
     {
       "name": "waza-write",
       "description": "Rewrites and polishes Chinese or English prose, technical instructions, and product copy. Use when drafting, editing, localizing, or cutting AI tone. Not for code comments or commit messages.",
-      "version": "3.41.0",
+      "version": "3.42.0",
       "category": "development",
       "source": "./skills/write",
       "homepage": "https://github.com/tw93/Waza",
