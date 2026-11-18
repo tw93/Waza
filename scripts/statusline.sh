@@ -40,7 +40,9 @@ jq_full="$jq_epoch_def"'[
   (.rate_limits.five_hour.used_percentage // null | if . then (. | round | tostring) else "null" end),
   (.rate_limits.five_hour.resets_at | to_epoch // "null" | tostring),
   (.rate_limits.seven_day.used_percentage // null | if . then (. | round | tostring) else "null" end),
-  (.rate_limits.seven_day.resets_at | to_epoch // "null" | tostring)
+  (.rate_limits.seven_day.resets_at | to_epoch // "null" | tostring),
+  (.model.display_name // "null" | tostring),
+  (.effort.level // "null" | tostring)
 ] | @tsv'
 
 jq_rl="$jq_epoch_def"'[
@@ -290,9 +292,16 @@ apply_highwater_all() {
 parsed=""
 [ -n "$input" ] && parsed=$(printf '%s' "$input" | jq -r "$jq_full" 2>/dev/null)
 
-IFS="$tab" read -r used_tokens window_size live_session_id live_api_ms live_output_tokens live_five_pct live_five_reset live_seven_pct live_seven_reset <<EOF
+IFS="$tab" read -r used_tokens window_size live_session_id live_api_ms live_output_tokens live_five_pct live_five_reset live_seven_pct live_seven_reset model_name effort_level <<EOF
 $parsed
 EOF
+
+# Model and effort: effort comes from stdin when present, else settings.json effortLevel
+[ "${model_name:-null}" = "null" ] && model_name=""
+[ "${effort_level:-null}" = "null" ] && effort_level=""
+if [ -z "$effort_level" ] && [ -f "$HOME/.claude/settings.json" ]; then
+  effort_level=$(jq -r '.effortLevel // empty' "$HOME/.claude/settings.json" 2>/dev/null)
+fi
 
 live_session_id="${live_session_id:-}"
 [ "$live_session_id" = "null" ] && live_session_id=""
@@ -427,4 +436,17 @@ else
   seven_part="${DIM}7d: --${RESET}"
 fi
 
-printf "%b | %b | %b\n" "$context_part" "$five_part" "$seven_part"
+# Model + effort (shown only when known)
+model_part=""
+if [ -n "$model_name" ]; then
+  model_part="$model_name"
+  [ -n "$effort_level" ] && model_part="${model_part} ${DIM}${effort_level}${RESET}"
+elif [ -n "$effort_level" ]; then
+  model_part="${DIM}${effort_level}${RESET}"
+fi
+
+if [ -n "$model_part" ]; then
+  printf "%b | %b | %b | %b\n" "$model_part" "$context_part" "$five_part" "$seven_part"
+else
+  printf "%b | %b | %b\n" "$context_part" "$five_part" "$seven_part"
+fi
